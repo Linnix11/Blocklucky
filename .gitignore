@@ -1,0 +1,23 @@
+# Dépendances
+node_modules/
+frontend/node_modules/
+
+# Secrets : ne jamais commiter
+.env
+.env.*
+!.env.example
+
+# Fichiers générés par Hardhat
+cache/
+artifacts/
+typechain-types/
+coverage/
+coverage.json
+gas-report.txt
+
+# Interface
+frontend/dist/
+
+# Divers
+.DS_Store
+*.log
