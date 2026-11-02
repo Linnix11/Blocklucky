@@ -7,6 +7,8 @@ cagnotte**. Tout est public : n'importe qui peut vérifier les tickets, le tirag
 Projet réalisé en 48 h par une équipe d'Epitech Digital School pour la mairie d'EtherBay.
 Il fonctionne sur **Sepolia**, le réseau de test d'Ethereum : les ethers utilisés sont fictifs.
 
+🎬 **[Vidéo de démonstration (1 min, mobile, réseau local)](docs/captures/demo-locale-mobile.mp4)** : achat, autres habitants en direct, tirage, gagnant.
+
 | Mobile : achat, tirage, gagnant | Ordinateur : vue de la mairie |
 |---|---|
 | ![Parcours sur mobile](docs/captures/mobile-parcours.png) | ![Vue ordinateur](docs/captures/bureau-espace-mairie.png) |
@@ -171,6 +173,8 @@ blocklucky/
 └── docs/
     ├── securite.md               dossier sécurité pour le DSI
     ├── deploiement-sepolia.md    guide de déploiement
+    ├── Plan_BlockLucky.md        plan du projet : objectifs, phases, décisions, risques
+    ├── soutenance.md             déroulé de la démo, plan B, questions du DSI
     ├── phase0-cadrage.md         versions vérifiées et pièges évités
     └── captures/                 captures d'écran
 ```
