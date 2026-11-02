@@ -21,3 +21,6 @@ frontend/dist/
 # Divers
 .DS_Store
 *.log
+
+# Analyse Slither
+crytic-export/

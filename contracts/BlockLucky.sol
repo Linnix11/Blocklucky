@@ -66,6 +66,11 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
     ///      du tirage et bloquer la loterie. En cas d'échec, les gains sont crédités (voir `withdrawPrize`).
     uint256 public constant PAYOUT_GAS_LIMIT = 50_000;
 
+    /// @notice Délai après lequel n'importe qui peut relancer un tirage resté sans réponse de Chainlink.
+    /// @dev Chainlink répond normalement en quelques minutes. Ce délai évite qu'une cagnotte reste
+    ///      bloquée pour toujours si VRF ne répond pas (ex. souscription sans LINK).
+    uint256 public constant DRAW_TIMEOUT = 1 hours;
+
     // =============================================================
     //                       PARAMÈTRES VRF
     // =============================================================
@@ -110,6 +115,9 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
 
     /// @notice Identifiant de la dernière demande de hasard envoyée à Chainlink.
     uint256 public lastRequestId;
+
+    /// @notice Date (secondes Unix) de la dernière demande de hasard envoyée à Chainlink.
+    uint256 public drawRequestedAt;
 
     /// @dev Tickets de chaque loterie : une entrée par ticket (roundId => liste des acheteurs).
     mapping(uint256 => address[]) private _tickets;
@@ -176,6 +184,10 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
     error UnknownRequest();
     /// @notice Seul le coordinateur Chainlink VRF peut fournir le nombre aléatoire.
     error OnlyCoordinatorCanFulfill(address have, address want);
+    /// @notice Aucun tirage n'est en attente de réponse de Chainlink.
+    error NoPendingDraw();
+    /// @notice Le délai avant de pouvoir relancer le tirage n'est pas écoulé.
+    error RetryTooEarly(uint256 availableAt);
 
     // =============================================================
     //                         CONSTRUCTEUR
@@ -203,32 +215,32 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
      * @notice Ouvre une nouvelle loterie. Réservé à la mairie.
      * @dev Aucune boucle : les tickets de la nouvelle loterie sont rangés dans `_tickets[roundId]`,
      *      un tableau neuf. `ticketsOf` est lui aussi indexé par `roundId`.
-     * @param _price Prix d'un ticket, en wei.
-     * @param _maxParticipants Nombre de participants qui déclenche la fin.
-     * @param _maxTicketsPerWallet Nombre maximum de tickets par portefeuille.
-     * @param _duration Durée de la loterie, en secondes.
+     * @param newPrice Prix d'un ticket, en wei.
+     * @param newMaxParticipants Nombre de participants qui déclenche la fin.
+     * @param newMaxTicketsPerWallet Nombre maximum de tickets par portefeuille.
+     * @param duration Durée de la loterie, en secondes.
      */
     function startNewRound(
-        uint256 _price,
-        uint256 _maxParticipants,
-        uint256 _maxTicketsPerWallet,
-        uint256 _duration
+        uint256 newPrice,
+        uint256 newMaxParticipants,
+        uint256 newMaxTicketsPerWallet,
+        uint256 duration
     ) external onlyOwner {
         if (state != LotteryState.CLOSED) revert LotteryNotClosed();
-        if (_price == 0 || _maxParticipants == 0 || _maxTicketsPerWallet == 0 || _duration == 0) {
+        if (newPrice == 0 || newMaxParticipants == 0 || newMaxTicketsPerWallet == 0 || duration == 0) {
             revert InvalidParameters();
         }
 
         roundId += 1;
-        ticketPrice = _price;
-        maxParticipants = _maxParticipants;
-        maxTicketsPerWallet = _maxTicketsPerWallet;
-        endTime = block.timestamp + _duration;
+        ticketPrice = newPrice;
+        maxParticipants = newMaxParticipants;
+        maxTicketsPerWallet = newMaxTicketsPerWallet;
+        endTime = block.timestamp + duration;
         participantsCount = 0;
         currentPot = 0;
         state = LotteryState.OPEN;
 
-        emit RoundStarted(roundId, _price, _maxParticipants, endTime);
+        emit RoundStarted(roundId, newPrice, newMaxParticipants, endTime);
     }
 
     // =============================================================
@@ -289,21 +301,21 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
         }
 
         state = LotteryState.CALCULATING;
+        _requestRandomness();
+    }
 
-        uint256 requestId = vrfCoordinator.requestRandomWords(
-            VRFV2PlusClient.RandomWordsRequest({
-                keyHash: keyHash,
-                subId: subscriptionId,
-                requestConfirmations: REQUEST_CONFIRMATIONS,
-                callbackGasLimit: CALLBACK_GAS_LIMIT,
-                numWords: NUM_WORDS,
-                // Paiement des tirages en LINK (nativePayment = false)
-                extraArgs: VRFV2PlusClient._argsToBytes(VRFV2PlusClient.ExtraArgsV1({nativePayment: false}))
-            })
-        );
-        lastRequestId = requestId;
-
-        emit DrawRequested(roundId, requestId);
+    /**
+     * @notice Relance le tirage si Chainlink n'a pas répondu après `DRAW_TIMEOUT`.
+     *         N'importe qui peut l'appeler : la cagnotte ne peut jamais rester bloquée.
+     * @dev Personne n'obtient de pouvoir sur le résultat : le hasard vient toujours de VRF.
+     *      L'ancienne demande devient invalide (`lastRequestId` change), donc une réponse tardive
+     *      à celle-ci est rejetée par `fulfillRandomWords`.
+     */
+    function retryDraw() external {
+        if (state != LotteryState.CALCULATING) revert NoPendingDraw();
+        uint256 availableAt = drawRequestedAt + DRAW_TIMEOUT;
+        if (block.timestamp < availableAt) revert RetryTooEarly(availableAt);
+        _requestRandomness();
     }
 
     /**
@@ -405,6 +417,25 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
             pendingWithdrawals[winner] += prize;
             emit PrizeCredited(winner, prize);
         }
+    }
+
+    /// @dev Envoie une demande de hasard à Chainlink VRF et l'enregistre comme demande en cours.
+    function _requestRandomness() private {
+        uint256 requestId = vrfCoordinator.requestRandomWords(
+            VRFV2PlusClient.RandomWordsRequest({
+                keyHash: keyHash,
+                subId: subscriptionId,
+                requestConfirmations: REQUEST_CONFIRMATIONS,
+                callbackGasLimit: CALLBACK_GAS_LIMIT,
+                numWords: NUM_WORDS,
+                // Paiement des tirages en LINK (nativePayment = false)
+                extraArgs: VRFV2PlusClient._argsToBytes(VRFV2PlusClient.ExtraArgsV1({nativePayment: false}))
+            })
+        );
+        lastRequestId = requestId;
+        drawRequestedAt = block.timestamp;
+
+        emit DrawRequested(roundId, requestId);
     }
 
     /// @dev Indique si la loterie en cours est terminée (participants atteints ou date passée).

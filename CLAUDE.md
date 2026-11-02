@@ -93,6 +93,8 @@ Le jury joue trois rôles :
 > `VRFConsumerBaseV2Plus` (son `setCoordinator` laisserait la mairie choisir le gagnant) mais
 > implémente `rawFulfillRandomWords` avec un coordinateur `immutable` et `Ownable2Step`.
 > Les tickets sont rangés par loterie (`_tickets[roundId]`) pour éviter un `delete` en boucle.
+> Phase 3 : ajout de `retryDraw()` (ouverte à tous, 1 h après la demande VRF) pour qu'une cagnotte
+> ne reste jamais bloquée si Chainlink ne répond pas.
 > Détails et justifications : `docs/securite.md`. Versions épinglées : `docs/phase0-cadrage.md`.
 
 ### 5.1 État du contrat
