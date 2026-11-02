@@ -1,0 +1,11 @@
+{
+  "31337": {
+    "BlockLucky": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "VRFCoordinator": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "vrfMock": true,
+    "subscriptionId": "88033209902384990886682705678615964381541665043627884578297060408446810983526",
+    "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "blockNumber": 5,
+    "deployedAt": "2026-11-02T12:14:14.437Z"
+  }
+}
