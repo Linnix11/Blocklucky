@@ -1,0 +1,931 @@
+/* BlockLucky : la tombola des fêtes d'EtherBay.
+   Ambiance : une nuit d'hiver sur la place de la mairie, guirlandes dorées, billet de tombola en papier.
+   Mobile d'abord ; une seule pièce forte (le billet), le reste reste sobre. */
+
+:root {
+  --night: #1b1230; /* ciel d'hiver, prune profond */
+  --night-2: #261a40; /* panneaux */
+  --night-3: #33255a; /* bordures, champs */
+  --snow: #f4eef9; /* texte principal */
+  --muted: #b9aacf; /* texte secondaire */
+  --paper: #fff3dc; /* papier du billet */
+  --ink: #2b1a12; /* encre sur le billet */
+  --gold: #f6b93b; /* guirlandes, actions principales */
+  --gold-deep: #c98a12;
+  --wine: #b3263e; /* vin chaud, tirage */
+  --fir: #2e8b57; /* sapin, succès */
+  --danger: #ff8a7a;
+
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+
+  --radius-ticket: 18px;
+  --radius-panel: 14px;
+  --radius-control: 10px;
+  --gutter: 16px;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--night);
+  color: var(--snow);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+  margin: 0 0 0.5em;
+}
+
+h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+p {
+  margin: 0 0 0.75em;
+}
+
+a {
+  color: var(--gold);
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- Guirlande (bordure haute) ---------- */
+.lights {
+  height: 10px;
+  background: radial-gradient(circle at 12px 4px, var(--gold) 3px, transparent 4px) 0 0 / 48px 10px repeat-x,
+    radial-gradient(circle at 36px 6px, var(--wine) 3px, transparent 4px) 0 0 / 48px 10px repeat-x;
+  opacity: 0.9;
+}
+
+/* ---------- En-tête ---------- */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px var(--gutter);
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: var(--gold);
+}
+
+.brand-city {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.wallet-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--night-3);
+  border-radius: 999px;
+  background: var(--night-2);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.wallet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fir);
+  box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.3);
+}
+
+.wallet-balance {
+  color: var(--muted);
+}
+
+/* ---------- Mise en page ---------- */
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px var(--gutter) 96px;
+}
+
+.intro {
+  margin: 12px 0 20px;
+}
+
+.intro h1 {
+  font-size: clamp(1.75rem, 6vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  max-width: 18ch;
+}
+
+.network-tag {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.play-grid {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+
+.play-side {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .play-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+/* ---------- Le billet de tombola ---------- */
+.ticket {
+  --notch: 14px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-ticket);
+  box-shadow: 0 18px 40px rgba(8, 4, 20, 0.45);
+  overflow: hidden;
+}
+
+.ticket-main {
+  padding: 22px 22px 18px;
+}
+
+.ticket-kicker {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--wine);
+  margin-bottom: 4px;
+}
+
+.pot-label {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #6b4a33;
+}
+
+.pot-amount {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3.2rem, 16vw, 5.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 2px 0 10px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.pot-unit {
+  font-size: 0.32em;
+  letter-spacing: 0;
+  margin-left: 0.25em;
+  color: var(--wine);
+}
+
+.pot-rule {
+  font-size: 0.95rem;
+  color: #6b4a33;
+  max-width: 40ch;
+}
+
+.ticket-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+  margin: 18px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(43, 26, 18, 0.15);
+}
+
+.fact dt {
+  font-size: 0.85rem;
+  color: #6b4a33;
+}
+
+.fact dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.fact-wide {
+  grid-column: 1 / -1;
+}
+
+.progress {
+  display: block;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: rgba(43, 26, 18, 0.12);
+  overflow: hidden;
+}
+
+.progress-bar {
+  display: block;
+  height: 100%;
+  background: var(--wine);
+  border-radius: inherit;
+  transition: width 0.6s ease;
+}
+
+/* Talon détachable : séparé par une ligne perforée et deux encoches */
+.ticket-stub {
+  position: relative;
+  padding: 18px 22px 20px;
+  background: var(--gold);
+  border-top: 3px dashed rgba(43, 26, 18, 0.35);
+}
+
+.ticket-stub::before,
+.ticket-stub::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--notch) * -1 - 1.5px);
+  width: calc(var(--notch) * 2);
+  height: calc(var(--notch) * 2);
+  border-radius: 50%;
+  background: var(--night);
+}
+
+.ticket-stub::before {
+  left: calc(var(--notch) * -1);
+}
+
+.ticket-stub::after {
+  right: calc(var(--notch) * -1);
+}
+
+.stub-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.stub-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 2px 0 0;
+}
+
+.stub-value.is-clock {
+  font-size: 2.4rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.stub-number {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 560px) {
+  .ticket {
+    flex-direction: row;
+  }
+  .ticket-main {
+    flex: 1;
+    padding: 28px;
+  }
+  .ticket-stub {
+    width: 34%;
+    min-width: 180px;
+    border-top: none;
+    border-left: 3px dashed rgba(43, 26, 18, 0.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .ticket-stub::before,
+  .ticket-stub::after {
+    left: calc(var(--notch) * -1 - 1.5px);
+    right: auto;
+  }
+  .ticket-stub::before {
+    top: calc(var(--notch) * -1);
+  }
+  .ticket-stub::after {
+    top: auto;
+    bottom: calc(var(--notch) * -1);
+  }
+}
+
+.ticket-loading .ticket-stub {
+  min-height: 80px;
+}
+
+.skeleton {
+  height: 18px;
+  border-radius: 6px;
+  background: rgba(43, 26, 18, 0.1);
+  margin: 10px 0;
+}
+
+.skeleton-big {
+  height: 64px;
+  width: 70%;
+}
+
+/* ---------- Panneaux ---------- */
+.panel {
+  background: var(--night-2);
+  border: 1px solid var(--night-3);
+  border-radius: var(--radius-panel);
+  padding: 18px;
+}
+
+.panel > :last-child {
+  margin-bottom: 0;
+}
+
+.panel-draw {
+  border-color: var(--wine);
+  background: linear-gradient(180deg, rgba(179, 38, 62, 0.22), var(--night-2) 70%);
+}
+
+.panel-draw h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-prize {
+  border-color: var(--gold);
+}
+
+.panel-result {
+  border-color: var(--fir);
+}
+
+.panel-admin {
+  border-style: dashed;
+}
+
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.my-tickets strong {
+  color: var(--gold);
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ---------- Boutons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 10px 18px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.btn-gold:hover:not(:disabled) {
+  background: #ffc95a;
+}
+
+.btn-wine {
+  background: var(--wine);
+  color: #fff;
+}
+
+.btn-wine:hover:not(:disabled) {
+  background: #c93049;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--snow);
+  border-color: var(--night-3);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--gold);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-lg {
+  min-height: 54px;
+  font-size: 1.1rem;
+}
+
+/* ---------- Choix de la quantité ---------- */
+.stepper {
+  display: grid;
+  grid-template-columns: 54px 1fr 54px;
+  align-items: center;
+  border: 1px solid var(--night-3);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+
+.stepper-btn {
+  height: 54px;
+  border: none;
+  background: var(--night-3);
+  color: var(--snow);
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.stepper-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.stepper-value {
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* ---------- Bandeaux ---------- */
+.notice {
+  display: grid;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  border-radius: var(--radius-panel);
+  background: var(--night-2);
+  border: 1px solid var(--gold-deep);
+}
+
+.notice p {
+  margin: 0;
+}
+
+.notice-warn {
+  border-color: var(--danger);
+}
+
+@media (min-width: 700px) {
+  .notice {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+/* ---------- Comment ça marche ---------- */
+.how {
+  margin-top: 48px;
+}
+
+.steps {
+  list-style: none;
+  counter-reset: step;
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  margin: 16px 0 20px;
+}
+
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding: 18px 18px 18px 64px;
+  background: var(--night-2);
+  border-radius: var(--radius-panel);
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+.steps p {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (min-width: 900px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tutorial {
+  background: var(--night-2);
+  border: 1px solid var(--night-3);
+  border-radius: var(--radius-panel);
+  padding: 4px 18px;
+}
+
+.tutorial summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font-weight: 700;
+}
+
+.tutorial ol {
+  padding-left: 1.2em;
+  margin: 0 0 16px;
+}
+
+.tutorial li {
+  margin-bottom: 8px;
+}
+
+/* ---------- Transparence ---------- */
+.transparency {
+  margin-top: 48px;
+}
+
+.lead {
+  max-width: 68ch;
+  color: var(--muted);
+}
+
+.transparency-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (min-width: 900px) {
+  .transparency-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.mono-address {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+  background: var(--night);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.players {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.players li {
+  display: grid;
+  grid-template-columns: 7.5em 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+}
+
+.players li.is-me {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.players-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--night-3);
+  overflow: hidden;
+}
+
+.players-bar span {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+}
+
+.players-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.activity {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  font-size: 0.95rem;
+}
+
+.activity li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--night-3);
+}
+
+.activity li:last-child {
+  border-bottom: none;
+}
+
+.activity-link {
+  font-size: 0.85rem;
+}
+
+.history {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.history th,
+.history td {
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--night-3);
+}
+
+.history th {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* ---------- Espace mairie ---------- */
+.admin-form {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.95rem;
+}
+
+.admin-form input {
+  font: inherit;
+  color: var(--snow);
+  background: var(--night);
+  border: 1px solid var(--night-3);
+  border-radius: var(--radius-control);
+  padding: 10px 12px;
+  min-height: 46px;
+}
+
+@media (min-width: 560px) {
+  .admin-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .admin-form button {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Annonce du gagnant ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: rgba(14, 8, 28, 0.82);
+}
+
+.winner-card {
+  width: min(460px, 100%);
+  text-align: center;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-ticket);
+  padding: 32px 24px 26px;
+  border-top: 10px solid var(--wine);
+  animation: winner-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+.winner-kicker {
+  color: var(--wine);
+  font-weight: 700;
+}
+
+.winner-card h2 {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.winner-prize {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 3rem;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.winner-address {
+  margin: 4px 0 20px;
+}
+
+@keyframes winner-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85) rotate(-2deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Suivi des transactions ---------- */
+.toast {
+  position: fixed;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: var(--gutter);
+  z-index: 40;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  border-radius: var(--radius-panel);
+  background: var(--snow);
+  color: var(--ink);
+  box-shadow: 0 12px 30px rgba(8, 4, 20, 0.5);
+  border-left: 6px solid var(--gold);
+}
+
+.toast-success {
+  border-left-color: var(--fir);
+}
+
+.toast-error {
+  border-left-color: var(--wine);
+}
+
+.toast-body {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.toast-title {
+  font-weight: 700;
+  margin: 0;
+}
+
+.toast-text {
+  margin: 2px 0 0;
+  font-size: 0.95rem;
+}
+
+.toast-link {
+  color: var(--wine);
+  font-size: 0.9rem;
+}
+
+.toast-close {
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+  padding: 0 4px;
+}
+
+.spinner {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid currentColor;
+  border-right-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Pied de page ---------- */
+.site-footer {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px var(--gutter) 40px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  border-top: 1px solid var(--night-3);
+}
+
+/* ---------- Mouvement réduit ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .spinner {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.6;
+  }
+}
