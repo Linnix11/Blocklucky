@@ -15,7 +15,8 @@
     "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
     "start-round:local": "hardhat run scripts/startRound.js --network localhost",
     "start-round:sepolia": "hardhat run scripts/startRound.js --network sepolia",
-    "fulfill:local": "hardhat run scripts/fulfillLocal.js --network localhost"
+    "fulfill:local": "hardhat run scripts/fulfillLocal.js --network localhost",
+    "demo:locale": "bash scripts/demo-locale.sh"
   },
   "engines": {
     "node": ">=18"

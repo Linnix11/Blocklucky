@@ -89,6 +89,7 @@ Toutes depuis le dossier `blocklucky/`.
 | `npm test` | Lance les 43 tests du contrat |
 | `npm run coverage` | Mesure la couverture du code par les tests |
 | `REPORT_GAS=true npm test` | Affiche le coût en gas de chaque fonction |
+| `npm run demo:locale` | **Démo de secours en une commande** : blockchain locale, loterie ouverte et interface |
 | `npm run node` | Démarre une blockchain locale |
 | `npm run simulate` | Joue une loterie complète en local (5 habitants, tirage, gagnant) |
 | `npm run deploy:local` | Déploie la loterie et un faux Chainlink en local |
@@ -128,7 +129,10 @@ Sans Internet ni ETH de test, c'est aussi la **démo de secours** de la soutenan
 5. Ouvrez http://localhost:5173, achetez des tickets avec plusieurs comptes, lancez le tirage, puis
    cliquez sur « Simuler la réponse de Chainlink ».
 
-Version console en une commande : `npm run simulate`.
+Tout cela en une seule commande : `npm run demo:locale` (Ctrl+C pour arrêter).
+Version console : `npm run simulate`.
+
+Préparation de la soutenance (vérifications, déroulé, questions du DSI) : [docs/soutenance.md](docs/soutenance.md).
 
 ## Déploiement sur Sepolia
 
