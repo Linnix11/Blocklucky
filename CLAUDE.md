@@ -89,6 +89,12 @@ Le jury joue trois rôles :
 
 ## 5. Spécification du smart contract `BlockLucky.sol`
 
+> **Décisions de la phase 2 (ne pas revenir dessus sans raison) :** le contrat n'hérite **pas** de
+> `VRFConsumerBaseV2Plus` (son `setCoordinator` laisserait la mairie choisir le gagnant) mais
+> implémente `rawFulfillRandomWords` avec un coordinateur `immutable` et `Ownable2Step`.
+> Les tickets sont rangés par loterie (`_tickets[roundId]`) pour éviter un `delete` en boucle.
+> Détails et justifications : `docs/securite.md`. Versions épinglées : `docs/phase0-cadrage.md`.
+
 ### 5.1 État du contrat
 
 ```solidity
