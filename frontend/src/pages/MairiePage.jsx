@@ -20,7 +20,7 @@ export function MairiePage() {
       <div className="intro">
         <h1>Mairie de {info.city.name}</h1>
         <p className="network-tag">
-          <a href={`#/ville/${info.city.slug}`}>Voir la page publique de la loterie →</a>
+          <a href={`/ville/${info.city.slug}`}>Voir la page publique de la loterie →</a>
         </p>
       </div>
       <div className="admin-grid">

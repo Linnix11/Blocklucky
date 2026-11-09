@@ -105,7 +105,7 @@ export function AdminPage({ onChange }) {
                     return (
                       <tr key={city.id}>
                         <td>
-                          <a href={`#/ville/${city.slug}`}>{city.name}</a>
+                          <a href={`/ville/${city.slug}`}>{city.name}</a>
                         </td>
                         <td>{city.mairieEmail}</td>
                         <td>{city.participants}</td>

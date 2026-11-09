@@ -37,7 +37,7 @@ export function CityPage({ city, me }) {
     <main className="page">
       <div className="intro">
         <p className="network-tag">
-          <a href="#/">← Toutes les villes</a>
+          <a href="/">← Toutes les villes</a>
         </p>
         <h1>La loterie des fêtes de {city.name}</h1>
         <p className="network-tag">{network.name}, ethers fictifs, aucun vrai argent en jeu</p>

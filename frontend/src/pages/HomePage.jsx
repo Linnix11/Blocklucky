@@ -16,7 +16,7 @@ export function HomePage({ cities }) {
         <ul className="city-list">
           {cities.map((city) => (
             <li key={city.id}>
-              <a className="panel city-card" href={`#/ville/${city.slug}`}>
+              <a className="panel city-card" href={`/ville/${city.slug}`}>
                 <span className="city-name">{city.name}</span>
                 <span className="muted">Voir la loterie →</span>
               </a>

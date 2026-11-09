@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useHash } from "./hooks/useHash";
+import { navigate, usePath } from "./hooks/usePath";
 import { api } from "./lib/api";
 import { HomePage } from "./pages/HomePage";
 import { CityPage } from "./pages/CityPage";
@@ -7,9 +7,9 @@ import { LoginPage } from "./pages/LoginPage";
 import { AdminPage } from "./pages/AdminPage";
 import { MairiePage } from "./pages/MairiePage";
 
-/** Routage par « #/… » : accueil, #/ville/<slug>, #/connexion, #/admin, #/mairie. */
+/** Routage : /, /ville/<slug>, /connexion, /admin, /mairie. */
 export default function App() {
-  const hash = useHash();
+  const path = usePath();
   const [me, setMe] = useState(undefined); // undefined : chargement, null : non connecté
   const [cities, setCities] = useState(null);
 
@@ -23,10 +23,10 @@ export default function App() {
   const logout = async () => {
     await api("/logout", { method: "POST" }).catch(() => {});
     setMe(null);
-    window.location.hash = "#/";
+    navigate("/");
   };
 
-  const [, route, param] = hash.split("/");
+  const [, route, param] = path.split("/");
   let page;
   if (route === "ville") {
     const city = cities?.find((c) => c.slug === param);
@@ -45,22 +45,22 @@ export default function App() {
     <>
       <div className="lights" aria-hidden="true" />
       <header className="site-header">
-        <a className="brand" href="#/">
+        <a className="brand" href="/">
           <span className="brand-name">BlockLucky</span>
           <span className="brand-city">La loterie des villes</span>
         </a>
         <nav className="account-nav" aria-label="Compte">
           {me ? (
             <>
-              {me.role === "admin" && <a href="#/admin">Admin</a>}
-              {me.role === "mairie" && <a href="#/mairie">Ma mairie</a>}
+              {me.role === "admin" && <a href="/admin">Admin</a>}
+              {me.role === "mairie" && <a href="/mairie">Ma mairie</a>}
               <span className="muted account-email">{me.email}</span>
               <button type="button" className="link-button" onClick={logout}>
                 Déconnexion
               </button>
             </>
           ) : (
-            me === null && <a href="#/connexion">Connexion</a>
+            me === null && <a href="/connexion">Connexion</a>
           )}
         </nav>
       </header>
@@ -85,7 +85,7 @@ function Guard({ me, role, children }) {
         <section className="panel stack" role="alert">
           <h2>Accès réservé</h2>
           <p>Connectez-vous avec un compte {role === "admin" ? "administrateur" : "mairie"}.</p>
-          <a className="btn btn-gold" href="#/connexion">
+          <a className="btn btn-gold" href="/connexion">
             Se connecter
           </a>
         </section>
@@ -100,7 +100,7 @@ function NotFound() {
     <main className="page">
       <section className="panel stack">
         <h2>Ville introuvable</h2>
-        <a href="#/">← Toutes les villes</a>
+        <a href="/">← Toutes les villes</a>
       </section>
     </main>
   );

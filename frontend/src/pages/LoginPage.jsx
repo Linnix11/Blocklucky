@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { api } from "../lib/api";
+import { navigate } from "../hooks/usePath";
 
-const HOME_BY_ROLE = { admin: "#/admin", mairie: "#/mairie", participant: "#/" };
+const HOME_BY_ROLE = { admin: "/admin", mairie: "/mairie", participant: "/" };
 
 /** Connexion unique (admin, mairie, habitant). Un habitant inscrit choisit son mot de passe à la première connexion. */
 export function LoginPage({ onLogin }) {
@@ -17,7 +18,7 @@ export function LoginPage({ onLogin }) {
     try {
       const me = await api("/login", { method: "POST", body: { email, password } });
       await onLogin();
-      window.location.hash = HOME_BY_ROLE[me.role];
+      navigate(HOME_BY_ROLE[me.role]);
     } catch (e) {
       setError(e.message);
     } finally {

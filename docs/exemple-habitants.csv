@@ -1,0 +1,14 @@
+nom,prenom,mail,portefeuille
+Martin,Alice,alice.martin@example.com,
+Bernard,Hugo,hugo.bernard@example.com,
+Dubois,Chloé,chloe.dubois@example.com,
+Thomas,Lucas,lucas.thomas@example.com,
+Robert,Emma,emma.robert@example.com,
+Petit,Nathan,nathan.petit@example.com,
+Durand,Léa,lea.durand@example.com,
+Leroy,Louis,louis.leroy@example.com,
+Moreau,Jade,jade.moreau@example.com,
+Simon,Gabriel,gabriel.simon@example.com,
+Mairie,Compte test,,0x8BfcA33275D6281260bAAAa73Ef84A37aAF89A0A
+Hardhat,Compte 1,,0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+Hardhat,Compte 2,,0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
