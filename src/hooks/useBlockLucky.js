@@ -17,6 +17,9 @@ const POLL_INTERVAL_MS = 4000;
 const HISTORY_SIZE = 8;
 const ACTIVITY_SIZE = 25;
 const MAX_LOG_RANGE = 2000; // blocs lus par requête d'événements
+// Marge sous le dernier bloc : les nœuds RPC publics sont répartis sur plusieurs serveurs,
+// et celui qui répond à eth_getLogs peut avoir un ou deux blocs de retard sur celui qui a donné le numéro.
+const LOG_SAFETY_BLOCKS = 3;
 
 const IDLE_TX = { status: "idle", label: "", successText: "", hash: null, error: null };
 
@@ -139,7 +142,7 @@ export function useBlockLucky(deployment) {
 
   // ---------- Écoute des événements ----------
   const pollEvents = useCallback(async () => {
-    const latest = await readProvider.getBlockNumber();
+    const latest = (await readProvider.getBlockNumber()) - LOG_SAFETY_BLOCKS;
     const firstRun = lastBlockRef.current === null;
     const from = firstRun
       ? Math.max(deployment.blockNumber ?? 0, latest - MAX_LOG_RANGE)
@@ -179,7 +182,12 @@ export function useBlockLucky(deployment) {
     if (!readContract || busyRef.current) return;
     busyRef.current = true;
     try {
-      await pollEvents();
+      // Les événements ne servent qu'au fil d'activité : un échec ici ne doit pas bloquer l'état de la loterie.
+      try {
+        await pollEvents();
+      } catch (error) {
+        console.warn("Lecture des événements impossible, nouvel essai au prochain passage.", error);
+      }
       setData(await fetchSnapshot(accountRef.current));
       setLoadError(null);
     } catch (error) {
