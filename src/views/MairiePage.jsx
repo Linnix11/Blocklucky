@@ -4,6 +4,8 @@ import { useBlockLucky } from "../hooks/useBlockLucky";
 import { useNow } from "../hooks/useNow";
 import { AdminPanel } from "../components/AdminPanel";
 import { cityDeployment } from "./CityPage";
+import { usePageTitle } from "../hooks/usePageTitle";
+import { deVille } from "../lib/format";
 
 /** Espace mairie : liste des habitants autorisés (CSV) et gestion de la loterie de la ville. */
 export function MairiePage() {
@@ -12,13 +14,14 @@ export function MairiePage() {
   useEffect(() => {
     load();
   }, [load]);
+  usePageTitle(info ? `Mairie ${deVille(info.city.name)}` : "Espace mairie");
 
   if (!info) return <main className="page"><p className="muted">Chargement…</p></main>;
 
   return (
     <main className="page">
       <div className="intro">
-        <h1>Mairie de {info.city.name}</h1>
+        <h1>Mairie {deVille(info.city.name)}</h1>
         <p className="network-tag">
           <a href={`/ville/${info.city.slug}`}>Voir la page publique de la loterie →</a>
         </p>

@@ -80,7 +80,9 @@ export function Transparency({ data, derived, activity, network, deployment, acc
 
         <div className="panel">
           <h3>
-            Les {totalTickets} ticket{totalTickets > 1 ? "s" : ""} en jeu
+            {totalTickets === 0
+              ? "Aucun ticket en jeu"
+              : `${totalTickets === 1 ? "Le ticket" : `Les ${totalTickets} tickets`} en jeu`}
           </h3>
           {derived.players.length === 0 ? (
             <p className="muted">Aucun ticket pour l'instant. Le premier achat apparaîtra ici.</p>

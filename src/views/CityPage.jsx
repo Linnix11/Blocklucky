@@ -12,6 +12,9 @@ import { WinnerAnnouncement, WinnerBanner } from "../components/WinnerBanner";
 import { Transparency } from "../components/Transparency";
 import { HowItWorks } from "../components/HowItWorks";
 import { TxStatus } from "../components/TxStatus";
+import { usePageTitle } from "../hooks/usePageTitle";
+import { deVille } from "../lib/format";
+import { STATE } from "../config";
 
 /** Contrat d'une ville : son adresse, plus la config du réseau (coordinateur VRF, mock en local). */
 export function cityDeployment(city) {
@@ -25,6 +28,9 @@ export function CityPage({ city, me }) {
   const now = useNow();
   const { data, derived, wallet, network, tx, txInProgress } = lottery;
   const [allowed, setAllowed] = useState(false);
+  usePageTitle(`Loterie ${deVille(city.name)}`);
+  // Vente ouverte : sur mobile, le panneau d'achat passe avant le billet (voir .play-grid.is-selling).
+  const selling = Boolean(data && data.state === STATE.OPEN && !data.canDraw && data.endTime > now);
 
   useEffect(() => {
     const query = wallet.account ? `?wallet=${wallet.account}` : "";
@@ -39,7 +45,7 @@ export function CityPage({ city, me }) {
         <p className="network-tag">
           <a href="/">← Toutes les villes</a>
         </p>
-        <h1 className={city.name.length > 26 ? "is-long" : undefined}>La loterie des fêtes de {city.name}</h1>
+        <h1 className={city.name.length > 26 ? "is-long" : undefined}>La loterie des fêtes {deVille(city.name)}</h1>
         <p className="network-tag">{network.name}, ethers fictifs, aucun vrai argent en jeu</p>
         {/* Sans MetaMask, le bandeau juste en dessous explique quoi installer : pas de second bouton ici. */}
         {wallet.available && <ConnectWallet wallet={wallet} balance={data?.me?.balance} onConnect={lottery.connect} />}
@@ -53,8 +59,8 @@ export function CityPage({ city, me }) {
         </div>
       )}
 
-      <div className="play-grid">
-        <LotteryStats data={data} now={now} />
+      <div className={`play-grid${selling ? " is-selling" : ""}`}>
+        <LotteryStats data={data} now={now} cityName={city.name} />
         <div className="play-side">
           <WinnerBanner data={data} account={wallet.account} network={network} txInProgress={txInProgress} onWithdraw={lottery.withdrawPrize} />
           <DrawButton data={data} derived={derived} now={now} />

@@ -1,10 +1,10 @@
 import { STATE } from "../config";
-import { formatDuration, formatEth } from "../lib/format";
+import { deVille, formatDuration, formatEth } from "../lib/format";
 
 /**
  * Le billet de tombola : cagnotte, participants, prix du ticket et compte à rebours (sur le talon).
  */
-export function LotteryStats({ data, now }) {
+export function LotteryStats({ data, now, cityName }) {
   if (!data) {
     return (
       <section className="ticket ticket-loading" aria-busy="true" aria-label="Chargement de la loterie">
@@ -48,7 +48,7 @@ export function LotteryStats({ data, now }) {
     <section className="ticket" aria-labelledby="pot-title">
       <div className="ticket-main">
         <p className="ticket-kicker">
-          {noRoundYet ? "Loterie des fêtes d'EtherBay" : `Loterie des fêtes n° ${data.roundId}`}
+          {noRoundYet ? `Loterie des fêtes ${deVille(cityName)}` : `Loterie des fêtes n° ${data.roundId}`}
         </p>
         <h2 id="pot-title" className="pot-label">
           Cagnotte

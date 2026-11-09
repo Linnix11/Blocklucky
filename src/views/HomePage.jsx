@@ -3,6 +3,7 @@ import { Contract, JsonRpcProvider, Network } from "ethers";
 import { LOTTERY_ABI, STATE, TARGET, TARGET_CHAIN_ID } from "../config";
 import { formatDuration, formatEth } from "../lib/format";
 import { useNow } from "../hooks/useNow";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const REFRESH_MS = 30000;
 
@@ -22,14 +23,15 @@ function useCityStatuses(cities) {
         cities.map(async (city) => {
           try {
             const c = new Contract(city.address, LOTTERY_ABI, provider);
-            const [state, roundId, endTime, pot, canDraw] = await Promise.all([
+            const [state, roundId, endTime, pot, canDraw, participants] = await Promise.all([
               c.state(),
               c.roundId(),
               c.endTime(),
               c.getPot(),
               c.canDraw(),
+              c.participantsCount(),
             ]);
-            return [city.id, { state: Number(state), roundId, endTime: Number(endTime), pot, canDraw }];
+            return [city.id, { state: Number(state), roundId, endTime: Number(endTime), pot, canDraw, participants }];
           } catch {
             return [city.id, { error: true }];
           }
@@ -54,7 +56,12 @@ function describeStatus(status, now) {
   if (status.roundId === 0n) return { label: "Pas encore de loterie", tone: "idle" };
   if (status.state === STATE.CALCULATING) return { label: "Tirage en cours", tone: "draw" };
   if (status.state === STATE.CLOSED) return { label: "Loterie terminée", tone: "idle" };
-  if (status.canDraw || status.endTime <= now) return { label: "Vente terminée, tirage à venir", tone: "draw" };
+  if (status.canDraw || status.endTime <= now) {
+    // Sans ticket vendu, la mairie clôture la loterie sans gagnant : pas de « tirage » à annoncer.
+    return status.participants === 0n
+      ? { label: "Vente terminée, aucun ticket vendu", tone: "idle" }
+      : { label: "Vente terminée, tirage à venir", tone: "draw" };
+  }
   return { label: `Vente ouverte · fin dans ${formatDuration(status.endTime - now)}`, tone: "open" };
 }
 
@@ -62,6 +69,7 @@ function describeStatus(status, now) {
 export function HomePage({ cities }) {
   const statuses = useCityStatuses(cities);
   const now = useNow();
+  usePageTitle();
 
   return (
     <main className="page">

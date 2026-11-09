@@ -230,6 +230,13 @@ a.brand {
   gap: var(--space-sm);
 }
 
+/* Vente ouverte, sur mobile : l'achat d'abord, le billet ensuite. */
+@media (max-width: 899px) {
+  .play-grid.is-selling .play-side {
+    order: -1;
+  }
+}
+
 @media (min-width: 900px) {
   .play-grid {
     grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
@@ -510,6 +517,13 @@ a.brand {
 
 .panel h2 {
   font-size: var(--text-lg);
+}
+
+/* Écrans d'une seule carte (accès réservé, ville introuvable) : le titre de page est dans la carte. */
+.panel h1 {
+  font-size: var(--text-display-s);
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 /* Tirage : aplat lie-de-vin, texte crème, aucun or dans le bloc */

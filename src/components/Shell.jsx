@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const AppContext = createContext(null);
 
@@ -116,18 +117,21 @@ export function Guard({ role, children }) {
       </main>
     );
   }
-  if (me?.role !== role) {
-    return (
-      <main className="page">
-        <section className="panel stack" role="alert">
-          <h2>Accès réservé</h2>
-          <p>Connectez-vous avec un compte {role === "admin" ? "administrateur" : "mairie"}.</p>
-          <a className="btn btn-gold" href="/connexion">
-            Se connecter
-          </a>
-        </section>
-      </main>
-    );
-  }
+  if (me?.role !== role) return <AccessDenied role={role} />;
   return children;
+}
+
+function AccessDenied({ role }) {
+  usePageTitle("Accès réservé");
+  return (
+    <main className="page">
+      <section className="panel stack" role="alert">
+        <h1>Accès réservé</h1>
+        <p>Connectez-vous avec un compte {role === "admin" ? "administrateur" : "mairie"}.</p>
+        <a className="btn btn-gold" href="/connexion">
+          Se connecter
+        </a>
+      </section>
+    </main>
+  );
 }

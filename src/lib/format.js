@@ -35,6 +35,11 @@ export function formatDate(unixSeconds) {
   });
 }
 
+/** « de Lyon », « d'EtherBay » : élision devant une voyelle ou un h. */
+export function deVille(name) {
+  return /^[aeiouyhàâäéèêëîïôöùûü]/i.test(name) ? `d'${name}` : `de ${name}`;
+}
+
 export function sameAddress(a, b) {
   return Boolean(a && b && a.toLowerCase() === b.toLowerCase());
 }
