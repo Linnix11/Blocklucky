@@ -65,11 +65,11 @@ Il fonctionne sur **Sepolia**, le réseau de test d'Ethereum : les ethers utilis
 Prérequis : **Node.js 20.19 ou plus récent** (22 conseillé), npm, Git. MetaMask pour jouer.
 
 ```bash
-git clone <url-du-dépôt>
+git clone https://github.com/Linnix11/Blocklucky.git
 ```
 
 ```bash
-cd blocklucky && npm install
+cd Blocklucky && npm install
 ```
 
 ```bash
@@ -84,7 +84,7 @@ cp .env.example .env
 
 ## Commandes
 
-Toutes depuis le dossier `blocklucky/`.
+Toutes depuis la racine du projet.
 
 | Commande | Rôle |
 |---|---|

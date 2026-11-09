@@ -6,9 +6,8 @@
 
 ## 1. Emplacement du projet
 
-Le dépôt contient déjà des exercices sans rapport (`Desktop/`). Le projet BlockLucky vit donc
-dans le dossier **`blocklucky/`**, qui correspond à la racine de l'arborescence de la section 8.
-`CLAUDE.md` y est placé (Claude Code le lit quand on travaille dans ce dossier).
+Le projet est à la racine du dépôt, selon l'arborescence de la section 8 du cadrage.
+La fiche de cadrage `CLAUDE.md` y est placée.
 
 ## 2. Environnement
 
@@ -51,7 +50,7 @@ Rappel du cadrage : `VRFConsumerBaseV2Plus` hérite déjà de `ConfirmedOwner` �
 
 ## 5. Contrainte de l'environnement cloud (pas sur une machine personnelle)
 
-Le conteneur cloud dans lequel travaille Claude Code bloque `binaries.soliditylang.org`, d'où Hardhat
+L'environnement cloud de développement utilisé bloque `binaries.soliditylang.org`, d'où Hardhat
 télécharge normalement le compilateur. Contournement validé dans le prototype : utiliser le paquet npm
 officiel `solc@0.8.24` (version JavaScript) via la sous-tâche Hardhat `TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD`.
 

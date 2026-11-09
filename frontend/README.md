@@ -4,7 +4,7 @@ React + Vite + ethers.js v6. Pensée d'abord pour le mobile.
 
 ## En local
 
-Trois terminaux, depuis le dossier `blocklucky/` :
+Trois terminaux, depuis la racine du projet :
 
 ```bash
 npx hardhat node
@@ -30,6 +30,6 @@ cible alors Sepolia automatiquement. Variables facultatives : voir `.env.example
 ## Mise en ligne sur Vercel
 
 1. Importez le dépôt sur vercel.com.
-2. **Root Directory** : `blocklucky/frontend`. Vercel détecte Vite (build `npm run build`, sortie `dist`).
+2. **Root Directory** : `frontend`. Vercel détecte Vite (build `npm run build`, sortie `dist`).
 3. Variables d'environnement : `VITE_CHAIN_ID=11155111` et, conseillé, `VITE_SEPOLIA_RPC_URL`
    (URL Alchemy avec une clé restreinte au domaine du site).
