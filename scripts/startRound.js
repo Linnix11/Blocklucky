@@ -5,7 +5,7 @@
  *   npx hardhat run scripts/startRound.js --network localhost
  *   npx hardhat run scripts/startRound.js --network sepolia
  *
- * L'adresse de la loterie est lue dans frontend/src/contracts/addresses.json (écrit par deploy.js).
+ * L'adresse de la loterie est lue dans src/contracts/addresses.json (écrit par deploy.js).
  */
 const { ethers, network } = require("hardhat");
 const { networkConfig, demoRound } = require("./lib/networkConfig");

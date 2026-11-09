@@ -1,12 +1,12 @@
 /**
- * Écrit l'ABI et les adresses des contrats dans frontend/src/contracts/ pour l'interface.
+ * Écrit l'ABI et les adresses des contrats dans src/contracts/ pour l'interface.
  *   - BlockLucky.json : { abi }
  *   - addresses.json  : { "<chainId>": { BlockLucky, VRFCoordinator, deployedAt, blockNumber } }
  */
 const fs = require("fs");
 const path = require("path");
 
-const OUT_DIR = path.join(__dirname, "..", "..", "frontend", "src", "contracts");
+const OUT_DIR = path.join(__dirname, "..", "..", "src", "contracts");
 const ADDRESSES_FILE = path.join(OUT_DIR, "addresses.json");
 
 /** Lit addresses.json (objet vide s'il n'existe pas encore). */
@@ -39,7 +39,7 @@ function getDeployedAddress(chainId) {
   const entry = readAddresses()[chainId.toString()];
   if (!entry || !entry.BlockLucky) {
     throw new Error(
-      `Aucun BlockLucky enregistré pour le chainId ${chainId} dans frontend/src/contracts/addresses.json. ` +
+      `Aucun BlockLucky enregistré pour le chainId ${chainId} dans src/contracts/addresses.json. ` +
         "Lancez d'abord scripts/deploy.js sur ce réseau."
     );
   }

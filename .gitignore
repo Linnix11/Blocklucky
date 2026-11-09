@@ -25,3 +25,7 @@ frontend/dist/
 # Analyse Slither
 crytic-export/
 dist/
+
+# Next.js
+.next/
+next-env.d.ts

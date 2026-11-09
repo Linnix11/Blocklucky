@@ -2,8 +2,8 @@
  * Côté blockchain : le serveur déploie une loterie par mairie et l'administre avec sa clé
  * (PRIVATE_KEY), qui doit être propriétaire de la souscription Chainlink VRF.
  */
-const { ethers } = require("ethers");
-const artifact = require("./BlockLucky.artifact.json");
+import { ethers } from "ethers";
+import artifact from "./BlockLucky.artifact.json";
 
 const VRF_ABI = ["function addConsumer(uint256 subId, address consumer)"];
 
@@ -62,7 +62,7 @@ const MESSAGES = {
 const lotteryInterface = new ethers.Interface(artifact.abi);
 
 /** Message d'erreur lisible : erreur du contrat traduite si possible. */
-function reason(error) {
+export function reason(error) {
   const data = error?.data || error?.info?.error?.data;
   let name = error?.revert?.name;
   try {
@@ -85,9 +85,6 @@ const withReset =
     }
   };
 
-module.exports = {
-  deployLottery: withReset(deployLottery),
-  startRound: withReset(startRound),
-  call: withReset(call),
-  reason,
-};
+export const deploy = withReset(deployLottery);
+export const openRound = withReset(startRound);
+export const send = withReset(call);

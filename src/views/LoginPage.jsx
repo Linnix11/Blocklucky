@@ -1,11 +1,14 @@
+"use client";
+
 import { useState } from "react";
 import { api } from "../lib/api";
-import { navigate } from "../hooks/usePath";
+import { useRouter } from "next/navigation";
 
 const HOME_BY_ROLE = { admin: "/admin", mairie: "/mairie", participant: "/" };
 
 /** Connexion unique (admin, mairie, habitant). Un habitant inscrit choisit son mot de passe à la première connexion. */
 export function LoginPage({ onLogin }) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -18,7 +21,7 @@ export function LoginPage({ onLogin }) {
     try {
       const me = await api("/login", { method: "POST", body: { email, password } });
       await onLogin();
-      navigate(HOME_BY_ROLE[me.role]);
+      router.push(HOME_BY_ROLE[me.role]);
     } catch (e) {
       setError(e.message);
     } finally {

@@ -2,17 +2,18 @@
  * Base MySQL : comptes, sessions, villes et listes de participants.
  * Les tables sont créées au démarrage si elles n'existent pas.
  */
-const mysql = require("mysql2/promise");
-const crypto = require("node:crypto");
+import mysql from "mysql2/promise";
+import crypto from "node:crypto";
 
-const pool = mysql.createPool({
+// Une seule connexion partagée, même quand Next recharge le module en développement.
+const pool = (globalThis.blockluckyPool ??= mysql.createPool({
   host: process.env.DB_HOST || "127.0.0.1",
   port: Number(process.env.DB_PORT || 3306),
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_NAME || "blocklucky",
   connectionLimit: 5,
-});
+}));
 
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS cities (
@@ -44,24 +45,31 @@ const SCHEMA = [
   )`,
 ];
 
-async function init() {
-  for (const sql of SCHEMA) await pool.query(sql);
+let ready;
+/** Crée les tables au premier appel. */
+function init() {
+  ready ??= (async () => {
+    for (const sql of SCHEMA) await pool.query(sql);
+  })().catch((error) => {
+    ready = null; // nouvel essai au prochain appel
+    throw error;
+  });
+  return ready;
 }
 
-async function query(sql, params) {
+export async function query(sql, params) {
+  await init();
   const [rows] = await pool.query(sql, params);
   return rows;
 }
 
-function hashPassword(password) {
+export function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
   return `${salt}:${crypto.scryptSync(password, salt, 32).toString("hex")}`;
 }
 
-function checkPassword(password, stored) {
+export function checkPassword(password, stored) {
   const [salt, hash] = stored.split(":");
   const candidate = crypto.scryptSync(password, salt, 32);
   return crypto.timingSafeEqual(candidate, Buffer.from(hash, "hex"));
 }
-
-module.exports = { init, query, hashPassword, checkPassword };

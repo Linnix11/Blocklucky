@@ -20,13 +20,13 @@ export const NETWORKS = {
     chainIdHex: "0xaa36a7",
     name: "Sepolia (réseau de test Ethereum)",
     shortName: "Sepolia",
-    rpcUrl: import.meta.env.VITE_SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com",
+    rpcUrl: process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com",
     explorer: "https://sepolia.etherscan.io",
     faucet: "https://faucets.chain.link/sepolia",
   },
 };
 
-const requested = Number(import.meta.env.VITE_CHAIN_ID);
+const requested = Number(process.env.NEXT_PUBLIC_CHAIN_ID);
 export const TARGET_CHAIN_ID = NETWORKS[requested] ? requested : addresses["11155111"] ? 11155111 : 31337;
 export const TARGET = NETWORKS[TARGET_CHAIN_ID];
 

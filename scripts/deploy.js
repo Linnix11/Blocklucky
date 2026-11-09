@@ -10,7 +10,7 @@
  * Sur Sepolia, il vérifie d'abord la souscription, déploie, attend des confirmations, vérifie
  * le code sur Etherscan puis rappelle d'ajouter la loterie comme consumer sur vrf.chain.link.
  *
- * Dans les deux cas, l'ABI et l'adresse sont écrites dans frontend/src/contracts/.
+ * Dans les deux cas, l'ABI et l'adresse sont écrites dans src/contracts/.
  */
 const hre = require("hardhat");
 const { ethers, network, artifacts } = hre;

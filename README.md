@@ -72,10 +72,6 @@ git clone https://github.com/Linnix11/Blocklucky.git
 cd Blocklucky && npm install
 ```
 
-```bash
-npm --prefix frontend install
-```
-
 Pour Sepolia uniquement, créez votre fichier de configuration (jamais commité) :
 
 ```bash
@@ -99,7 +95,7 @@ Toutes depuis la racine du projet.
 | `npm run fulfill:local` | En local, fait répondre le faux Chainlink après un tirage |
 | `npm run deploy:sepolia` | Déploie sur Sepolia ⚠️ voir le guide |
 | `npm run start-round:sepolia` | Ouvre une loterie de démo sur Sepolia |
-| `npm run frontend` | Lance l'interface sur http://localhost:5173 |
+| `npm run dev` | Lance le site (Next.js : interface + API des comptes) sur http://localhost:3000. Il faut MySQL et les variables `DB_*` du `.env` |
 
 > Réseau d'école ou d'entreprise filtré ? Si Hardhat ne peut pas télécharger le compilateur,
 > préfixez les commandes par `SOLC_LOCAL=1` (compilateur fourni par npm).
@@ -123,12 +119,12 @@ Sans Internet ni ETH de test, c'est aussi la **démo de secours** de la soutenan
 3. Terminal 3 :
 
    ```bash
-   npm run frontend
+   npm run dev
    ```
 
 4. Dans MetaMask : ajoutez le réseau `http://127.0.0.1:8545` (chainId `31337`) et importez un des comptes
    affichés dans le terminal 1. Le compte n°0 est la mairie.
-5. Ouvrez http://localhost:5173, achetez des tickets avec plusieurs comptes, lancez le tirage, puis
+5. Ouvrez http://localhost:3000, achetez des tickets avec plusieurs comptes, lancez le tirage, puis
    cliquez sur « Simuler la réponse de Chainlink ».
 
 Tout cela en une seule commande : `npm run demo:locale` (Ctrl+C pour arrêter).
@@ -147,7 +143,13 @@ Guide pas à pas (faucets, souscription Chainlink, consumer) : **[docs/deploieme
 | Interface en ligne | *lien Vercel à compléter* |
 | Coordinateur Chainlink VRF v2.5 | [`0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B`](https://sepolia.etherscan.io/address/0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B) |
 
-Mise en ligne de l'interface sur Vercel : voir [frontend/README.md](frontend/README.md).
+Mise en ligne (Hostinger, application Node.js, préréglage Next.js) : build `npm run build`, démarrage `npm start`.
+Variables : `NEXT_PUBLIC_CHAIN_ID`, `SEPOLIA_RPC_URL`, `PRIVATE_KEY`, `VRF_COORDINATOR`, `VRF_SUBSCRIPTION_ID`, `VRF_KEY_HASH`,
+`ADMIN_EMAIL`, `ADMIN_PASSWORD` et `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD` (voir `.env.example`).
+
+Comptes : l'admin (`/admin`, identifiants `ADMIN_EMAIL`/`ADMIN_PASSWORD`) crée les mairies, et le serveur déploie la loterie de
+chacune. Chaque mairie (`/mairie`) importe en CSV les mails ou adresses 0x des habitants autorisés à jouer
+(exemple : [docs/exemple-habitants.csv](docs/exemple-habitants.csv)). Les habitants jouent sur `/ville/<nom>`.
 
 ---
 
@@ -165,11 +167,12 @@ blocklucky/
 │   ├── simulate.js               loterie complète en console
 │   ├── fulfillLocal.js           réponse du faux Chainlink en local
 │   └── lib/networkConfig.js      adresses Chainlink par réseau (sources citées)
-├── frontend/                     interface React + Vite + ethers.js v6
-│   └── src/
-│       ├── hooks/useBlockLucky.js        portefeuille, lecture du contrat, événements, transactions
-│       ├── components/                   billet, achat, tirage, gagnant, transparence…
-│       └── contracts/                    ABI et adresses (générés par deploy.js)
+├── src/                          site Next.js + ethers.js v6
+│   ├── app/                      pages (/, /ville/[slug], /connexion, /admin, /mairie) et API (app/api)
+│   ├── server/                   MySQL, sessions, déploiement et gestion des loteries par le serveur
+│   ├── views/, components/       écrans : billet, achat, tirage, gagnant, admin, mairie…
+│   ├── hooks/useBlockLucky.js    portefeuille, lecture du contrat, événements, transactions
+│   └── contracts/                ABI et adresses (générés par deploy.js)
 └── docs/
     ├── securite.md               dossier sécurité pour le DSI
     ├── deploiement-sepolia.md    guide de déploiement
@@ -225,7 +228,7 @@ Aucune action ne dépend du nombre total de participants : le coût reste le mê
 | Framework | Hardhat 2.29.1 + toolbox 6.1.2 | Écosystème mûr, `solidity-coverage` compatible |
 | Bibliothèques | OpenZeppelin 5.6.1 (`Ownable2Step`, `ReentrancyGuard`), Chainlink 1.4.0 | Composants audités. Chainlink 1.5.0 ne compile pas avec Hardhat 2 (voir [docs/phase0-cadrage.md](docs/phase0-cadrage.md)) |
 | Hasard | Chainlink VRF v2.5 | Hasard à la fois imprévisible et vérifiable, standard du secteur ; jamais l'heure du bloc ni `prevrandao`, manipulables |
-| Interface | React 19 + Vite 7 + ethers 6 | Léger, rapide, déployable sur Vercel |
+| Interface | Next.js 16 (React 19) + ethers 6 + MySQL | Interface et API des comptes dans un seul projet, hébergé sur Hostinger |
 
 ## Limites et pistes futures
 

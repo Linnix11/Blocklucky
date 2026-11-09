@@ -11,14 +11,15 @@
     "node": "hardhat node",
     "simulate": "hardhat run scripts/simulate.js --network localhost",
     "deploy:local": "hardhat run scripts/deploy.js --network localhost",
-    "frontend": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend ci && npm --prefix frontend run build -- --outDir ../dist --emptyOutDir",
+    "frontend": "next dev",
+    "build": "next build",
     "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
     "start-round:local": "hardhat run scripts/startRound.js --network localhost",
     "start-round:sepolia": "hardhat run scripts/startRound.js --network sepolia",
     "fulfill:local": "hardhat run scripts/fulfillLocal.js --network localhost",
     "demo:locale": "bash scripts/demo-locale.sh",
-    "start": "node server/index.js"
+    "start": "next start",
+    "dev": "next dev"
   },
   "engines": {
     "node": ">=18"
@@ -31,9 +32,12 @@
   "dependencies": {
     "@chainlink/contracts": "1.4.0",
     "@openzeppelin/contracts": "5.6.1",
+    "canvas-confetti": "1.9.4",
     "dotenv": "17.4.2",
     "ethers": "6.17.0",
-    "express": "5.3.0",
-    "mysql2": "3.24.6"
+    "mysql2": "3.24.6",
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }

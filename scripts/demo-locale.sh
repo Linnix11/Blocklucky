@@ -39,7 +39,7 @@ npx hardhat run scripts/startRound.js --network localhost | grep -E "ouverte|Fin
 
 cat <<INFO
 
-🎄 4/4 Interface : http://localhost:5173
+🎄 4/4 Interface : http://localhost:3000
    MetaMask : réseau « Localhost 8545 » (RPC http://127.0.0.1:8545, chainId 31337, symbole ETH).
    Comptes de test à importer (clés privées publiques de Hardhat, sans valeur) :
 INFO
@@ -51,6 +51,6 @@ cat <<INFO
 
 INFO
 
-VITE_CHAIN_ID=31337 npm --prefix frontend run dev &
+NEXT_PUBLIC_CHAIN_ID=31337 npx next dev &
 FRONT_PID=$!
 wait "$FRONT_PID"

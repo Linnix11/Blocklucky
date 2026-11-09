@@ -1,48 +1,51 @@
-import { useCallback, useEffect, useState } from "react";
-import { navigate, usePath } from "./hooks/usePath";
-import { api } from "./lib/api";
-import { HomePage } from "./pages/HomePage";
-import { CityPage } from "./pages/CityPage";
-import { LoginPage } from "./pages/LoginPage";
-import { AdminPage } from "./pages/AdminPage";
-import { MairiePage } from "./pages/MairiePage";
+"use client";
 
-/** Routage : /, /ville/<slug>, /connexion, /admin, /mairie. */
-export default function App() {
-  const path = usePath();
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+
+const AppContext = createContext(null);
+
+/** Session (me) et liste des villes, partagées par toutes les pages. */
+export const useApp = () => useContext(AppContext);
+
+/**
+ * Cadre commun : en-tête, compte connecté, pied de page.
+ * Le site dépend du navigateur (MetaMask, heure locale) : il est rendu côté client uniquement.
+ */
+export function Shell({ children }) {
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [me, setMe] = useState(undefined); // undefined : chargement, null : non connecté
   const [cities, setCities] = useState(null);
 
   const loadMe = useCallback(() => api("/me").then(setMe).catch(() => setMe(null)), []);
   const loadCities = useCallback(() => api("/cities").then(setCities).catch(() => setCities([])), []);
+
   useEffect(() => {
+    setMounted(true);
     loadMe();
     loadCities();
-  }, [loadMe, loadCities]);
+    // Liens internes (<a href="/…">) : navigation sans rechargement
+    const onClick = (event) => {
+      const link = event.target.closest?.("a[href^='/']");
+      if (!link || link.target || event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      router.push(link.getAttribute("href"));
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [loadMe, loadCities, router]);
 
   const logout = async () => {
     await api("/logout", { method: "POST" }).catch(() => {});
     setMe(null);
-    navigate("/");
+    router.push("/");
   };
 
-  const [, route, param] = path.split("/");
-  let page;
-  if (route === "ville") {
-    const city = cities?.find((c) => c.slug === param);
-    page = cities && !city ? <NotFound /> : city ? <CityPage key={city.slug} city={city} me={me} /> : null;
-  } else if (route === "connexion") {
-    page = <LoginPage onLogin={loadMe} />;
-  } else if (route === "admin") {
-    page = <Guard me={me} role="admin">{<AdminPage onChange={loadCities} />}</Guard>;
-  } else if (route === "mairie") {
-    page = <Guard me={me} role="mairie">{<MairiePage />}</Guard>;
-  } else {
-    page = <HomePage cities={cities} />;
-  }
-
   return (
-    <>
+    <AppContext.Provider value={{ me, cities, loadMe, loadCities }}>
       <div className="lights" aria-hidden="true" />
       <header className="site-header">
         <a className="brand" href="/">
@@ -65,7 +68,7 @@ export default function App() {
         </nav>
       </header>
 
-      {page}
+      {mounted ? children : <main className="page" />}
 
       <footer className="site-footer">
         <p>
@@ -73,12 +76,20 @@ export default function App() {
           utilisés n'ont aucune valeur.
         </p>
       </footer>
-    </>
+    </AppContext.Provider>
   );
 }
 
-function Guard({ me, role, children }) {
-  if (me === undefined) return <main className="page"><p className="muted">Chargement…</p></main>;
+/** Page réservée à un rôle (admin ou mairie). */
+export function Guard({ role, children }) {
+  const { me } = useApp();
+  if (me === undefined) {
+    return (
+      <main className="page">
+        <p className="muted">Chargement…</p>
+      </main>
+    );
+  }
   if (me?.role !== role) {
     return (
       <main className="page">
@@ -93,15 +104,4 @@ function Guard({ me, role, children }) {
     );
   }
   return children;
-}
-
-function NotFound() {
-  return (
-    <main className="page">
-      <section className="panel stack">
-        <h2>Ville introuvable</h2>
-        <a href="/">← Toutes les villes</a>
-      </section>
-    </main>
-  );
 }
