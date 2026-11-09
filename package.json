@@ -12,7 +12,7 @@
     "simulate": "hardhat run scripts/simulate.js --network localhost",
     "deploy:local": "hardhat run scripts/deploy.js --network localhost",
     "frontend": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend ci && npm --prefix frontend run build",
+    "build": "npm --prefix frontend ci && npm --prefix frontend run build -- --outDir ../dist --emptyOutDir",
     "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
     "start-round:local": "hardhat run scripts/startRound.js --network localhost",
     "start-round:sepolia": "hardhat run scripts/startRound.js --network sepolia",

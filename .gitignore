@@ -24,3 +24,4 @@ frontend/dist/
 
 # Analyse Slither
 crytic-export/
+dist/
