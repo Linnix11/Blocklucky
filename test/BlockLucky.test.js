@@ -36,7 +36,7 @@ describe("BlockLucky", function () {
     const subId = receipt.logs
       .map((log) => vrf.interface.parseLog(log))
       .find((event) => event && event.name === "SubscriptionCreated").args.subId;
-    await vrf.fundSubscription(subId, ethers.parseEther("1000"));
+    await vrf.fundSubscriptionWithNative(subId, { value: ethers.parseEther("1000") });
 
     const BlockLucky = await ethers.getContractFactory("BlockLucky");
     const lottery = await BlockLucky.deploy(await vrf.getAddress(), subId, KEY_HASH);
@@ -345,6 +345,15 @@ describe("BlockLucky", function () {
       );
       const { winner } = await lottery.results(1n);
       expect([alice.address, bob.address, carol.address]).to.include(winner);
+    });
+
+    it("le tirage est payé en ETH par la souscription (nativePayment), pas en LINK", async function () {
+      const { lottery, vrf, subId } = await loadFixture(drawnFixture);
+      const before = await vrf.getSubscription(subId);
+      await vrf.fulfillRandomWords(await lottery.lastRequestId(), await lottery.getAddress());
+      const after = await vrf.getSubscription(subId);
+      expect(after.nativeBalance).to.be.lessThan(before.nativeBalance);
+      expect(after.balance).to.equal(before.balance);
     });
 
     it("le gagnant est désigné par randomWords[0] % nombre de tickets", async function () {

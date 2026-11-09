@@ -44,7 +44,7 @@ async function main() {
   const subId = receipt.logs
     .map((log) => vrf.interface.parseLog(log))
     .find((event) => event && event.name === "SubscriptionCreated").args.subId;
-  await (await vrf.fundSubscription(subId, ethers.parseEther("100"))).wait();
+  await (await vrf.fundSubscriptionWithNative(subId, { value: ethers.parseEther("100") })).wait();
   console.log(`1. Mock Chainlink VRF déployé : ${await vrf.getAddress()}`);
 
   // 2. Loterie

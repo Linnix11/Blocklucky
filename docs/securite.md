@@ -57,7 +57,7 @@ Les attaques classiques sont bloquées et testées :
 
 | Panne | Conséquence | Parade |
 |---|---|---|
-| Chainlink ne répond pas (souscription vide, incident) | Tirage en attente | Ajouter des LINK ; sinon n'importe qui relance après 1 h (`retryDraw`) |
+| Chainlink ne répond pas (souscription vide, incident) | Tirage en attente | Ajouter des ETH à la souscription ; sinon n'importe qui relance après 1 h (`retryDraw`) |
 | Le gagnant est un contrat qui refuse l'argent | Envoi automatique impossible | Gains réservés, récupérables avec `withdrawPrize()` |
 | Personne n'achète de ticket | Pas de gagnant possible | Clôture propre « sans gagnant », la mairie peut rouvrir |
 | Le site web est hors ligne | Interface indisponible | Le contrat continue de fonctionner : on peut l'utiliser depuis Etherscan |

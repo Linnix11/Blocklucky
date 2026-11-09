@@ -59,12 +59,14 @@ git check-ignore .env
 
 1. Allez sur [vrf.chain.link](https://vrf.chain.link), réseau **Sepolia**, connectez le compte de test.
 2. **Create Subscription** → confirmez la transaction.
-3. **Add funds** → déposez des **LINK** de test (le contrat paie en LINK). Mettez-en largement,
-   par exemple **10 à 25 LINK**.
-   - Pourquoi autant ? Un tirage ne coûte que quelques dixièmes de LINK, mais les nœuds Chainlink
-     ne répondent que si le solde couvre le **pire cas** (300 000 gas au prix maximal de la voie 500 gwei).
-     Si un tirage reste « Pending » sur vrf.chain.link, le site indique le solde minimum à atteindre :
-     ajoutez des LINK et le tirage repart tout seul.
+3. **Fund subscription** → choisissez **ETH** (le contrat paie Chainlink en ETH, `nativePayment: true`) et
+   déposez au moins **0,3 ETH** de test. Les ETH Sepolia se minent sans limite sur
+   [sepolia-faucet.pk910.de](https://sepolia-faucet.pk910.de), contrairement aux LINK (25 par jour).
+   - Pourquoi autant ? Un tirage ne coûte qu'environ 0,01 ETH, mais les nœuds Chainlink ne répondent
+     que si le solde couvre le **pire cas** : 300 000 gas au prix maximal de la voie 500 gwei, soit environ
+     **0,17 ETH**. Si un tirage reste « Pending » sur vrf.chain.link, ajoutez des ETH : il repart tout seul.
+   - Les contrats déployés avant le 09/11/2026 (dont `0x82bC…1b5c`) paient encore en **LINK** : il leur faut
+     environ **35 LINK** sur la souscription.
 4. Copiez l'**ID de la souscription** (un très grand nombre) → `VRF_SUBSCRIPTION_ID` dans `.env`.
 
 ## Étape 5 : tests et déploiement
@@ -115,5 +117,5 @@ documentation et je testerai la lecture de l'état depuis l'interface.
 | `insufficient funds` | Pas assez d'ETH de test | Faucet (étape 2) |
 | `La souscription … n'existe pas` | Mauvais `VRF_SUBSCRIPTION_ID` | Recopier l'ID depuis vrf.chain.link |
 | `requestDraw` rejeté (`InvalidConsumer`) | Étape 6 oubliée | Ajouter le consumer |
-| Tirage bloqué en « tirage en cours » | Pas assez de LINK sur la souscription | Ajouter des LINK ; après 1 h, n'importe qui peut aussi appeler `retryDraw()` |
+| Tirage bloqué en « tirage en cours » | Pas assez d'ETH (ou de LINK pour les anciens contrats) sur la souscription | Ajouter des ETH ; après 1 h, n'importe qui peut aussi appeler `retryDraw()` |
 | `Couldn't download compiler` | Réseau filtré (école, entreprise) | Ajouter `SOLC_LOCAL=1` devant la commande |

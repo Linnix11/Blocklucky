@@ -428,8 +428,9 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
                 requestConfirmations: REQUEST_CONFIRMATIONS,
                 callbackGasLimit: CALLBACK_GAS_LIMIT,
                 numWords: NUM_WORDS,
-                // Paiement des tirages en LINK (nativePayment = false)
-                extraArgs: VRFV2PlusClient._argsToBytes(VRFV2PlusClient.ExtraArgsV1({nativePayment: false}))
+                // Paiement des tirages en ETH (nativePayment = true) : la souscription est approvisionnée
+                // en ETH, plus simple à obtenir que des LINK sur le réseau de test.
+                extraArgs: VRFV2PlusClient._argsToBytes(VRFV2PlusClient.ExtraArgsV1({nativePayment: true}))
             })
         );
         lastRequestId = requestId;

@@ -34,7 +34,7 @@ async function deployLocal(deployer) {
   const subId = receipt.logs
     .map((log) => vrf.interface.parseLog(log))
     .find((event) => event && event.name === "SubscriptionCreated").args.subId;
-  await (await vrf.fundSubscription(subId, ethers.parseEther("1000"))).wait();
+  await (await vrf.fundSubscriptionWithNative(subId, { value: ethers.parseEther("100") })).wait();
 
   const BlockLucky = await ethers.getContractFactory("BlockLucky");
   const lottery = await BlockLucky.deploy(await vrf.getAddress(), subId, ethers.id("blocklucky-local-keyhash"));
@@ -84,8 +84,8 @@ async function deploySepolia(deployer, config) {
   console.log(`   propriétaire : ${sub.subOwner}`);
   console.log(`   solde        : ${ethers.formatEther(sub.balance)} LINK, ${ethers.formatEther(sub.nativeBalance)} ETH`);
   console.log(`   consumers    : ${sub.consumers.length}`);
-  if (sub.balance === 0n) {
-    console.warn("⚠️  La souscription n'a pas de LINK : les tirages resteront en attente tant qu'elle n'est pas approvisionnée.");
+  if (sub.nativeBalance < ethers.parseEther("0.2")) {
+    console.warn("⚠️  Moins de 0,2 ETH sur la souscription : les tirages (payés en ETH) resteront en attente tant qu'elle n'est pas approvisionnée.");
   }
 
   // --- Déploiement ---

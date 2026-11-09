@@ -6,7 +6,7 @@
 
 - [ ] Contrat déployé et **vérifié** sur Sepolia Etherscan, adresse reportée dans le README
 - [ ] Interface en ligne sur Vercel, testée sur un téléphone en 4G (pas seulement le wifi de l'école)
-- [ ] Souscription Chainlink VRF : **au moins 10 LINK**, contrat bien listé dans « Consumers »
+- [ ] Souscription Chainlink VRF : **au moins 0,3 ETH**, contrat bien listé dans « Consumers »
 - [ ] **5 comptes MetaMask de démo** avec chacun ≥ 0,01 ETH de test (faucets : les remplir à l'avance,
       ils limitent souvent le nombre de retraits)
 - [ ] Une loterie de répétition complète faite sur Sepolia, de l'achat au gagnant (chronométrer le délai Chainlink)
@@ -106,7 +106,7 @@ son terme avec les règles annoncées. Avant de jouer avec de l'argent réel : a
 
 - **Le modulo ne favorise-t-il pas certains tickets ?** Le nombre aléatoire fait 256 bits : l'écart
   entre tickets est de l'ordre de 10 000 / 2²⁵⁶, impossible à mesurer.
-- **Qui paie Chainlink ?** La mairie, via une souscription approvisionnée en LINK. Un tirage coûte une
-  fraction de LINK ; les joueurs ne paient que leurs tickets et les frais de réseau.
+- **Qui paie Chainlink ?** La mairie, via une souscription approvisionnée en ETH. Un tirage coûte environ
+  0,01 ETH ; les joueurs ne paient que leurs tickets et les frais de réseau.
 - **Et la clé de la mairie ?** Volée, elle permet seulement d'ouvrir des loteries ou de céder la
   propriété, jamais de toucher aux fonds. Pour le vrai évènement : portefeuille multi-signatures.
