@@ -6,6 +6,14 @@ import { api } from "@/lib/api";
 
 const AppContext = createContext(null);
 
+/** Bandeau défilant du pied de page (décoratif : le même texte figure en clair dans les pages). */
+const MARQUEE = [
+  "Tirage vérifiable par Chainlink",
+  "100 % de la cagnotte au gagnant",
+  "Ethers fictifs, aucun vrai argent",
+  "Une loterie par ville",
+];
+
 /** Session (me) et liste des villes, partagées par toutes les pages. */
 export const useApp = () => useContext(AppContext);
 
@@ -48,30 +56,48 @@ export function Shell({ children }) {
     <AppContext.Provider value={{ me, cities, loadMe, loadCities }}>
       <div className="lights" aria-hidden="true" />
       <header className="site-header">
-        <a className="brand" href="/">
-          <span className="brand-name">BlockLucky</span>
-          <span className="brand-city">La loterie des villes</span>
-        </a>
-        <nav className="account-nav" aria-label="Compte">
-          {me ? (
-            <>
-              {me.role === "admin" && <a href="/admin">Admin</a>}
-              {me.role === "mairie" && <a href="/mairie">Ma mairie</a>}
-              <span className="muted account-email">{me.email}</span>
-              <button type="button" className="link-button" onClick={logout}>
-                Déconnexion
-              </button>
-            </>
-          ) : (
-            me === null && <a href="/connexion">Connexion</a>
-          )}
-        </nav>
+        <p className="masthead-line">
+          <span>La loterie des villes</span>
+          <span>Réseau de test Sepolia</span>
+        </p>
+        <div className="masthead-main">
+          <a className="brand" href="/">
+            <span className="brand-name">BlockLucky</span>
+          </a>
+          <nav className="account-nav" aria-label="Compte">
+            {me ? (
+              <>
+                {me.role === "admin" && <a href="/admin">Admin</a>}
+                {me.role === "mairie" && <a href="/mairie">Ma mairie</a>}
+                <span className="muted account-email">{me.email}</span>
+                <button type="button" className="link-button" onClick={logout}>
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              me === null && <a href="/connexion">Connexion</a>
+            )}
+          </nav>
+        </div>
       </header>
 
       {mounted ? children : <main className="page" />}
 
       <footer className="site-footer">
-        <p>
+        <div className="marquee" aria-hidden="true">
+          <div className="marquee-track">
+            {[0, 1].map((copy) => (
+              <span key={copy} className="marquee-text">
+                {MARQUEE.map((item) => (
+                  <span key={item}>
+                    {item} <span className="marquee-dot">◆</span>{" "}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </div>
+        </div>
+        <p className="footer-note">
           BlockLucky, un projet Epitech Digital School. Loteries de démonstration sur réseau de test : les ethers
           utilisés n'ont aucune valeur.
         </p>

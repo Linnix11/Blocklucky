@@ -144,7 +144,7 @@ function Participants({ list, onChange }) {
       </p>
 
       <label className="file-input">
-        <span className="btn btn-gold btn-block">Importer un fichier CSV</span>
+        <span className="btn btn-gold btn-block">Importer un CSV</span>
         <input type="file" accept=".csv,.txt,text/csv,text/plain" onChange={onFile} />
       </label>
       <label className="checkbox">

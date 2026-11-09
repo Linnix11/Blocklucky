@@ -1,0 +1,14 @@
+[
+  {
+    "date": "2026-11-09",
+    "scope": "app",
+    "macrostructure": "Marquee Hero (accueil) · Stat-Led (ville) · poster (connexion) · outils (admin, mairie)",
+    "theme": "custom",
+    "theme_axes": "dark / display-heavy (Bricolage Grotesque 800 caps) / warm (or + lie-de-vin)",
+    "vibe": "tombola de village, la nuit, guirlandes",
+    "enrichment": "none (billet de tombola en CSS existant)",
+    "nav": "N6 masthead",
+    "footer": "Ft8 marquee",
+    "brief": "BlockLucky · loterie des fêtes des villes, refonte de tout le site"
+  }
+]

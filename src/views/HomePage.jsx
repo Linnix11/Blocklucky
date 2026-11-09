@@ -66,15 +66,18 @@ export function HomePage({ cities }) {
   return (
     <main className="page">
       <div className="intro">
-        <h1>La loterie des fêtes, tirée au sort sous les yeux de tous.</h1>
-        <p className="network-tag">Choisissez votre ville pour voir sa loterie et participer.</p>
+        <h1>La loterie des fêtes, sous les yeux de tous.</h1>
+        <p className="network-tag">
+          Chaque ville a sa loterie. Le tirage est fait par Chainlink et toute la cagnotte va au gagnant.
+        </p>
       </div>
+      <h2 className="city-list-title">Choisissez votre ville</h2>
       {cities === null ? (
         <p className="muted">Chargement…</p>
       ) : cities.length === 0 ? (
         <p className="muted">Aucune ville n'a encore ouvert de loterie.</p>
       ) : (
-        <ul className="city-list">
+        <ul className="city-list" aria-label="Villes">
           {cities.map((city) => {
             const status = statuses[city.id];
             const { label, tone } = describeStatus(status, now);

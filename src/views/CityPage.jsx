@@ -39,9 +39,10 @@ export function CityPage({ city, me }) {
         <p className="network-tag">
           <a href="/">← Toutes les villes</a>
         </p>
-        <h1>La loterie des fêtes de {city.name}</h1>
+        <h1 className={city.name.length > 26 ? "is-long" : undefined}>La loterie des fêtes de {city.name}</h1>
         <p className="network-tag">{network.name}, ethers fictifs, aucun vrai argent en jeu</p>
-        <ConnectWallet wallet={wallet} balance={data?.me?.balance} onConnect={lottery.connect} />
+        {/* Sans MetaMask, le bandeau juste en dessous explique quoi installer : pas de second bouton ici. */}
+        {wallet.available && <ConnectWallet wallet={wallet} balance={data?.me?.balance} onConnect={lottery.connect} />}
       </div>
 
       <WalletNotice wallet={wallet} network={network} onSwitch={lottery.switchNetwork} />

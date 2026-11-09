@@ -1,52 +1,21 @@
-/* BlockLucky : la tombola des fêtes d'EtherBay.
-   Ambiance : une nuit d'hiver sur la place de la mairie, guirlandes dorées, billet de tombola en papier.
-   Mobile d'abord ; une seule pièce forte (le billet), le reste reste sobre. */
+/* Hallmark · genre: editorial (registre fête populaire) · design-system: design.md · designed-as-app
+ * macrostructure: Marquee Hero (/) · Stat-Led (/ville) · poster (/connexion) · outils (/admin, /mairie)
+ * theme: custom · vibe: tombola de village, la nuit · paper oklch(21.2% 0.058 295) · accents or oklch(82.1% 0.151 81) + lie-de-vin oklch(50.6% 0.176 17)
+ * fonts: Bricolage Grotesque 800 (titres, capitales) + Atkinson Hyperlegible · nav: N6 masthead · footer: Ft8 marquee
+ * Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4
+ * Toutes les valeurs viennent de src/tokens.css. Mobile d'abord.
+ */
 
-:root {
-  --night: #1b1230; /* ciel d'hiver, prune profond */
-  --night-2: #261a40; /* panneaux */
-  --night-3: #33255a; /* bordures, champs */
-  --snow: #f4eef9; /* texte principal */
-  --muted: #b9aacf; /* texte secondaire */
-  --paper: #fff3dc; /* papier du billet */
-  --ink: #2b1a12; /* encre sur le billet */
-  --gold: #f6b93b; /* guirlandes, actions principales */
-  --gold-deep: #c98a12;
-  --wine: #b3263e; /* vin chaud, tirage */
-  --fir: #2e8b57; /* sapin, succès */
-  --danger: #ff8a7a;
-  --gold-hover: #ffc95a;
-  --wine-hover: #c93049;
-  --wine-wash: #3a1c40; /* panneau du tirage : prune teintée de vin chaud */
-  --on-wine: #fff6ea; /* texte sur fond vin, crème plutôt que blanc pur */
-  --ink-soft: #6b4a33; /* texte secondaire sur le billet */
-  --ink-line: rgba(43, 26, 18, 0.15); /* filets sur le billet */
-  --ink-wash: rgba(43, 26, 18, 0.12); /* fonds discrets sur le billet */
-  --ink-perforation: rgba(43, 26, 18, 0.35); /* pointillés du talon */
-  --fir-halo: rgba(46, 139, 87, 0.3);
-  --overlay: rgba(14, 8, 28, 0.82);
-  --shadow-ticket: 0 10px 24px rgba(8, 4, 20, 0.4);
-  --shadow-toast: 0 12px 30px rgba(8, 4, 20, 0.5);
-
-  --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
-  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-
-  --radius-ticket: 18px;
-  --radius-panel: 14px;
-  --radius-control: 10px;
-  --gutter: 16px;
-
-  color-scheme: dark;
-}
-
+/* ---------- Base ---------- */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: clip;
 }
 
 html {
@@ -56,221 +25,350 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--night);
-  color: var(--snow);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-night);
+  color: var(--color-snow);
   font-family: var(--font-body);
-  font-size: 1.0625rem;
+  font-size: var(--text-md);
   line-height: 1.55;
+}
+
+main {
+  flex: 1;
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  line-height: 1.15;
+  font-style: normal;
+  line-height: 1.05;
   margin: 0 0 0.5em;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+h1,
+h2 {
+  text-transform: uppercase;
 }
 
 h2 {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  line-height: 1.15;
 }
 
 p {
-  margin: 0 0 0.75em;
+  margin: 0 0 var(--space-xs);
 }
 
 a {
-  color: var(--gold);
+  color: var(--color-gold);
   text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
 }
 
 :focus-visible {
-  outline: 3px solid var(--gold);
+  outline: 3px solid var(--color-gold);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
-/* ---------- Guirlande (bordure haute) ---------- */
+/* ---------- Guirlande ---------- */
 .lights {
-  height: 10px;
-  background: radial-gradient(circle at 12px 4px, var(--gold) 3px, transparent 4px) 0 0 / 48px 10px repeat-x,
-    radial-gradient(circle at 36px 6px, var(--wine) 3px, transparent 4px) 0 0 / 48px 10px repeat-x;
-  opacity: 0.9;
+  height: 12px;
+  background: radial-gradient(circle at 12px 5px, var(--color-gold) 3px, transparent 4px) 0 0 / 48px 12px repeat-x,
+    radial-gradient(circle at 36px 7px, var(--color-wine) 3px, transparent 4px) 0 0 / 48px 12px repeat-x;
 }
 
-/* ---------- En-tête ---------- */
+/* ---------- En-tête façon journal (N6) ---------- */
 .site-header {
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-xs) var(--gutter) 0;
+}
+
+.masthead-line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin: 0;
+  padding-bottom: var(--space-2xs);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.masthead-line span {
+  white-space: nowrap;
+}
+
+/* Sur petit écran, une seule mention : le réseau est déjà rappelé sur chaque page de ville. */
+@media (max-width: 559px) {
+  .masthead-line span + span {
+    display: none;
+  }
+}
+
+.masthead-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 14px var(--gutter);
-  max-width: 1120px;
-  margin: 0 auto;
+  gap: var(--space-xs) var(--space-sm);
+  flex-wrap: wrap;
+  padding: var(--space-xs) 0;
+  border-top: var(--rule) solid var(--color-gold);
+  border-bottom: var(--rule) solid var(--color-gold);
+  /* double filet : un second trait sous le premier */
+  box-shadow: 0 4px 0 -2px var(--color-night), 0 6px 0 -2px var(--color-gold);
 }
 
-.brand {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+a.brand {
+  color: inherit;
+  text-decoration: none;
 }
 
 .brand-name {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1.35rem;
-  color: var(--gold);
+  font-size: clamp(1.6rem, 7vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--color-gold);
 }
 
-.brand-city {
-  font-size: 0.85rem;
-  color: var(--muted);
+.account-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0 var(--space-sm);
+  font-weight: 700;
 }
 
-.wallet-chip {
+.account-nav a {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid var(--night-3);
-  border-radius: 999px;
-  background: var(--night-2);
-  font-size: 0.9rem;
+  min-height: 44px;
   white-space: nowrap;
 }
 
-.wallet-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--fir);
-  box-shadow: 0 0 0 3px var(--fir-halo);
-}
-
-.wallet-balance {
-  color: var(--muted);
+.account-email {
+  font-weight: 400;
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
 }
 
 /* ---------- Mise en page ---------- */
 .page {
   max-width: 1120px;
+  width: 100%;
   margin: 0 auto;
-  padding: 8px var(--gutter) 96px;
+  padding: var(--space-md) var(--gutter) var(--space-2xl);
+}
+
+.page-narrow {
+  max-width: 520px;
 }
 
 .intro {
-  margin: 12px 0 20px;
+  margin: var(--space-xs) 0 var(--space-lg);
 }
 
 .intro h1 {
-  font-size: clamp(1.75rem, 6vw, 2.9rem);
+  font-size: var(--text-display);
   font-weight: 800;
   letter-spacing: -0.01em;
-  max-width: 18ch;
+  line-height: 1;
+  max-width: 16ch;
+  margin-bottom: var(--space-sm);
+}
+
+/* Les titres longs (plus de 50 caractères) descendent d'un cran. */
+.intro h1.is-long {
+  font-size: var(--text-display-s);
+  max-width: 20ch;
 }
 
 .network-tag {
-  color: var(--muted);
-  font-size: 0.95rem;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  max-width: 60ch;
+}
+
+.network-tag a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  font-weight: 700;
+}
+
+.lead {
+  max-width: 62ch;
 }
 
 .play-grid {
   display: grid;
-  gap: 20px;
+  gap: var(--space-md);
   align-items: start;
 }
 
 .play-side {
   display: grid;
-  gap: 16px;
+  gap: var(--space-sm);
 }
 
 @media (min-width: 900px) {
   .play-grid {
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    gap: 28px;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: var(--space-lg);
   }
 }
 
-/* ---------- Le billet de tombola ---------- */
+.stack {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+/* Les enfants de grille peuvent rétrécir sous leur contenu (pas de débordement à 320 px). */
+.play-grid > *,
+.play-side > *,
+.stack > *,
+.admin-grid > *,
+.transparency-grid > *,
+.how-layout > * {
+  min-width: 0;
+}
+
+.muted {
+  color: var(--color-muted);
+}
+
+.hint {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.field-error,
+.form-error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.my-tickets strong {
+  color: var(--color-gold);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Le billet de tombola (pièce maîtresse, Stat-Led) ---------- */
 .ticket {
   --notch: 14px;
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
   border-radius: var(--radius-ticket);
   box-shadow: var(--shadow-ticket);
   overflow: hidden;
+  margin-right: 6px; /* laisse la place à l'ombre nette */
+}
+
+.ticket a {
+  color: var(--color-wine);
+}
+
+.ticket :focus-visible {
+  outline-color: var(--color-ink);
 }
 
 .ticket-main {
-  padding: 22px 22px 18px;
+  padding: var(--space-md) var(--space-md) var(--space-sm);
 }
 
 .ticket-kicker {
   font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--wine);
-  margin-bottom: 4px;
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-wine);
+  margin-bottom: var(--space-3xs);
 }
 
 .pot-label {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--text-md);
+  letter-spacing: 0.06em;
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--color-ink-soft);
 }
 
 .pot-amount {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(3.2rem, 16vw, 5.6rem);
-  line-height: 0.95;
+  font-size: var(--text-pot);
+  line-height: 0.9;
   letter-spacing: -0.03em;
-  margin: 2px 0 10px;
+  margin: var(--space-3xs) 0 var(--space-xs);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
 
 .pot-unit {
-  font-size: 0.32em;
-  letter-spacing: 0;
+  font-size: 0.3em;
+  letter-spacing: 0.04em;
   margin-left: 0.25em;
-  color: var(--wine);
+  color: var(--color-wine);
 }
 
 .pot-rule {
-  font-size: 0.95rem;
-  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
   max-width: 40ch;
 }
 
 .ticket-facts {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 16px;
-  margin: 18px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--ink-line);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-xs) var(--space-sm);
+  margin: var(--space-sm) 0 0;
+  padding-top: var(--space-sm);
+  border-top: var(--rule) solid var(--color-ink);
 }
 
 .fact dt {
-  font-size: 0.85rem;
-  color: var(--ink-soft);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
 }
 
 .fact dd {
   margin: 0;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-variant-numeric: tabular-nums;
 }
 
@@ -280,27 +378,26 @@ a {
 
 .progress {
   display: block;
-  height: 8px;
-  margin-top: 6px;
-  border-radius: 999px;
-  background: var(--ink-wash);
+  height: 10px;
+  margin-top: var(--space-2xs);
+  border: var(--rule) solid var(--color-ink);
+  border-radius: 2px;
+  background: var(--color-paper);
   overflow: hidden;
 }
 
 .progress-bar {
   display: block;
   height: 100%;
-  background: var(--wine);
-  border-radius: inherit;
-  transition: width 0.6s var(--ease-out);
+  background: var(--color-wine);
 }
 
-/* Talon détachable : séparé par une ligne perforée et deux encoches */
+/* Talon détachable : ligne perforée et deux encoches */
 .ticket-stub {
   position: relative;
-  padding: 18px 22px 20px;
-  background: var(--gold);
-  border-top: 3px dashed var(--ink-perforation);
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+  background: var(--color-gold);
+  border-top: 3px dashed var(--color-ink-perforation);
 }
 
 .ticket-stub::before,
@@ -311,7 +408,7 @@ a {
   width: calc(var(--notch) * 2);
   height: calc(var(--notch) * 2);
   border-radius: 50%;
-  background: var(--night);
+  background: var(--color-night);
 }
 
 .ticket-stub::before {
@@ -324,28 +421,32 @@ a {
 
 .stub-title {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   margin: 0;
 }
 
 .stub-value {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.3rem;
-  margin: 2px 0 0;
+  font-weight: 800;
+  font-size: var(--text-lg);
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin: var(--space-3xs) 0 0;
 }
 
 .stub-value.is-clock {
-  font-size: 2.4rem;
+  font-size: var(--text-2xl);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
 
 .stub-number {
-  margin: 8px 0 0;
-  font-size: 0.8rem;
-  opacity: 0.7;
-  font-variant-numeric: tabular-nums;
+  margin: var(--space-2xs) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-ink);
 }
 
 @media (min-width: 560px) {
@@ -354,13 +455,13 @@ a {
   }
   .ticket-main {
     flex: 1;
-    padding: 28px;
+    padding: var(--space-lg);
   }
   .ticket-stub {
     width: 34%;
     min-width: 180px;
     border-top: none;
-    border-left: 3px dashed var(--ink-perforation);
+    border-left: 3px dashed var(--color-ink-perforation);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -385,9 +486,9 @@ a {
 
 .skeleton {
   height: 18px;
-  border-radius: 6px;
-  background: var(--ink-wash);
-  margin: 10px 0;
+  border-radius: 2px;
+  background: var(--color-ink-wash);
+  margin: var(--space-xs) 0;
 }
 
 .skeleton-big {
@@ -395,64 +496,62 @@ a {
   width: 70%;
 }
 
-/* ---------- Panneaux ---------- */
+/* ---------- Panneaux (fond nuit, plats) ---------- */
 .panel {
-  background: var(--night-2);
-  border: 1px solid var(--night-3);
-  border-radius: var(--radius-panel);
-  padding: 18px;
+  background: var(--color-night-2);
+  border: var(--rule) solid var(--color-night-3);
+  border-radius: var(--radius-card);
+  padding: var(--space-sm);
 }
 
 .panel > :last-child {
   margin-bottom: 0;
 }
 
+.panel h2 {
+  font-size: var(--text-lg);
+}
+
+/* Tirage : aplat lie-de-vin, texte crème, aucun or dans le bloc */
 .panel-draw {
-  border-color: var(--wine);
-  background: var(--wine-wash);
+  background: var(--color-wine);
+  border-color: var(--color-wine);
+  color: var(--color-on-wine);
+  box-shadow: var(--shadow-hard);
 }
 
 .panel-draw h2 {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2xs);
+}
+
+.panel-draw .hint {
+  color: var(--color-on-wine);
+}
+
+.panel-draw :focus-visible {
+  outline-color: var(--color-on-wine);
 }
 
 .panel-prize {
-  border-color: var(--gold);
+  border-color: var(--color-gold);
+  box-shadow: var(--shadow-hard);
 }
 
 .panel-result {
-  border-color: var(--fir);
+  border-color: var(--color-fir);
 }
 
 .panel-admin {
   border-style: dashed;
 }
 
-.stack {
-  display: grid;
-  gap: 12px;
-}
-
-.muted {
-  color: var(--muted);
-}
-
-.hint {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.my-tickets strong {
-  color: var(--gold);
-}
-
-.field-error {
-  color: var(--danger);
-  font-size: 0.95rem;
-  margin: 0;
+.panel-admin h3 {
+  margin: var(--space-2xs) 0 0;
+  font-size: var(--text-md);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* ---------- Boutons ---------- */
@@ -460,21 +559,19 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2xs);
   min-height: 46px;
-  padding: 10px 18px;
-  border: 2px solid transparent;
+  padding: var(--space-2xs) var(--space-md);
+  border: var(--rule) solid transparent;
   border-radius: var(--radius-control);
   font: inherit;
   font-weight: 700;
   text-decoration: none;
   text-align: center;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.15s var(--ease-out), transform 0.1s var(--ease-out);
-}
-
-.btn:active:not(:disabled) {
-  transform: translateY(1px);
+  transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out),
+    transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
 }
 
 .btn:disabled {
@@ -483,31 +580,43 @@ a {
 }
 
 .btn-gold {
-  background: var(--gold);
-  color: var(--ink);
+  background: var(--color-gold);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-button);
 }
 
 .btn-gold:hover:not(:disabled) {
-  background: var(--gold-hover);
+  background: var(--color-gold-hover);
 }
 
 .btn-wine {
-  background: var(--wine);
-  color: var(--on-wine);
+  background: var(--color-wine);
+  color: var(--color-on-wine);
+  box-shadow: var(--shadow-button);
 }
 
 .btn-wine:hover:not(:disabled) {
-  background: var(--wine-hover);
+  background: var(--color-wine-hover);
+}
+
+.btn-gold:active:not(:disabled),
+.btn-wine:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--color-shadow);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--snow);
-  border-color: var(--night-3);
+  color: var(--color-snow);
+  border-color: var(--color-night-3);
 }
 
 .btn-ghost:hover:not(:disabled) {
-  border-color: var(--gold);
+  border-color: var(--color-gold);
+}
+
+.btn-ghost:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .btn-block {
@@ -516,15 +625,59 @@ a {
 
 .btn-lg {
   min-height: 54px;
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
+}
+
+.link-button {
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-gold);
+  background: none;
+  border: 0;
+  padding: var(--space-2xs) 0;
+  min-height: 44px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.link-button.danger {
+  color: var(--color-danger);
+}
+
+/* ---------- Portefeuille ---------- */
+.wallet-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-xs);
+  border: var(--rule) solid var(--color-night-3);
+  border-radius: 999px;
+  background: var(--color-night-2);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.wallet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-fir);
+  box-shadow: 0 0 0 3px var(--color-fir-halo);
+}
+
+.wallet-balance {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Choix de la quantité ---------- */
 .stepper {
   display: grid;
-  grid-template-columns: 54px 1fr 54px;
+  grid-template-columns: 54px minmax(0, 1fr) 54px;
   align-items: center;
-  border: 1px solid var(--night-3);
+  border: var(--rule) solid var(--color-night-3);
   border-radius: var(--radius-control);
   overflow: hidden;
 }
@@ -532,10 +685,15 @@ a {
 .stepper-btn {
   height: 54px;
   border: none;
-  background: var(--night-3);
-  color: var(--snow);
-  font-size: 1.6rem;
+  background: var(--color-night-3);
+  color: var(--color-snow);
+  font-size: var(--text-xl);
   cursor: pointer;
+  transition: background-color var(--dur-short) var(--ease-out);
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background: var(--color-night);
 }
 
 .stepper-btn:disabled {
@@ -546,20 +704,21 @@ a {
 .stepper-value {
   text-align: center;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-weight: 800;
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Bandeaux ---------- */
+/* ---------- Bandeaux d'aide ---------- */
 .notice {
   display: grid;
-  gap: 12px;
+  gap: var(--space-xs);
   align-items: center;
-  padding: 16px 18px;
-  margin-bottom: 20px;
-  border-radius: var(--radius-panel);
-  background: var(--night-2);
-  border: 1px solid var(--gold-deep);
+  padding: var(--space-sm);
+  margin-bottom: var(--space-md);
+  border-radius: var(--radius-card);
+  background: var(--color-night-2);
+  border: var(--rule) solid var(--color-gold-deep);
 }
 
 .notice p {
@@ -567,26 +726,63 @@ a {
 }
 
 .notice-warn {
-  border-color: var(--danger);
+  border-color: var(--color-danger);
 }
 
 @media (min-width: 700px) {
   .notice {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 }
 
-/* ---------- Comment ça marche ---------- */
-.how {
-  margin-top: 48px;
+/* ---------- Titres de section publics : losange or devant ---------- */
+.how h2::before,
+.transparency h2::before,
+.city-list-title::before {
+  content: "◆";
+  display: inline-block;
+  margin-right: 0.4em;
+  font-size: 0.7em;
+  vertical-align: 0.12em;
 }
 
-/* Les trois étapes se lisent comme un texte numéroté, sans cartes ; le guide MetaMask se range à côté. */
+.transparency h2::before,
+.city-list-title::before {
+  color: var(--color-gold);
+}
+
+/* ---------- Comment ça marche : aplat or qui déborde de la marge ---------- */
+.how {
+  --on-block: var(--color-ink);
+  margin: var(--space-2xl) calc(var(--gutter) * -1) 0;
+  padding: var(--space-xl) var(--gutter);
+  background: var(--color-gold);
+  color: var(--on-block);
+}
+
+.how a {
+  color: var(--on-block);
+}
+
+.how :focus-visible {
+  outline-color: var(--on-block);
+}
+
+@media (min-width: 1168px) {
+  /* Sur grand écran, l'aplat dépasse de 24 px de chaque côté de la colonne. */
+  .how {
+    margin-inline: calc(var(--space-md) * -1);
+    padding-inline: var(--space-md);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-hard);
+  }
+}
+
 .how-layout {
   display: grid;
-  gap: 24px;
+  gap: var(--space-lg);
   align-items: start;
-  margin-top: 16px;
+  margin-top: var(--space-md);
 }
 
 .steps {
@@ -600,10 +796,10 @@ a {
 .steps li {
   counter-increment: step;
   display: grid;
-  grid-template-columns: 2.6rem minmax(0, 1fr);
-  column-gap: 12px;
-  padding: 16px 0;
-  border-top: 1px solid var(--night-3);
+  grid-template-columns: 3rem minmax(0, 1fr);
+  column-gap: var(--space-xs);
+  padding: var(--space-sm) 0;
+  border-top: var(--rule) solid var(--on-block);
 }
 
 .steps li:first-child {
@@ -616,79 +812,91 @@ a {
   grid-row: span 2;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2.2rem;
-  line-height: 1;
-  color: var(--gold);
+  font-size: var(--text-2xl);
+  line-height: 0.9;
   font-variant-numeric: tabular-nums;
 }
 
 .steps h3 {
-  margin-bottom: 4px;
+  margin-bottom: var(--space-3xs);
 }
 
 .steps p {
   margin: 0;
-  color: var(--muted);
 }
 
 @media (min-width: 900px) {
   .how-layout {
     grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    gap: 48px;
+    gap: var(--space-xl);
   }
 }
 
 .tutorial {
-  background: var(--night-2);
-  border: 1px solid var(--night-3);
-  border-radius: var(--radius-panel);
-  padding: 4px 18px;
+  border: var(--rule) solid var(--on-block);
+  border-radius: var(--radius-card);
+  padding: 0 var(--space-sm);
 }
 
 .tutorial summary {
   cursor: pointer;
-  padding: 12px 0;
+  padding: var(--space-xs) 0;
   font-weight: 700;
+  min-height: 44px;
 }
 
 .tutorial ol {
-  padding-left: 1.2em;
-  margin: 0 0 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-sm);
 }
 
 .tutorial li {
-  margin-bottom: 8px;
+  position: relative;
+  padding-left: 1.4em;
+  margin-bottom: var(--space-2xs);
+}
+
+.tutorial li::before {
+  content: "❋";
+  position: absolute;
+  left: 0;
 }
 
 /* ---------- Transparence ---------- */
 .transparency {
-  margin-top: 48px;
+  margin-top: var(--space-xl);
 }
 
-.lead {
-  max-width: 68ch;
-  color: var(--muted);
+/* Séparateur d'ornements avant la section */
+.transparency::before {
+  content: "✱ ✱ ✱ ✱";
+  display: block;
+  text-align: center;
+  letter-spacing: 0.6em;
+  color: var(--color-gold);
+  margin-bottom: var(--space-xl);
 }
 
 .transparency-grid {
   display: grid;
-  gap: 16px;
-  margin-top: 16px;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 @media (min-width: 900px) {
   .transparency-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 
 .mono-address {
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   overflow-wrap: anywhere;
-  background: var(--night);
-  padding: 8px 10px;
-  border-radius: 8px;
+  background: var(--color-night);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: 2px;
 }
 
 .players {
@@ -696,38 +904,38 @@ a {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 10px;
+  gap: var(--space-xs);
 }
 
 .players li {
   display: grid;
-  grid-template-columns: 7.5em 1fr auto;
+  grid-template-columns: 7.5em minmax(0, 1fr) auto;
   align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
+  gap: var(--space-xs);
+  font-size: var(--text-sm);
 }
 
 .players li.is-me {
-  color: var(--gold);
+  color: var(--color-gold);
   font-weight: 700;
 }
 
 .players-bar {
-  height: 8px;
-  border-radius: 999px;
-  background: var(--night-3);
+  height: 10px;
+  border-radius: 2px;
+  background: var(--color-night-3);
   overflow: hidden;
 }
 
 .players-bar span {
   display: block;
   height: 100%;
-  background: var(--gold);
+  background: var(--color-gold);
 }
 
 .players-count {
   font-variant-numeric: tabular-nums;
-  color: var(--muted);
+  color: var(--color-muted);
 }
 
 .activity {
@@ -736,12 +944,12 @@ a {
   margin: 0;
   max-height: 280px;
   overflow-y: auto;
-  font-size: 0.95rem;
+  font-size: var(--text-sm);
 }
 
 .activity li {
-  padding: 8px 0;
-  border-bottom: 1px solid var(--night-3);
+  padding: var(--space-2xs) 0;
+  border-bottom: var(--rule) solid var(--color-night-3);
 }
 
 .activity li:last-child {
@@ -749,101 +957,355 @@ a {
 }
 
 .activity-link {
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
 }
 
-.history {
+.history,
+.data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
 }
 
 .history th,
-.history td {
+.history td,
+.data-table th,
+.data-table td {
   text-align: left;
-  padding: 8px 6px;
-  border-bottom: 1px solid var(--night-3);
+  padding: var(--space-2xs) var(--space-xs) var(--space-2xs) 0;
+  border-bottom: var(--rule) solid var(--color-night-3);
 }
 
-.history th {
-  color: var(--muted);
-  font-weight: 400;
+.history th,
+.data-table th {
+  color: var(--color-muted);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* ---------- Espace mairie ---------- */
+.data-table td {
+  white-space: nowrap;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+/* ---------- Accueil : l'index des villes ---------- */
+.city-list-title {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--space-sm);
+}
+
+.city-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 860px;
+  border-bottom: var(--rule) solid var(--color-gold);
+}
+
+.city-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-sm);
+  row-gap: var(--space-3xs);
+  align-items: baseline;
+  padding: var(--space-sm) var(--space-2xs);
+  border-top: var(--rule) solid var(--color-gold);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+}
+
+/* Au survol, la ligne devient un aplat or (comme une affiche qu'on retourne). */
+.city-row:hover {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+.city-row:active {
+  background: var(--color-gold-hover);
+  color: var(--color-ink);
+}
+
+.city-row:hover .city-status,
+.city-row:active .city-status {
+  color: var(--color-ink);
+}
+
+.city-row:focus-visible {
+  outline-offset: 0;
+}
+
+.city-name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  line-height: 1.05;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.city-pot {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: right;
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.city-status {
+  grid-column: 1 / -1;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.city-status-open {
+  color: var(--color-gold);
+}
+
+.city-status-draw {
+  color: var(--color-snow);
+}
+
+@media (min-width: 700px) {
+  .city-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) 8rem;
+    padding: var(--space-md) var(--space-xs);
+  }
+  .city-status {
+    grid-column: auto;
+  }
+  .city-pot {
+    grid-row: auto;
+    grid-column: auto;
+  }
+}
+
+/* ---------- Connexion : une affiche ---------- */
+.page-narrow .panel {
+  background: var(--color-night-2);
+  border-color: var(--color-gold);
+  box-shadow: var(--shadow-poster);
+  padding: var(--space-md);
+  margin-right: 6px;
+}
+
+.page-narrow .panel h1 {
+  font-size: var(--text-display-s);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Formulaires (connexion, admin, mairie) ---------- */
+.admin-grid {
+  display: grid;
+  gap: var(--space-sm);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .admin-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+}
+
+.admin-status {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3xs) var(--space-sm);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-status dt {
+  color: var(--color-muted);
+}
+
+.admin-status dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 .admin-form {
   display: grid;
-  gap: 12px;
+  gap: var(--space-xs);
 }
 
 .admin-form label {
   display: grid;
-  gap: 4px;
-  font-size: 0.95rem;
+  gap: var(--space-3xs);
+  font-size: var(--text-sm);
+  font-weight: 700;
 }
 
-.admin-form input {
+.admin-form input,
+.inline-form input,
+.search-input {
   font: inherit;
-  color: var(--snow);
-  background: var(--night);
-  border: 1px solid var(--night-3);
+  font-weight: 400;
+  color: var(--color-snow);
+  background: var(--color-night);
+  border: var(--rule) solid var(--color-night-3);
   border-radius: var(--radius-control);
-  padding: 10px 12px;
+  padding: var(--space-2xs) var(--space-xs);
   min-height: 46px;
+  transition: border-color var(--dur-short) var(--ease-out);
+}
+
+.admin-form input:hover,
+.inline-form input:hover,
+.search-input:hover {
+  border-color: var(--color-muted);
+}
+
+.admin-form input:focus-visible,
+.inline-form input:focus-visible,
+.search-input:focus-visible {
+  border-color: var(--color-gold);
+  outline-offset: 1px;
+}
+
+.admin-form input:disabled,
+.inline-form input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 @media (min-width: 560px) {
   .admin-form {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
   .admin-form button {
     grid-column: 1 / -1;
   }
+  .admin-form.admin-form-single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.inline-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.inline-form input,
+.search-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-input {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.file-input input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-input:focus-within .btn {
+  outline: 3px solid var(--color-snow);
+  outline-offset: 3px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+}
+
+.checkbox input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-gold);
+}
+
+.participant-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.participant-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xs);
+  border-bottom: var(--rule) solid var(--color-night-3);
+}
+
+.participant-list span {
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 /* ---------- Annonce du gagnant ---------- */
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: var(--z-overlay);
   display: grid;
   place-items: center;
   padding: var(--gutter);
-  background: var(--overlay);
+  background: var(--color-overlay);
 }
 
 .winner-card {
   width: min(460px, 100%);
   text-align: center;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
   border-radius: var(--radius-ticket);
-  padding: 32px 24px 26px;
-  border-top: 10px solid var(--wine);
+  padding: var(--space-xl) var(--space-md) var(--space-md);
+  border-top: 10px solid var(--color-wine);
+  box-shadow: var(--shadow-ticket);
   animation: winner-in 0.4s var(--ease-out);
 }
 
+.winner-card :focus-visible {
+  outline-color: var(--color-ink);
+}
+
 .winner-kicker {
-  color: var(--wine);
+  color: var(--color-wine);
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .winner-card h2 {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: var(--text-2xl);
 }
 
 .winner-prize {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 3rem;
+  font-size: clamp(2.4rem, 12vw, 3.5rem);
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
 
 .winner-address {
-  margin: 4px 0 20px;
+  margin: var(--space-3xs) 0 var(--space-md);
 }
 
 @keyframes winner-in {
@@ -859,42 +1321,46 @@ a {
 
 /* ---------- Suivi des transactions ---------- */
 .toast {
+  --toast-accent: var(--color-gold);
   position: fixed;
   left: var(--gutter);
   right: var(--gutter);
   bottom: var(--gutter);
-  z-index: 40;
+  z-index: var(--z-toast);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-xs);
   max-width: 480px;
   margin: 0 auto;
-  padding: 14px 16px;
-  border-radius: var(--radius-panel);
-  background: var(--snow);
-  color: var(--ink);
-  box-shadow: var(--shadow-toast);
-  border: 1px solid var(--ink-line);
-  --toast-accent: var(--gold);
+  padding: var(--space-sm);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border: var(--rule) solid var(--color-ink);
+  box-shadow: var(--shadow-hard);
+}
+
+.toast :focus-visible {
+  outline-color: var(--color-ink);
 }
 
 .toast-success {
-  --toast-accent: var(--fir);
+  --toast-accent: var(--color-fir);
 }
 
 .toast-error {
-  --toast-accent: var(--wine);
+  --toast-accent: var(--color-wine);
 }
 
-/* État de la transaction : un petit carré de couleur devant le titre (pas de bande sur le côté). */
+/* État : un petit carré de couleur devant le titre, pas de bande sur le côté. */
 .toast-success .toast-title::before,
 .toast-error .toast-title::before {
   content: "";
   display: inline-block;
   width: 10px;
   height: 10px;
-  margin-right: 8px;
+  margin-right: var(--space-2xs);
   border-radius: 2px;
   background: var(--toast-accent);
   vertical-align: 0.05em;
@@ -902,7 +1368,7 @@ a {
 
 .toast-body {
   display: flex;
-  gap: 12px;
+  gap: var(--space-xs);
   align-items: flex-start;
 }
 
@@ -912,23 +1378,25 @@ a {
 }
 
 .toast-text {
-  margin: 2px 0 0;
-  font-size: 0.95rem;
+  margin: var(--space-3xs) 0 0;
+  font-size: var(--text-sm);
 }
 
 .toast-link {
-  color: var(--wine);
-  font-size: 0.9rem;
+  color: var(--color-wine);
+  font-size: var(--text-sm);
 }
 
 .toast-close {
   border: none;
   background: none;
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   line-height: 1;
   cursor: pointer;
-  color: var(--ink);
-  padding: 0 4px;
+  color: var(--color-ink);
+  min-width: 44px;
+  min-height: 44px;
+  margin: calc(var(--space-xs) * -1) calc(var(--space-xs) * -1) 0 0;
 }
 
 .spinner {
@@ -947,14 +1415,60 @@ a {
   }
 }
 
-/* ---------- Pied de page ---------- */
+/* ---------- Pied de page : bandeau défilant (Ft8) ---------- */
 .site-footer {
+  margin-top: var(--space-xl);
+}
+
+.marquee {
+  overflow: hidden;
+  background: var(--color-gold);
+  color: var(--color-ink);
+  border-block: var(--rule) solid var(--color-ink);
+  padding: var(--space-xs) 0;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--dur-marquee) linear infinite;
+}
+
+.marquee-text {
+  flex: none;
+  padding-right: 0.5em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.marquee-dot {
+  display: inline-block;
+  margin: 0 0.5em;
+  font-size: 0.7em;
+  vertical-align: 0.12em;
+}
+
+/* Le bandeau s'arrête au survol (WCAG 2.2.2). */
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.footer-note {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 24px var(--gutter) 40px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  border-top: 1px solid var(--night-3);
+  padding: var(--space-md) var(--gutter) var(--space-xl);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
 }
 
 /* ---------- Mouvement réduit ---------- */
@@ -966,268 +1480,12 @@ a {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .marquee-track {
+    animation: none;
+  }
   .spinner {
     animation: none;
     border-right-color: currentColor;
     opacity: 0.6;
   }
-}
-
-.admin-status {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 6px 16px;
-  margin: 0;
-}
-
-.admin-status dt {
-  color: var(--muted);
-}
-
-.admin-status dd {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.panel-admin h3 {
-  margin: 8px 0 0;
-  font-size: 1.05rem;
-}
-
-@media (min-width: 560px) {
-  .admin-form.admin-form-single {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- Comptes, admin, mairie ---------- */
-a.brand {
-  color: inherit;
-  text-decoration: none;
-}
-
-.account-nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 4px 16px;
-  font-size: 0.95rem;
-}
-
-.account-email {
-  overflow-wrap: anywhere;
-}
-
-.link-button {
-  font: inherit;
-  color: var(--gold);
-  background: none;
-  border: 0;
-  padding: 8px 0;
-  min-height: 44px;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.link-button.danger {
-  color: var(--danger);
-}
-
-.page-narrow {
-  max-width: 480px;
-}
-
-.form-error {
-  color: var(--danger);
-  margin: 0;
-}
-
-/* Accueil : une ligne par ville (nom, état de la loterie, cagnotte), séparées par des filets. */
-.city-list {
-  list-style: none;
-  padding: 0;
-  margin: 8px 0 0;
-  max-width: 820px;
-  border-bottom: 1px solid var(--night-3);
-}
-
-.city-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 16px;
-  row-gap: 2px;
-  align-items: baseline;
-  padding: 16px 4px;
-  border-top: 1px solid var(--night-3);
-  color: inherit;
-  text-decoration: none;
-  transition: background-color 0.15s var(--ease-out);
-}
-
-.city-row:hover {
-  background: var(--night-2);
-}
-
-.city-row:hover .city-name {
-  color: var(--gold);
-}
-
-.city-name {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
-
-.city-pot {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  text-align: right;
-  grid-row: 1;
-  grid-column: 2;
-}
-
-.city-status {
-  grid-column: 1 / -1;
-  font-size: 0.95rem;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.city-status-open {
-  color: var(--gold);
-}
-
-.city-status-draw {
-  color: var(--snow);
-}
-
-@media (min-width: 700px) {
-  .city-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 7.5rem;
-    padding: 18px 8px;
-  }
-  .city-status {
-    grid-column: auto;
-  }
-  .city-pot {
-    grid-row: auto;
-    grid-column: auto;
-  }
-}
-
-.admin-grid {
-  display: grid;
-  gap: 16px;
-  align-items: start;
-}
-
-@media (min-width: 900px) {
-  .admin-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-  }
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-.data-table th,
-.data-table td {
-  text-align: left;
-  padding: 8px 10px 8px 0;
-  border-bottom: 1px solid var(--night-3);
-  white-space: nowrap;
-}
-
-.data-table th {
-  color: var(--muted);
-  font-weight: 400;
-}
-
-.file-input {
-  position: relative;
-  display: block;
-  cursor: pointer;
-}
-
-.file-input input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.file-input:focus-within .btn {
-  outline: 2px solid var(--snow);
-  outline-offset: 2px;
-}
-
-.checkbox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-}
-
-.checkbox input {
-  width: 20px;
-  height: 20px;
-}
-
-.inline-form {
-  display: flex;
-  gap: 8px;
-}
-
-.inline-form input,
-.search-input {
-  flex: 1;
-  min-width: 0;
-  font: inherit;
-  color: var(--snow);
-  background: var(--night);
-  border: 1px solid var(--night-3);
-  border-radius: var(--radius-control);
-  padding: 10px 12px;
-  min-height: 46px;
-}
-
-.participant-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 420px;
-  overflow-y: auto;
-}
-
-.participant-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--night-3);
-}
-
-.participant-list span {
-  overflow-wrap: anywhere;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
 }

@@ -67,7 +67,7 @@ export function Transparency({ data, derived, activity, network, deployment, acc
           <p className="mono-address">{deployment.BlockLucky}</p>
           {contractHref ? (
             <a className="btn btn-ghost" href={contractHref} target="_blank" rel="noreferrer">
-              Voir le code et les transactions sur Etherscan
+              Voir sur Etherscan
             </a>
           ) : (
             <p className="hint">Réseau local : pas d'explorateur public.</p>
