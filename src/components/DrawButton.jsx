@@ -4,6 +4,15 @@ import { formatDuration } from "../lib/format";
 export function DrawButton({ data, derived, now }) {
   if (!data || !derived) return null;
 
+  if (data.canDraw && data.tickets.length === 0) {
+    return (
+      <section className="panel panel-draw" aria-labelledby="draw-title">
+        <h2 id="draw-title">La vente est terminée</h2>
+        <p>Aucun ticket n'a été vendu : la mairie va clôturer cette loterie sans gagnant, puis pourra en ouvrir une nouvelle.</p>
+      </section>
+    );
+  }
+
   if (data.canDraw) {
     return (
       <section className="panel panel-draw" aria-labelledby="draw-title">

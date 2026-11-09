@@ -41,7 +41,7 @@ export function LotteryStats({ data, now }) {
     stubValue = formatDuration(secondsLeft);
   } else {
     stubTitle = "Vente terminée";
-    stubValue = "Le tirage peut être lancé";
+    stubValue = data.tickets.length === 0 ? "Aucun ticket vendu" : "Le tirage peut être lancé";
   }
 
   return (

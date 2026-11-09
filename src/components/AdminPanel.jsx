@@ -51,7 +51,7 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
           <>
             {" · "}
             <a href={vrfLink} target="_blank" rel="noreferrer">
-              Souscription Chainlink (LINK restants)
+              Souscription Chainlink (solde en ETH)
             </a>
           </>
         )}
@@ -59,9 +59,18 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
 
       <h3>Tirage</h3>
       {data.canDraw ? (
-        <button type="button" className="btn btn-wine btn-block" onClick={actions.draw} disabled={txInProgress}>
-          Lancer le tirage
-        </button>
+        data.tickets.length === 0 ? (
+          <>
+            <p className="hint">Aucun ticket vendu : la loterie sera clôturée sans gagnant, sans appel à Chainlink.</p>
+            <button type="button" className="btn btn-wine btn-block" onClick={actions.draw} disabled={txInProgress}>
+              Clôturer la loterie
+            </button>
+          </>
+        ) : (
+          <button type="button" className="btn btn-wine btn-block" onClick={actions.draw} disabled={txInProgress}>
+            Lancer le tirage
+          </button>
+        )
       ) : derived.isCalculating ? (
         retryIn <= 0 ? (
           <button type="button" className="btn btn-wine btn-block" onClick={actions.retry} disabled={txInProgress}>

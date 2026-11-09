@@ -38,6 +38,10 @@ function describe(event, network, account) {
       return <>{who(event.args[0])} a récupéré {formatEth(event.args[1])}.</>;
     case "RoundClosedWithoutWinner":
       return <>La loterie n° {String(event.args[0])} s'est terminée sans ticket vendu.</>;
+    case "OwnershipTransferred":
+      return <>Le contrat a été mis en service et confié à {who(event.args[1])}.</>;
+    case "OwnershipTransferRequested":
+      return <>Transfert de la gestion du contrat demandé vers {who(event.args[1])}.</>;
     default:
       return event.name;
   }

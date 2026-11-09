@@ -38,9 +38,15 @@ export function AdminPage({ onChange }) {
 
   const remove = async (city) => {
     if (!window.confirm(`Supprimer ${city.name}, son compte mairie et sa liste de participants ? Le contrat reste sur la blockchain.`)) return;
-    await api(`/admin/cities/${city.id}`, { method: "DELETE" });
-    await load();
-    onChange();
+    setStatus(null);
+    try {
+      await api(`/admin/cities/${city.id}`, { method: "DELETE" });
+      setStatus({ type: "ok", text: `${city.name} a été supprimée.` });
+      await load();
+      onChange();
+    } catch (e) {
+      setStatus({ type: "error", text: `Impossible de supprimer ${city.name} : ${e.message}` });
+    }
   };
 
   return (

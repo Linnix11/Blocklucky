@@ -89,8 +89,10 @@ function Participants({ list, onChange }) {
       const { added } = await api("/mairie/participants", { method: "POST", body: { csv, replace } });
       setStatus({ type: "ok", text: `${added} habitant(s) importé(s).` });
       await onChange();
+      return true;
     } catch (e) {
       setStatus({ type: "error", text: e.message });
+      return false;
     }
   };
 
@@ -101,8 +103,15 @@ function Participants({ list, onChange }) {
   };
 
   const remove = async (identifier) => {
-    await api(`/mairie/participants/${encodeURIComponent(identifier)}`, { method: "DELETE" });
-    await onChange();
+    if (!window.confirm(`Retirer ${identifier} de la liste ? Il ne pourra plus acheter de tickets.`)) return;
+    setStatus(null);
+    try {
+      await api(`/mairie/participants/${encodeURIComponent(identifier)}`, { method: "DELETE" });
+      setStatus({ type: "ok", text: `${identifier} a été retiré de la liste.` });
+      await onChange();
+    } catch (e) {
+      setStatus({ type: "error", text: `Impossible de retirer ${identifier} : ${e.message}` });
+    }
   };
 
   const shown = list.filter((id) => id.includes(filter.trim().toLowerCase())).slice(0, 200);
@@ -128,7 +137,7 @@ function Participants({ list, onChange }) {
         className="inline-form"
         onSubmit={(e) => {
           e.preventDefault();
-          send(manual).then(() => setManual(""));
+          send(manual).then((ok) => ok && setManual(""));
         }}
       >
         <label className="visually-hidden" htmlFor="manual-add">

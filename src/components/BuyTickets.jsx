@@ -24,10 +24,10 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
   const chance = totalTickets > 0 && myTickets > 0 ? (myTickets / totalTickets) * 100 : null;
 
   let blocker = null;
+  // L'inscription se vérifie avec l'adresse du portefeuille : on propose donc de le connecter avant de refuser.
   if (!saleOpen) blocker = "La vente de tickets est fermée pour cette loterie.";
-  else if (!allowed)
-    blocker = "Réservé aux habitants inscrits par la mairie : connectez-vous avec votre mail, ou avec le portefeuille déclaré à la mairie.";
   else if (!wallet.account) blocker = "connect";
+  else if (!allowed) blocker = "not-allowed";
   else if (wallet.wrongNetwork) blocker = `Passez votre portefeuille sur ${network.shortName} pour acheter.`;
   else if (remaining === 0) blocker = `Vous avez déjà ${maxPerWallet} tickets, le maximum par portefeuille.`;
 
@@ -44,10 +44,29 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
 
       {blocker === "connect" ? (
         <div className="stack">
-          <p>Connectez votre portefeuille pour acheter des tickets.</p>
+          <p>
+            {allowed
+              ? "Connectez votre portefeuille pour acheter des tickets."
+              : "Réservé aux habitants inscrits par la mairie. Connectez le portefeuille déclaré à la mairie, ou connectez-vous avec votre mail."}
+          </p>
           <button type="button" className="btn btn-gold btn-block" onClick={onConnect} disabled={!wallet.available}>
             Connecter mon portefeuille
           </button>
+          {!allowed && (
+            <a className="btn btn-ghost btn-block" href="/connexion">
+              Me connecter avec mon mail
+            </a>
+          )}
+        </div>
+      ) : blocker === "not-allowed" ? (
+        <div className="stack">
+          <p className="muted">
+            Ce portefeuille n'est pas dans la liste des habitants de la ville. Demandez à votre mairie de l'ajouter, ou
+            connectez-vous avec le mail qu'elle a inscrit.
+          </p>
+          <a className="btn btn-ghost btn-block" href="/connexion">
+            Me connecter avec mon mail
+          </a>
         </div>
       ) : blocker ? (
         <p className="muted">{blocker}</p>
