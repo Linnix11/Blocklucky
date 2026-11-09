@@ -21,7 +21,7 @@ export function HowItWorks({ network }) {
         <li>
           <h3>Le tirage désigne un gagnant</h3>
           <p>
-            Quand le nombre de participants est atteint ou que l'heure est passée, n'importe qui lance le tirage.
+            Quand le nombre de participants est atteint ou que l'heure est passée, la mairie lance le tirage.
             Chainlink tire au sort, et le gagnant reçoit toute la cagnotte automatiquement.
           </p>
         </li>

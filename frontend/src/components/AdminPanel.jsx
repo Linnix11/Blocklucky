@@ -23,7 +23,7 @@ export function AdminPanel({ data, derived, network, deployment, txInProgress, n
 
   return (
     <section className="panel panel-admin stack" aria-labelledby="admin-title">
-      <h2 id="admin-title">Espace mairie</h2>
+      <h2 id="admin-title">Gestion de la loterie</h2>
       <p className="muted">
         La mairie ouvre les loteries et choisit leurs règles. Elle ne peut ni choisir le gagnant, ni retirer la cagnotte.
       </p>
@@ -64,6 +64,10 @@ export function AdminPanel({ data, derived, network, deployment, txInProgress, n
       {data.canDraw ? (
         <button type="button" className="btn btn-wine btn-block" onClick={lottery.requestDraw} disabled={txInProgress}>
           Lancer le tirage
+        </button>
+      ) : derived.isCalculating && deployment.vrfMock ? (
+        <button type="button" className="btn btn-ghost btn-block" onClick={lottery.simulateChainlink} disabled={txInProgress}>
+          Simuler la réponse de Chainlink (réseau local)
         </button>
       ) : derived.isCalculating ? (
         retryIn <= 0 ? (

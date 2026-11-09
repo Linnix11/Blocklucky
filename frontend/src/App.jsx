@@ -7,13 +7,15 @@ import { DrawButton } from "./components/DrawButton";
 import { WinnerAnnouncement, WinnerBanner } from "./components/WinnerBanner";
 import { Transparency } from "./components/Transparency";
 import { HowItWorks } from "./components/HowItWorks";
-import { AcceptOwnership, AdminPanel } from "./components/AdminPanel";
 import { TxStatus } from "./components/TxStatus";
+import { AdminPage } from "./components/AdminPage";
+import { useHash } from "./hooks/useHash";
 
 export default function App() {
   const lottery = useBlockLucky();
   const now = useNow();
   const { data, derived, wallet, network, deployment, tx, txInProgress } = lottery;
+  const isAdminRoute = useHash() === "#/admin";
 
   return (
     <>
@@ -26,6 +28,9 @@ export default function App() {
         <ConnectWallet wallet={wallet} balance={data?.me?.balance} onConnect={lottery.connect} />
       </header>
 
+      {isAdminRoute ? (
+        <AdminPage lottery={lottery} now={now} />
+      ) : (
       <main className="page">
         <div className="intro">
           <h1>La loterie des fêtes, tirée au sort sous les yeux de tous.</h1>
@@ -64,14 +69,7 @@ export default function App() {
                 <DrawButton
                   data={data}
                   derived={derived}
-                  wallet={wallet}
-                  deployment={deployment}
-                  txInProgress={txInProgress}
                   now={now}
-                  onDraw={lottery.requestDraw}
-                  onRetry={lottery.retryDraw}
-                  onSimulate={lottery.simulateChainlink}
-                  onConnect={lottery.connect}
                 />
                 <BuyTickets
                   data={data}
@@ -82,18 +80,6 @@ export default function App() {
                   onConnect={lottery.connect}
                   now={now}
                 />
-                {wallet.isOwner && (
-                  <AdminPanel
-                    data={data}
-                    derived={derived}
-                    network={network}
-                    deployment={deployment}
-                    txInProgress={txInProgress}
-                    now={now}
-                    lottery={lottery}
-                  />
-                )}
-                {wallet.isPendingOwner && <AcceptOwnership txInProgress={txInProgress} onAccept={lottery.acceptOwnership} />}
               </div>
             </div>
 
@@ -110,6 +96,7 @@ export default function App() {
           </>
         )}
       </main>
+      )}
 
       <footer className="site-footer">
         <p>
