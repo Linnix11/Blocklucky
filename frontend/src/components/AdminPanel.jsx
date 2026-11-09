@@ -1,25 +1,22 @@
 import { useState } from "react";
-import { isAddress, ZeroAddress } from "ethers";
 import { DEMO_ROUND, STATE } from "../config";
-import { explorerLink, formatDate, formatDuration, formatEth, sameAddress, shortAddress } from "../lib/format";
+import { explorerLink, formatDate, formatDuration, formatEth } from "../lib/format";
 
 const STATE_LABEL = { [STATE.CLOSED]: "Fermée", [STATE.OPEN]: "Vente en cours", [STATE.CALCULATING]: "Tirage en cours" };
 
 /**
- * Espace mairie (compte owner) : état de la loterie, tirage, ouverture d'une loterie, transfert de la mairie.
+ * Gestion de la loterie d'une mairie : état, tirage, ouverture d'une loterie.
+ * Les actions passent par le serveur (`actions`), qui signe avec sa clé : pas besoin de MetaMask.
  * Le contrat ne donne volontairement aucun pouvoir sur le gagnant ni sur la cagnotte.
  */
-export function AdminPanel({ data, derived, network, deployment, txInProgress, now, lottery }) {
+export function AdminPanel({ data, derived, network, deployment, now, busy: txInProgress, actions }) {
   const [form, setForm] = useState(DEMO_ROUND);
-  const [newOwner, setNewOwner] = useState("");
   if (!data || !derived) return null;
 
   const update = (field) => (event) => setForm((f) => ({ ...f, [field]: event.target.value }));
   const retryIn = derived.retryAvailableAt - now;
   const contractLink = explorerLink(network.explorer, "address", deployment.BlockLucky);
   const vrfLink = network.chainId === 11155111 ? `https://vrf.chain.link/sepolia/${data.subscriptionId}` : null;
-  const ownerValid = isAddress(newOwner) && !sameAddress(newOwner, data.owner);
-  const hasPending = data.pendingOwner && data.pendingOwner !== ZeroAddress;
 
   return (
     <section className="panel panel-admin stack" aria-labelledby="admin-title">
@@ -62,16 +59,12 @@ export function AdminPanel({ data, derived, network, deployment, txInProgress, n
 
       <h3>Tirage</h3>
       {data.canDraw ? (
-        <button type="button" className="btn btn-wine btn-block" onClick={lottery.requestDraw} disabled={txInProgress}>
+        <button type="button" className="btn btn-wine btn-block" onClick={actions.draw} disabled={txInProgress}>
           Lancer le tirage
-        </button>
-      ) : derived.isCalculating && deployment.vrfMock ? (
-        <button type="button" className="btn btn-ghost btn-block" onClick={lottery.simulateChainlink} disabled={txInProgress}>
-          Simuler la réponse de Chainlink (réseau local)
         </button>
       ) : derived.isCalculating ? (
         retryIn <= 0 ? (
-          <button type="button" className="btn btn-wine btn-block" onClick={lottery.retryDraw} disabled={txInProgress}>
+          <button type="button" className="btn btn-wine btn-block" onClick={actions.retry} disabled={txInProgress}>
             Relancer le tirage (Chainlink n'a pas répondu)
           </button>
         ) : (
@@ -94,7 +87,7 @@ export function AdminPanel({ data, derived, network, deployment, txInProgress, n
           className="admin-form"
           onSubmit={(event) => {
             event.preventDefault();
-            lottery.startNewRound(form);
+            actions.start(form);
           }}
         >
           <label>
@@ -121,49 +114,6 @@ export function AdminPanel({ data, derived, network, deployment, txInProgress, n
         <p className="hint">Possible une fois la loterie en cours tirée.</p>
       )}
 
-      <h3>Transférer la mairie</h3>
-      <p className="hint">
-        Le nouveau compte devra accepter depuis ce site pour devenir la mairie. Tant qu'il n'a pas accepté, rien ne change.
-        {hasPending && <> En attente d'acceptation par {shortAddress(data.pendingOwner)}.</>}
-      </p>
-      <form
-        className="admin-form admin-form-single"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (window.confirm(`Proposer la mairie à ${newOwner} ?`)) lottery.transferOwnership(newOwner);
-        }}
-      >
-        <label>
-          Adresse du nouveau compte
-          <input
-            type="text"
-            inputMode="text"
-            autoComplete="off"
-            spellCheck="false"
-            placeholder="0x…"
-            value={newOwner}
-            onChange={(event) => setNewOwner(event.target.value.trim())}
-            aria-invalid={newOwner !== "" && !ownerValid}
-          />
-        </label>
-        {newOwner !== "" && !ownerValid && <p className="hint">Adresse invalide ou déjà propriétaire.</p>}
-        <button type="submit" className="btn btn-ghost btn-block" disabled={txInProgress || !ownerValid}>
-          Proposer le transfert
-        </button>
-      </form>
-    </section>
-  );
-}
-
-/** Affiché au compte à qui la mairie a été proposée. */
-export function AcceptOwnership({ txInProgress, onAccept }) {
-  return (
-    <section className="panel panel-admin" aria-labelledby="accept-title">
-      <h2 id="accept-title">La mairie vous est proposée</h2>
-      <p className="muted">Acceptez pour pouvoir ouvrir les prochaines loteries.</p>
-      <button type="button" className="btn btn-gold btn-block" onClick={onAccept} disabled={txInProgress}>
-        Accepter la mairie
-      </button>
     </section>
   );
 }

@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  // En développement, l'API du serveur (npm start) répond sur le port 3000
+  server: { proxy: { "/api": "http://localhost:3000" } },
   build: {
     rollupOptions: {
       output: {

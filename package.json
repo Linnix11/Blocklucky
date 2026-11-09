@@ -17,7 +17,8 @@
     "start-round:local": "hardhat run scripts/startRound.js --network localhost",
     "start-round:sepolia": "hardhat run scripts/startRound.js --network sepolia",
     "fulfill:local": "hardhat run scripts/fulfillLocal.js --network localhost",
-    "demo:locale": "bash scripts/demo-locale.sh"
+    "demo:locale": "bash scripts/demo-locale.sh",
+    "start": "node server/index.js"
   },
   "engines": {
     "node": ">=18"
@@ -30,6 +31,9 @@
   "dependencies": {
     "@chainlink/contracts": "1.4.0",
     "@openzeppelin/contracts": "5.6.1",
-    "dotenv": "17.4.2"
+    "dotenv": "17.4.2",
+    "ethers": "6.17.0",
+    "express": "5.3.0",
+    "mysql2": "3.24.6"
   }
 }

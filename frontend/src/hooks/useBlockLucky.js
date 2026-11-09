@@ -9,7 +9,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BrowserProvider, Contract, JsonRpcProvider, Network, parseEther } from "ethers";
-import { DEPLOYMENT, LOTTERY_ABI, MOCK_VRF_ABI, STATE, TARGET, TARGET_CHAIN_ID } from "../config";
+import { LOTTERY_ABI, MOCK_VRF_ABI, STATE, TARGET, TARGET_CHAIN_ID } from "../config";
 import { humanizeError, isUserRejection } from "../lib/errors";
 import { formatEth, sameAddress } from "../lib/format";
 
@@ -25,7 +25,8 @@ function getInjectedProvider() {
   return typeof window !== "undefined" ? window.ethereum : undefined;
 }
 
-export function useBlockLucky() {
+/** @param deployment { BlockLucky: adresse du contrat, blockNumber, VRFCoordinator?, vrfMock? } ou null */
+export function useBlockLucky(deployment) {
   const ethereum = getInjectedProvider();
 
   // ---------- Lecture sans portefeuille ----------
@@ -34,8 +35,8 @@ export function useBlockLucky() {
     []
   );
   const readContract = useMemo(
-    () => (DEPLOYMENT ? new Contract(DEPLOYMENT.BlockLucky, LOTTERY_ABI, readProvider) : null),
-    [readProvider]
+    () => (deployment ? new Contract(deployment.BlockLucky, LOTTERY_ABI, readProvider) : null),
+    [readProvider, deployment]
   );
 
   // ---------- État React ----------
@@ -71,7 +72,6 @@ export function useBlockLucky() {
         drawRequestedAt,
         drawTimeout,
         lastRequestId,
-        pendingOwner,
         subscriptionId,
       ] = await Promise.all([
         c.state(),
@@ -88,7 +88,6 @@ export function useBlockLucky() {
         c.drawRequestedAt(),
         c.DRAW_TIMEOUT(),
         c.lastRequestId(),
-        c.pendingOwner(),
         c.subscriptionId(),
       ]);
 
@@ -130,7 +129,6 @@ export function useBlockLucky() {
         drawRequestedAt: Number(drawRequestedAt),
         drawTimeout: Number(drawTimeout),
         lastRequestId,
-        pendingOwner,
         subscriptionId,
         me,
         history,
@@ -144,7 +142,7 @@ export function useBlockLucky() {
     const latest = await readProvider.getBlockNumber();
     const firstRun = lastBlockRef.current === null;
     const from = firstRun
-      ? Math.max(DEPLOYMENT.blockNumber ?? 0, latest - MAX_LOG_RANGE)
+      ? Math.max(deployment.blockNumber ?? 0, latest - MAX_LOG_RANGE)
       : lastBlockRef.current + 1;
     if (from > latest) return;
     const to = Math.min(latest, from + MAX_LOG_RANGE);
@@ -265,7 +263,6 @@ export function useBlockLucky() {
 
   const wrongNetwork = Boolean(account && walletChainId !== null && walletChainId !== TARGET_CHAIN_ID);
   const isOwner = Boolean(account && data && sameAddress(account, data.owner));
-  const isPendingOwner = Boolean(account && data && sameAddress(account, data.pendingOwner));
   const txInProgress = tx.status === "wallet" || tx.status === "pending";
 
   /**
@@ -300,7 +297,7 @@ export function useBlockLucky() {
     [ethereum, account, wrongNetwork, refresh]
   );
 
-  const lotteryWith = (signer) => new Contract(DEPLOYMENT.BlockLucky, LOTTERY_ABI, signer);
+  const lotteryWith = (signer) => new Contract(deployment.BlockLucky, LOTTERY_ABI, signer);
 
   // ---------- Actions ----------
   const buyTickets = useCallback(
@@ -361,30 +358,13 @@ export function useBlockLucky() {
     [send]
   );
 
-  const transferOwnership = useCallback(
-    (newOwner) =>
-      send(
-        { label: "Transfert de la mairie", successText: "Transfert proposé : le nouveau compte doit l'accepter." },
-        (signer) => lotteryWith(signer).transferOwnership(newOwner)
-      ),
-    [send]
-  );
-
-  const acceptOwnership = useCallback(
-    () =>
-      send({ label: "Acceptation de la mairie", successText: "Vous êtes maintenant la mairie." }, (signer) =>
-        lotteryWith(signer).acceptOwnership()
-      ),
-    [send]
-  );
-
   /** Réseau local uniquement : fait répondre le faux coordinateur Chainlink. */
   const simulateChainlink = useCallback(
     () =>
       send({ label: "Réponse de Chainlink (simulée)", successText: "Chainlink (simulé) a répondu." }, (signer) =>
-        new Contract(DEPLOYMENT.VRFCoordinator, MOCK_VRF_ABI, signer).fulfillRandomWords(
+        new Contract(deployment.VRFCoordinator, MOCK_VRF_ABI, signer).fulfillRandomWords(
           data.lastRequestId,
-          DEPLOYMENT.BlockLucky
+          deployment.BlockLucky
         )
       ),
     [send, data]
@@ -413,7 +393,7 @@ export function useBlockLucky() {
 
   return {
     network: TARGET,
-    deployment: DEPLOYMENT,
+    deployment,
     data,
     derived,
     loadError,
@@ -424,7 +404,6 @@ export function useBlockLucky() {
       chainId: walletChainId,
       wrongNetwork,
       isOwner,
-      isPendingOwner,
     },
     tx,
     txInProgress,
@@ -438,8 +417,6 @@ export function useBlockLucky() {
     retryDraw,
     withdrawPrize,
     startNewRound,
-    transferOwnership,
-    acceptOwnership,
     simulateChainlink,
   };
 }

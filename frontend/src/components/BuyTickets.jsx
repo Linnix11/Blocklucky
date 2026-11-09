@@ -3,7 +3,7 @@ import { STATE } from "../config";
 import { formatEth } from "../lib/format";
 
 /** Choix du nombre de tickets et achat. */
-export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConnect, now }) {
+export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConnect, now, allowed = true }) {
   const [quantity, setQuantity] = useState(1);
 
   const myTickets = Number(data?.me?.myTickets ?? 0n);
@@ -25,6 +25,8 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
 
   let blocker = null;
   if (!saleOpen) blocker = "La vente de tickets est fermée pour cette loterie.";
+  else if (!allowed)
+    blocker = "Réservé aux habitants inscrits par la mairie : connectez-vous avec votre mail, ou avec le portefeuille déclaré à la mairie.";
   else if (!wallet.account) blocker = "connect";
   else if (wallet.wrongNetwork) blocker = `Passez votre portefeuille sur ${network.shortName} pour acheter.`;
   else if (remaining === 0) blocker = `Vous avez déjà ${maxPerWallet} tickets, le maximum par portefeuille.`;
