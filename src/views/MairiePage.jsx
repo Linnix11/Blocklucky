@@ -102,17 +102,36 @@ function Participants({ list, onChange }) {
     event.target.value = "";
   };
 
+  // Retrait immédiat, annulable pendant quelques secondes (pas de boîte de confirmation : l'action est réversible).
   const remove = async (identifier) => {
-    if (!window.confirm(`Retirer ${identifier} de la liste ? Il ne pourra plus acheter de tickets.`)) return;
     setStatus(null);
     try {
       await api(`/mairie/participants/${encodeURIComponent(identifier)}`, { method: "DELETE" });
-      setStatus({ type: "ok", text: `${identifier} a été retiré de la liste.` });
+      setStatus({ type: "ok", text: `${identifier} a été retiré de la liste.`, undo: identifier });
       await onChange();
     } catch (e) {
       setStatus({ type: "error", text: `Impossible de retirer ${identifier} : ${e.message}` });
     }
   };
+
+  const undoRemove = async (identifier) => {
+    setStatus(null);
+    try {
+      // Toujours en ajout, quelle que soit la case « Remplacer toute la liste ».
+      await api("/mairie/participants", { method: "POST", body: { csv: identifier, replace: false } });
+      setStatus({ type: "ok", text: `${identifier} est de nouveau dans la liste.` });
+      await onChange();
+    } catch (e) {
+      setStatus({ type: "error", text: `Impossible de remettre ${identifier} : ${e.message}` });
+    }
+  };
+
+  // Le bouton « Annuler » disparaît après 10 secondes.
+  useEffect(() => {
+    if (!status?.undo) return undefined;
+    const timer = setTimeout(() => setStatus((s) => (s?.undo ? { type: s.type, text: s.text } : s)), 10000);
+    return () => clearTimeout(timer);
+  }, [status]);
 
   const shown = list.filter((id) => id.includes(filter.trim().toLowerCase())).slice(0, 200);
 
@@ -152,6 +171,14 @@ function Participants({ list, onChange }) {
       {status && (
         <p className={status.type === "error" ? "form-error" : "hint"} role="status">
           {status.text}
+          {status.undo && (
+            <>
+              {" "}
+              <button type="button" className="link-button" onClick={() => undoRemove(status.undo)}>
+                Annuler
+              </button>
+            </>
+          )}
         </p>
       )}
 
