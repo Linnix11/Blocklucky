@@ -929,3 +929,30 @@ a {
     opacity: 0.6;
   }
 }
+
+.admin-status {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.admin-status dt {
+  color: var(--muted);
+}
+
+.admin-status dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.panel-admin h3 {
+  margin: 8px 0 0;
+  font-size: 1.05rem;
+}
+
+@media (min-width: 560px) {
+  .admin-form.admin-form-single {
+    grid-template-columns: 1fr;
+  }
+}

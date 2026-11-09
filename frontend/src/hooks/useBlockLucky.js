@@ -71,6 +71,8 @@ export function useBlockLucky() {
         drawRequestedAt,
         drawTimeout,
         lastRequestId,
+        pendingOwner,
+        subscriptionId,
       ] = await Promise.all([
         c.state(),
         c.roundId(),
@@ -86,6 +88,8 @@ export function useBlockLucky() {
         c.drawRequestedAt(),
         c.DRAW_TIMEOUT(),
         c.lastRequestId(),
+        c.pendingOwner(),
+        c.subscriptionId(),
       ]);
 
       let me = null;
@@ -126,6 +130,8 @@ export function useBlockLucky() {
         drawRequestedAt: Number(drawRequestedAt),
         drawTimeout: Number(drawTimeout),
         lastRequestId,
+        pendingOwner,
+        subscriptionId,
         me,
         history,
       };
@@ -259,6 +265,7 @@ export function useBlockLucky() {
 
   const wrongNetwork = Boolean(account && walletChainId !== null && walletChainId !== TARGET_CHAIN_ID);
   const isOwner = Boolean(account && data && sameAddress(account, data.owner));
+  const isPendingOwner = Boolean(account && data && sameAddress(account, data.pendingOwner));
   const txInProgress = tx.status === "wallet" || tx.status === "pending";
 
   /**
@@ -354,6 +361,23 @@ export function useBlockLucky() {
     [send]
   );
 
+  const transferOwnership = useCallback(
+    (newOwner) =>
+      send(
+        { label: "Transfert de la mairie", successText: "Transfert proposé : le nouveau compte doit l'accepter." },
+        (signer) => lotteryWith(signer).transferOwnership(newOwner)
+      ),
+    [send]
+  );
+
+  const acceptOwnership = useCallback(
+    () =>
+      send({ label: "Acceptation de la mairie", successText: "Vous êtes maintenant la mairie." }, (signer) =>
+        lotteryWith(signer).acceptOwnership()
+      ),
+    [send]
+  );
+
   /** Réseau local uniquement : fait répondre le faux coordinateur Chainlink. */
   const simulateChainlink = useCallback(
     () =>
@@ -400,6 +424,7 @@ export function useBlockLucky() {
       chainId: walletChainId,
       wrongNetwork,
       isOwner,
+      isPendingOwner,
     },
     tx,
     txInProgress,
@@ -413,6 +438,8 @@ export function useBlockLucky() {
     retryDraw,
     withdrawPrize,
     startNewRound,
+    transferOwnership,
+    acceptOwnership,
     simulateChainlink,
   };
 }

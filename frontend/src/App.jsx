@@ -7,7 +7,7 @@ import { DrawButton } from "./components/DrawButton";
 import { WinnerAnnouncement, WinnerBanner } from "./components/WinnerBanner";
 import { Transparency } from "./components/Transparency";
 import { HowItWorks } from "./components/HowItWorks";
-import { AdminPanel } from "./components/AdminPanel";
+import { AcceptOwnership, AdminPanel } from "./components/AdminPanel";
 import { TxStatus } from "./components/TxStatus";
 
 export default function App() {
@@ -82,7 +82,18 @@ export default function App() {
                   onConnect={lottery.connect}
                   now={now}
                 />
-                {wallet.isOwner && <AdminPanel data={data} txInProgress={txInProgress} onStart={lottery.startNewRound} />}
+                {wallet.isOwner && (
+                  <AdminPanel
+                    data={data}
+                    derived={derived}
+                    network={network}
+                    deployment={deployment}
+                    txInProgress={txInProgress}
+                    now={now}
+                    lottery={lottery}
+                  />
+                )}
+                {wallet.isPendingOwner && <AcceptOwnership txInProgress={txInProgress} onAccept={lottery.acceptOwnership} />}
               </div>
             </div>
 
