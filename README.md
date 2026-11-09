@@ -143,6 +143,8 @@ Guide pas à pas (faucets, souscription Chainlink, consumer) : **[docs/deploieme
 | Interface en ligne | *lien Vercel à compléter* |
 | Coordinateur Chainlink VRF v2.5 | [`0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B`](https://sepolia.etherscan.io/address/0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B) |
 
+Guide complet de la plateforme (comptes, Hostinger, démo, dépannage) : [docs/guide-plateforme.md](docs/guide-plateforme.md).
+
 Mise en ligne (Hostinger, application Node.js, préréglage Next.js) : build `npm run build`, démarrage `npm start`.
 Variables : `NEXT_PUBLIC_CHAIN_ID`, `SEPOLIA_RPC_URL`, `PRIVATE_KEY`, `VRF_COORDINATOR`, `VRF_SUBSCRIPTION_ID`, `VRF_KEY_HASH`,
 `ADMIN_EMAIL`, `ADMIN_PASSWORD` et `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD` (voir `.env.example`).
