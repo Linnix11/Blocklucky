@@ -74,7 +74,7 @@ export function HomePage({ cities }) {
   return (
     <main className="page">
       <div className="intro">
-        <h1>La loterie des fêtes, sous les yeux de tous.</h1>
+        <h1>Le jackpot de votre ville</h1>
         <p className="network-tag">
           Chaque ville a sa loterie. Le tirage est fait par Chainlink et toute la cagnotte va au gagnant.
         </p>
@@ -85,22 +85,27 @@ export function HomePage({ cities }) {
       ) : cities.length === 0 ? (
         <p className="muted">Aucune ville n'a encore ouvert de loterie.</p>
       ) : (
-        <ul className="city-list" aria-label="Villes">
-          {cities.map((city) => {
-            const status = statuses[city.id];
-            const { label, tone } = describeStatus(status, now);
-            const showPot = status && !status.error && status.roundId > 0n && status.state !== STATE.CLOSED;
-            return (
-              <li key={city.id}>
-                <a className="city-row" href={`/ville/${city.slug}`}>
-                  <span className="city-name">{city.name}</span>
-                  <span className={`city-status city-status-${tone}`}>{label}</span>
-                  <span className="city-pot">{showPot ? formatEth(status.pot) : ""}</span>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+        <>
+          {cities.every((city) => statuses[city.id] && describeStatus(statuses[city.id], now).tone !== "open") && (
+            <p className="notice">Aucune vente en cours pour l'instant. La prochaine loterie s'allumera ici.</p>
+          )}
+          <ul className="city-list" aria-label="Villes">
+            {cities.map((city) => {
+              const status = statuses[city.id];
+              const { label, tone } = describeStatus(status, now);
+              const showPot = status && !status.error && status.roundId > 0n && status.state !== STATE.CLOSED;
+              return (
+                <li key={city.id}>
+                  <a className={`city-row${tone === "open" ? " is-live" : ""}`} href={`/ville/${city.slug}`}>
+                    <span className="city-name">{city.name}</span>
+                    <span className={`city-status city-status-${tone}`}>{label}</span>
+                    <span className="city-pot">{showPot ? formatEth(status.pot) : ""}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       )}
     </main>
   );

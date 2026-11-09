@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import { explorerLink, formatDate, formatEth, sameAddress, shortAddress } from "../lib/format";
 
-const FESTIVE_COLORS = ["#F6B93B", "#B3263E", "#2E8B57", "#FFF3DC"];
+// Couleurs du design (tokens.css) : or, rouge, crème, menthe. canvas-confetti ne lit pas les variables CSS.
+const FESTIVE_COLORS = ["#FFCC33", "#D81B24", "#FFF4E0", "#3EE8A8"];
 
 function celebrate() {
   const options = { colors: FESTIVE_COLORS, disableForReducedMotion: true, zIndex: 60 };
@@ -30,8 +31,15 @@ export function WinnerAnnouncement({ announcement, account, onClose }) {
   return (
     <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="winner-title">
       <div className="winner-card">
-        <p className="winner-kicker">Loterie des fêtes n° {String(announcement.roundId)}</p>
-        <h2 id="winner-title">{isMe ? "Vous avez gagné !" : "Nous avons un gagnant !"}</h2>
+        <p className="winner-kicker">Loterie n° {String(announcement.roundId)}</p>
+        <h2 id="winner-title" className="winner-title">
+          {isMe ? "Jackpot !" : "Nous avons un gagnant !"}
+        </h2>
+        <div className="reels winner-reels" aria-hidden="true">
+          <div className="reel"><span className="reel-value">7</span></div>
+          <div className="reel"><span className="reel-value">7</span></div>
+          <div className="reel"><span className="reel-value">7</span></div>
+        </div>
         <p className="winner-prize">{formatEth(announcement.prize)}</p>
         <p className="winner-address">
           {isMe ? "Les gains sont envoyés directement dans votre portefeuille." : <>pour le portefeuille {shortAddress(announcement.winner)}</>}

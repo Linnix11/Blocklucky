@@ -15,6 +15,9 @@ const MARQUEE = [
   "Une loterie par ville",
 ];
 
+/** Ampoules de l'enseigne en haut de page (décoratives). */
+const BULBS = Array.from({ length: 48 }, (_, i) => i);
+
 /** Session (me) et liste des villes, partagées par toutes les pages. */
 export const useApp = () => useContext(AppContext);
 
@@ -55,12 +58,12 @@ export function Shell({ children }) {
 
   return (
     <AppContext.Provider value={{ me, cities, loadMe, loadCities }}>
-      <div className="lights" aria-hidden="true" />
+      <div className="bulbs" aria-hidden="true">
+        {BULBS.map((i) => (
+          <i key={i} />
+        ))}
+      </div>
       <header className="site-header">
-        <p className="masthead-line">
-          <span>La loterie des villes</span>
-          <span>Réseau de test Sepolia</span>
-        </p>
         <div className="masthead-main">
           <a className="brand" href="/">
             <span className="brand-name">BlockLucky</span>
@@ -91,7 +94,7 @@ export function Shell({ children }) {
               <span key={copy} className="marquee-text">
                 {MARQUEE.map((item) => (
                   <span key={item}>
-                    {item} <span className="marquee-dot">◆</span>{" "}
+                    {item} <span className="marquee-dot">★</span>{" "}
                   </span>
                 ))}
               </span>

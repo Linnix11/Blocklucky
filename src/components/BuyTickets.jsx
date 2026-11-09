@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { STATE } from "../config";
 import { formatEth } from "../lib/format";
 
-/** Choix du nombre de tickets et achat. */
+const percent = (value) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: value < 10 ? 1 : 0 })} %`;
+
+/** Choix du nombre de jetons (1 jeton = 1 ticket) et achat avec le bouton « levier ». */
 export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConnect, now, allowed = true }) {
   const [quantity, setQuantity] = useState(1);
 
@@ -21,24 +23,25 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
   const balance = data.me?.balance;
   const notEnough = balance !== undefined && balance !== null && balance < cost;
   const totalTickets = data.tickets.length;
-  const chance = totalTickets > 0 && myTickets > 0 ? (myTickets / totalTickets) * 100 : null;
+  const chanceNow = totalTickets > 0 && myTickets > 0 ? (myTickets / totalTickets) * 100 : null;
+  const chanceAfter = ((myTickets + quantity) / (totalTickets + quantity)) * 100;
 
   let blocker = null;
   // L'inscription se vérifie avec l'adresse du portefeuille : on propose donc de le connecter avant de refuser.
-  if (!saleOpen) blocker = "La vente de tickets est fermée pour cette loterie.";
+  if (!saleOpen) blocker = "La vente est fermée pour cette loterie.";
   else if (!wallet.account) blocker = "connect";
   else if (!allowed) blocker = "not-allowed";
-  else if (wallet.wrongNetwork) blocker = `Passez votre portefeuille sur ${network.shortName} pour acheter.`;
-  else if (remaining === 0) blocker = `Vous avez déjà ${maxPerWallet} tickets, le maximum par portefeuille.`;
+  else if (wallet.wrongNetwork) blocker = `Passez votre portefeuille sur ${network.shortName} pour jouer.`;
+  else if (remaining === 0) blocker = `Vous avez déjà ${maxPerWallet} tickets, le maximum par personne.`;
 
   return (
-    <section className="panel" aria-labelledby="buy-title">
-      <h2 id="buy-title">Mes tickets</h2>
+    <section className="card buy" aria-labelledby="buy-title">
+      <h2 id="buy-title">{saleOpen ? "Combien de jetons ?" : "Mes tickets"}</h2>
 
-      {wallet.account && (
+      {wallet.account && myTickets > 0 && (
         <p className="my-tickets">
-          Vous avez <strong>{myTickets}</strong> ticket{myTickets > 1 ? "s" : ""} sur {maxPerWallet} possibles
-          {chance !== null && <>, soit {chance.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} % de chances de gagner</>}.
+          Vous avez <strong>{myTickets}</strong> ticket{myTickets > 1 ? "s" : ""} sur {maxPerWallet}
+          {chanceNow !== null && <>, soit {percent(chanceNow)} de chances de gagner</>}.
         </p>
       )}
 
@@ -46,10 +49,10 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
         <div className="stack">
           <p>
             {allowed
-              ? "Connectez votre portefeuille pour acheter des tickets."
+              ? "Connectez votre portefeuille MetaMask pour poser vos jetons."
               : "Réservé aux habitants inscrits par la mairie. Connectez le portefeuille déclaré à la mairie, ou connectez-vous avec votre mail."}
           </p>
-          <button type="button" className="btn btn-gold btn-block" onClick={onConnect} disabled={!wallet.available}>
+          <button type="button" className="btn btn-lever btn-block" onClick={onConnect} disabled={!wallet.available}>
             Connecter mon portefeuille
           </button>
           {!allowed && (
@@ -78,32 +81,33 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
             onBuy(quantity);
           }}
         >
-          <div className="stepper" role="group" aria-label="Nombre de tickets">
-            <button
-              type="button"
-              className="stepper-btn"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              disabled={quantity <= 1}
-              aria-label="Un ticket de moins"
-            >
-              −
-            </button>
-            <output className="stepper-value" aria-live="polite">
-              {quantity} ticket{quantity > 1 ? "s" : ""}
-            </output>
-            <button
-              type="button"
-              className="stepper-btn"
-              onClick={() => setQuantity((q) => Math.min(remaining, q + 1))}
-              disabled={quantity >= remaining}
-              aria-label="Un ticket de plus"
-            >
-              +
-            </button>
+          <p className="hint">1 jeton = 1 ticket = {formatEth(data.ticketPrice)} de test. {maxPerWallet} maximum par personne.</p>
+          <div className="chips" role="group" aria-label="Nombre de tickets">
+            {Array.from({ length: maxPerWallet }, (_, i) => i + 1).map((n) => (
+              <button
+                key={n}
+                type="button"
+                className={`chip chip-${((n - 1) % 5) + 1}`}
+                aria-pressed={quantity === n}
+                aria-label={`${n} ticket${n > 1 ? "s" : ""}`}
+                disabled={n > remaining}
+                onClick={() => setQuantity(n)}
+              >
+                <b>{n}</b>
+              </button>
+            ))}
           </div>
 
-          <button type="submit" className="btn btn-gold btn-block btn-lg" disabled={txInProgress || notEnough}>
-            Acheter pour {formatEth(cost)}
+          <p className="odds">
+            <span>Vos chances après l'achat</span>
+            <b>{percent(chanceAfter)}</b>
+          </p>
+
+          <button type="submit" className="btn btn-lever btn-block btn-lg" disabled={txInProgress || notEnough}>
+            <span>Tirer le levier</span>
+            <span className="btn-price">
+              {quantity} ticket{quantity > 1 ? "s" : ""} · {formatEth(cost)}
+            </span>
           </button>
 
           {notEnough && (
@@ -116,7 +120,7 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
               )}
             </p>
           )}
-          <p className="hint">Chaque ticket est une chance de plus. Les frais de réseau sont payés en ETH de test.</p>
+          <p className="hint center">MetaMask vous demandera de confirmer. Ethers fictifs, aucun vrai argent.</p>
         </form>
       )}
     </section>

@@ -1,82 +1,81 @@
-/* Hallmark · tokens · design-system: design.md
- * BlockLucky : une tombola de village, la nuit. Valeurs converties depuis la palette d'origine.
+/* BlockLucky · design-system: design.md (version 2, « machine à sous »)
+ * Toutes les couleurs, polices, tailles et durées du site.
  */
 :root {
-  /* Fond de nuit */
-  --color-night: oklch(21.2% 0.058 295);
-  --color-night-2: oklch(25.4% 0.07 296);
-  --color-night-3: oklch(31.1% 0.091 292);
-  --color-shadow: oklch(11% 0.04 295); /* ombres nettes sur fond nuit */
+  /* Salle de jeux, le soir */
+  --color-night: #120707;
+  --color-night-glow: #3a1010;
+  --color-panel: #261010;
+  --color-panel-2: #321515;
+  --color-line: #4f1f1f;
+  --color-shadow: #000000aa;
 
-  /* Texte sur la nuit */
-  --color-snow: oklch(95.7% 0.016 310);
-  --color-muted: oklch(76.3% 0.055 304);
+  /* Texte */
+  --color-cream: #fff4e0;
+  --color-cream-2: #e9dcc6;
+  --color-muted: #d9bba8;
+  --color-ink: #2a0f0f; /* texte sur or et sur crème */
+  --color-ink-soft: #6b3a2a;
 
-  /* Papier du billet */
-  --color-paper: oklch(96.8% 0.033 84);
-  --color-ink: oklch(23.8% 0.031 46);
-  --color-ink-soft: oklch(44% 0.057 56);
-  --color-ink-line: oklch(23.8% 0.031 46 / 0.15);
-  --color-ink-wash: oklch(23.8% 0.031 46 / 0.12);
-  --color-ink-perforation: oklch(23.8% 0.031 46 / 0.35);
+  /* Accents */
+  --color-gold: #ffcc33;
+  --color-gold-deep: #b97f00;
+  --color-red: #d81b24; /* 4,7:1 avec le crème */
+  --color-red-deep: #7d0c0c;
+  --color-mint: #3ee8a8;
+  --color-mint-wash: #0f2e22;
+  --color-danger: #ff8f7a;
+  --color-bulb-off: #5a2a14;
+  --color-lamp-off: #3c1b1b;
+  --color-reel-window: #0d0404;
+  --color-overlay: #0b0303e6;
 
-  /* Accents (duo-ton : jamais les deux dans le même bloc) */
-  --color-gold: oklch(82.1% 0.151 81);
-  --color-gold-hover: oklch(86.4% 0.141 83);
-  --color-gold-deep: oklch(68% 0.139 76);
-  --color-wine: oklch(50.6% 0.176 17);
-  --color-wine-hover: oklch(55.5% 0.188 17);
-  --color-on-wine: oklch(97.7% 0.019 75);
-
-  /* États */
-  --color-fir: oklch(56.9% 0.119 155);
-  --color-fir-halo: oklch(56.9% 0.119 155 / 0.3);
-  --color-danger: oklch(75.8% 0.145 29);
-  --color-overlay: oklch(13% 0.04 295 / 0.85);
+  /* Jetons */
+  --chip-1: #d81b24;
+  --chip-2: #1f8a5b;
+  --chip-3: #2659d9;
+  --chip-4: #7b2bd1;
+  --chip-5: #1a1a1a;
 
   /* Polices */
-  --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  --font-display: "Bungee", "Arial Black", sans-serif;
+  --font-logo: "Bungee Shade", "Bungee", "Arial Black", sans-serif;
   --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Tailles de texte */
+  /* Tailles */
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-md: 1.0625rem;
-  --text-lg: 1.375rem;
-  --text-xl: 1.75rem;
-  --text-2xl: 2.25rem;
-  --text-display-s: clamp(2rem, 7vw, 3.25rem);
-  --text-display: clamp(2.4rem, 9vw, 4.75rem);
-  --text-pot: clamp(3.4rem, 17vw, 6.25rem);
+  --text-lg: 1.25rem;
+  --text-xl: 1.6rem;
+  --text-title: clamp(1.7rem, 5.5vw, 2.6rem);
+  --text-jackpot: clamp(2.9rem, 12vw, 4.6rem);
 
-  /* Espacements (échelle de 4 px) */
+  /* Espacements (4 px) */
   --space-3xs: 0.25rem;
   --space-2xs: 0.5rem;
   --space-xs: 0.75rem;
   --space-sm: 1rem;
-  --space-md: 1.5rem;
-  --space-lg: 2rem;
-  --space-xl: 3rem;
-  --space-2xl: 4.5rem;
-  --space-3xl: 7rem;
+  --space-md: 1.25rem;
+  --space-lg: 1.75rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
   --gutter: 1rem;
 
   /* Formes */
-  --radius-ticket: 14px;
-  --radius-card: 6px;
-  --radius-control: 6px;
-  --rule: 2px;
-  --shadow-hard: 4px 4px 0 var(--color-shadow);
-  --shadow-button: 3px 3px 0 var(--color-shadow);
-  --shadow-ticket: 6px 6px 0 var(--color-wine);
-  --shadow-poster: 6px 6px 0 var(--color-wine);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-machine: 26px;
+  --radius-pill: 999px;
+  --frame: 5px;
+  --reel-height: 86px;
 
   /* Mouvement */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-short: 150ms;
-  --dur-marquee: 40s;
+  --dur-reel: 900ms;
 
   /* Plans */
   --z-toast: 40;
@@ -87,6 +86,6 @@
 
 @media (min-width: 700px) {
   :root {
-    --gutter: 1.5rem;
+    --gutter: 1.25rem;
   }
 }

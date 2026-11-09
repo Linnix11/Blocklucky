@@ -1,8 +1,5 @@
-/* Hallmark · genre: editorial (registre fête populaire) · design-system: design.md · designed-as-app
- * macrostructure: Marquee Hero (/) · Stat-Led (/ville) · poster (/connexion) · outils (/admin, /mairie)
- * theme: custom · vibe: tombola de village, la nuit · paper oklch(21.2% 0.058 295) · accents or oklch(82.1% 0.151 81) + lie-de-vin oklch(50.6% 0.176 17)
- * fonts: Bricolage Grotesque 800 (titres, capitales) + Atkinson Hyperlegible · nav: N6 masthead · footer: Ft8 marquee
- * Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4
+/* BlockLucky · design-system: design.md (version 2, « machine à sous »)
+ * Accueil : liste des villes · Ville : machine + achat · Connexion, admin, mairie : outils sobres.
  * Toutes les valeurs viennent de src/tokens.css. Mobile d'abord.
  */
 
@@ -27,8 +24,9 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--color-night);
-  color: var(--color-snow);
+  background: radial-gradient(ellipse 120% 60% at 50% -10%, var(--color-night-glow) 0%, var(--color-night) 60%) no-repeat,
+    var(--color-night);
+  color: var(--color-cream);
   font-family: var(--font-body);
   font-size: var(--text-md);
   line-height: 1.55;
@@ -42,28 +40,20 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
+  font-weight: 400;
   font-style: normal;
-  line-height: 1.05;
+  line-height: 1.1;
   margin: 0 0 0.5em;
   overflow-wrap: anywhere;
   min-width: 0;
 }
 
-h1,
 h2 {
-  text-transform: uppercase;
-}
-
-h2 {
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-size: var(--text-lg);
 }
 
 h3 {
-  font-size: var(--text-lg);
-  font-weight: 800;
-  line-height: 1.15;
+  font-size: var(--text-md);
 }
 
 p {
@@ -79,46 +69,66 @@ a {
 :focus-visible {
   outline: 3px solid var(--color-gold);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
-/* ---------- Guirlande ---------- */
-.lights {
-  height: 12px;
-  background: radial-gradient(circle at 12px 5px, var(--color-gold) 3px, transparent 4px) 0 0 / 48px 12px repeat-x,
-    radial-gradient(circle at 36px 7px, var(--color-wine) 3px, transparent 4px) 0 0 / 48px 12px repeat-x;
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
-/* ---------- En-tête façon journal (N6) ---------- */
+/* ---------- Ampoules de l'enseigne ---------- */
+.bulbs {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  padding: var(--space-2xs) var(--space-xs) 0;
+  overflow: hidden;
+}
+
+.bulbs i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-bulb-off);
+}
+
+.bulbs i:nth-child(3n + 1) {
+  animation: chase 1.2s steps(1) infinite;
+}
+
+.bulbs i:nth-child(3n + 2) {
+  animation: chase 1.2s steps(1) 0.4s infinite;
+}
+
+.bulbs i:nth-child(3n) {
+  animation: chase 1.2s steps(1) 0.8s infinite;
+}
+
+@keyframes chase {
+  0%,
+  33% {
+    background: var(--color-gold);
+    box-shadow: 0 0 8px var(--color-gold);
+  }
+  34%,
+  100% {
+    background: var(--color-bulb-off);
+    box-shadow: none;
+  }
+}
+
+/* ---------- En-tête ---------- */
 .site-header {
   max-width: 1120px;
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-xs) var(--gutter) 0;
-}
-
-.masthead-line {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  margin: 0;
-  padding-bottom: var(--space-2xs);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-
-.masthead-line span {
-  white-space: nowrap;
-}
-
-/* Sur petit écran, une seule mention : le réseau est déjà rappelé sur chaque page de ville. */
-@media (max-width: 559px) {
-  .masthead-line span + span {
-    display: none;
-  }
+  padding: var(--space-xs) var(--gutter);
 }
 
 .masthead-main {
@@ -127,11 +137,6 @@ a {
   justify-content: space-between;
   gap: var(--space-xs) var(--space-sm);
   flex-wrap: wrap;
-  padding: var(--space-xs) 0;
-  border-top: var(--rule) solid var(--color-gold);
-  border-bottom: var(--rule) solid var(--color-gold);
-  /* double filet : un second trait sous le premier */
-  box-shadow: 0 4px 0 -2px var(--color-night), 0 6px 0 -2px var(--color-gold);
 }
 
 a.brand {
@@ -140,12 +145,9 @@ a.brand {
 }
 
 .brand-name {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1.6rem, 7vw, 2.6rem);
+  font-family: var(--font-logo);
+  font-size: clamp(1.4rem, 6vw, 1.9rem);
   line-height: 1;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
   color: var(--color-gold);
 }
 
@@ -154,15 +156,26 @@ a.brand {
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 0 var(--space-sm);
+  gap: var(--space-2xs) var(--space-sm);
   font-weight: 700;
 }
 
 .account-nav a {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 40px;
+  padding: 0 var(--space-sm);
+  border: 2px solid var(--color-gold);
+  border-radius: var(--radius-pill);
+  color: var(--color-cream);
+  text-decoration: none;
   white-space: nowrap;
+  transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+}
+
+.account-nav a:hover {
+  background: var(--color-gold);
+  color: var(--color-ink);
 }
 
 .account-email {
@@ -176,7 +189,7 @@ a.brand {
   max-width: 1120px;
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-md) var(--gutter) var(--space-2xl);
+  padding: var(--space-sm) var(--gutter) var(--space-2xl);
 }
 
 .page-narrow {
@@ -184,28 +197,22 @@ a.brand {
 }
 
 .intro {
-  margin: var(--space-xs) 0 var(--space-lg);
+  margin: 0 0 var(--space-md);
 }
 
 .intro h1 {
-  font-size: var(--text-display);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  max-width: 16ch;
-  margin-bottom: var(--space-sm);
+  font-size: var(--text-title);
+  margin: var(--space-2xs) 0 var(--space-2xs);
 }
 
-/* Les titres longs (plus de 50 caractères) descendent d'un cran. */
 .intro h1.is-long {
-  font-size: var(--text-display-s);
-  max-width: 20ch;
+  font-size: clamp(1.4rem, 4.5vw, 2rem);
 }
 
 .network-tag {
   color: var(--color-muted);
   font-size: var(--text-sm);
-  max-width: 60ch;
+  max-width: 62ch;
 }
 
 .network-tag a {
@@ -215,32 +222,28 @@ a.brand {
   font-weight: 700;
 }
 
-.lead {
-  max-width: 62ch;
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: 0 0 var(--space-2xs);
+  color: var(--color-mint);
+  font-weight: 700;
 }
 
-.play-grid {
-  display: grid;
-  gap: var(--space-md);
-  align-items: start;
+.live-badge::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-mint);
+  box-shadow: 0 0 8px var(--color-mint);
+  animation: pulse 1.6s infinite;
 }
 
-.play-side {
-  display: grid;
-  gap: var(--space-sm);
-}
-
-/* Vente ouverte, sur mobile : l'achat d'abord, le billet ensuite. */
-@media (max-width: 899px) {
-  .play-grid.is-selling .play-side {
-    order: -1;
-  }
-}
-
-@media (min-width: 900px) {
-  .play-grid {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    gap: var(--space-lg);
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
   }
 }
 
@@ -249,13 +252,7 @@ a.brand {
   gap: var(--space-xs);
 }
 
-/* Les enfants de grille peuvent rétrécir sous leur contenu (pas de débordement à 320 px). */
-.play-grid > *,
-.play-side > *,
-.stack > *,
-.admin-grid > *,
-.transparency-grid > *,
-.how-layout > * {
+.stack > * {
   min-width: 0;
 }
 
@@ -269,6 +266,10 @@ a.brand {
   margin: 0;
 }
 
+.hint.center {
+  text-align: center;
+}
+
 .field-error,
 .form-error {
   color: var(--color-danger);
@@ -280,222 +281,251 @@ a.brand {
   color: var(--color-gold);
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-/* ---------- Le billet de tombola (pièce maîtresse, Stat-Led) ---------- */
-.ticket {
-  --notch: 14px;
-  position: relative;
+/* ---------- Page de ville : la machine à gauche, l'achat à droite ---------- */
+.play-grid {
   display: flex;
   flex-direction: column;
-  background: var(--color-paper);
+  gap: var(--space-md);
+}
+
+.play-grid > *,
+.play-side > * {
+  min-width: 0;
+}
+
+/* Sur mobile, la colonne de droite s'efface pour que l'achat puisse passer avant la machine. */
+.play-side {
+  display: contents;
+}
+
+.play-grid.is-selling .buy {
+  order: -1;
+}
+
+@media (min-width: 900px) {
+  .play-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: var(--space-lg);
+    align-items: start;
+  }
+  .play-side {
+    display: grid;
+    gap: var(--space-sm);
+  }
+  .play-grid.is-selling .buy {
+    order: 0;
+  }
+}
+
+/* ---------- La machine ---------- */
+.cabinet {
+  position: relative;
+  margin: var(--space-md) 34px 0 0; /* place pour l'enseigne au-dessus et le levier à droite */
+}
+
+.machine {
+  background: linear-gradient(var(--color-panel-2), var(--color-panel));
+  border: var(--frame) solid var(--color-gold);
+  border-radius: var(--radius-machine) var(--radius-machine) var(--radius-lg) var(--radius-lg);
+  padding: var(--space-sm);
+  box-shadow: 0 10px 0 var(--color-gold-deep), 0 20px 40px var(--color-shadow);
+}
+
+.topper {
+  width: max-content;
+  max-width: 100%;
+  margin: calc(var(--space-lg) * -1 - var(--frame)) auto var(--space-xs);
+  padding: var(--space-3xs) var(--space-sm);
+  background: var(--color-gold);
   color: var(--color-ink);
-  border-radius: var(--radius-ticket);
-  box-shadow: var(--shadow-ticket);
-  overflow: hidden;
-  margin-right: 6px; /* laisse la place à l'ombre nette */
-}
-
-.ticket a {
-  color: var(--color-wine);
-}
-
-.ticket :focus-visible {
-  outline-color: var(--color-ink);
-}
-
-.ticket-main {
-  padding: var(--space-md) var(--space-md) var(--space-sm);
-}
-
-.ticket-kicker {
-  font-weight: 700;
-  font-size: var(--text-sm);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-wine);
-  margin-bottom: var(--space-3xs);
-}
-
-.pot-label {
-  font-size: var(--text-md);
-  letter-spacing: 0.06em;
-  margin: 0;
-  color: var(--color-ink-soft);
-}
-
-.pot-amount {
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 0 var(--color-gold-deep);
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--text-pot);
-  line-height: 0.9;
-  letter-spacing: -0.03em;
-  margin: var(--space-3xs) 0 var(--space-xs);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.jackpot {
+  font-family: var(--font-display);
+  font-size: var(--text-jackpot);
+  line-height: 1;
+  text-align: center;
+  margin: var(--space-2xs) 0 var(--space-3xs);
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px var(--color-red), 0 4px 0 var(--color-shadow);
   overflow-wrap: anywhere;
 }
 
-.pot-unit {
-  font-size: 0.3em;
-  letter-spacing: 0.04em;
-  margin-left: 0.25em;
-  color: var(--color-wine);
+.jackpot small {
+  font-size: 0.38em;
+  margin-left: 0.3em;
+  color: var(--color-gold);
+  text-shadow: none;
 }
 
-.pot-rule {
+.jackpot-sub {
+  text-align: center;
+  color: var(--color-muted);
   font-size: var(--text-sm);
-  color: var(--color-ink);
-  max-width: 40ch;
+  margin: 0 0 var(--space-sm);
 }
 
-.ticket-facts {
+.reels {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-xs) var(--space-sm);
-  margin: var(--space-sm) 0 0;
-  padding-top: var(--space-sm);
-  border-top: var(--rule) solid var(--color-ink);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2xs);
+  padding: var(--space-2xs);
+  background: var(--color-reel-window);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 3px #000, inset 0 10px 20px #000;
 }
 
-.fact dt {
+.reel {
+  min-height: var(--reel-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xs) var(--space-3xs);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(var(--color-cream-2), var(--color-cream) 30%, var(--color-cream) 70%, var(--color-cream-2));
+  color: var(--color-red);
+  text-align: center;
+}
+
+.reel-value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 6vw, 1.9rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  animation: reel-spin var(--dur-reel) var(--ease-out);
+}
+
+.reel-label {
+  display: block;
+  margin-top: var(--space-3xs);
   font-size: var(--text-xs);
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  line-height: 1.2;
   color: var(--color-ink-soft);
 }
 
-.fact dd {
-  margin: 0;
-  font-weight: 700;
-  font-size: var(--text-lg);
-  font-variant-numeric: tabular-nums;
-}
-
-.fact-wide {
-  grid-column: 1 / -1;
-}
-
-.progress {
-  display: block;
-  height: 10px;
-  margin-top: var(--space-2xs);
-  border: var(--rule) solid var(--color-ink);
-  border-radius: 2px;
-  background: var(--color-paper);
-  overflow: hidden;
-}
-
-.progress-bar {
-  display: block;
-  height: 100%;
-  background: var(--color-wine);
-}
-
-/* Talon détachable : ligne perforée et deux encoches */
-.ticket-stub {
-  position: relative;
-  padding: var(--space-sm) var(--space-md) var(--space-md);
-  background: var(--color-gold);
-  border-top: 3px dashed var(--color-ink-perforation);
-}
-
-.ticket-stub::before,
-.ticket-stub::after {
-  content: "";
-  position: absolute;
-  top: calc(var(--notch) * -1 - 1.5px);
-  width: calc(var(--notch) * 2);
-  height: calc(var(--notch) * 2);
-  border-radius: 50%;
-  background: var(--color-night);
-}
-
-.ticket-stub::before {
-  left: calc(var(--notch) * -1);
-}
-
-.ticket-stub::after {
-  right: calc(var(--notch) * -1);
-}
-
-.stub-title {
-  font-weight: 700;
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.stub-value {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--text-lg);
-  line-height: 1.1;
-  text-transform: uppercase;
-  margin: var(--space-3xs) 0 0;
-}
-
-.stub-value.is-clock {
-  font-size: var(--text-2xl);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-
-.stub-number {
-  margin: var(--space-2xs) 0 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
+.reel.is-live .reel-value {
   color: var(--color-ink);
 }
 
-@media (min-width: 560px) {
-  .ticket {
-    flex-direction: row;
+/* Le chiffre arrive par le haut, comme un rouleau qui s'arrête. */
+@keyframes reel-spin {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
   }
-  .ticket-main {
-    flex: 1;
-    padding: var(--space-lg);
+  60% {
+    transform: translateY(8%);
+    opacity: 1;
   }
-  .ticket-stub {
-    width: 34%;
-    min-width: 180px;
-    border-top: none;
-    border-left: 3px dashed var(--color-ink-perforation);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .ticket-stub::before,
-  .ticket-stub::after {
-    left: calc(var(--notch) * -1 - 1.5px);
-    right: auto;
-  }
-  .ticket-stub::before {
-    top: calc(var(--notch) * -1);
-  }
-  .ticket-stub::after {
-    top: auto;
-    bottom: calc(var(--notch) * -1);
+  100% {
+    transform: none;
   }
 }
 
-.ticket-loading .ticket-stub {
-  min-height: 80px;
+.rail {
+  margin-top: var(--space-sm);
+}
+
+.rail p {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.rail b {
+  color: var(--color-cream);
+  font-variant-numeric: tabular-nums;
+}
+
+.lamps {
+  display: flex;
+  gap: 3px;
+}
+
+.lamps i {
+  flex: 1;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--color-lamp-off);
+}
+
+.lamps i.on {
+  background: var(--color-gold);
+  box-shadow: 0 0 6px var(--color-gold);
+}
+
+.rail .machine-price {
+  margin: var(--space-xs) 0 0;
+}
+
+/* Levier décoratif sur le côté */
+.lever {
+  position: absolute;
+  top: 70px;
+  right: -34px;
+  width: 30px;
+  height: 160px;
+}
+
+.lever-base {
+  position: absolute;
+  left: 4px;
+  bottom: 6px;
+  width: 22px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--color-gold-deep);
+}
+
+.lever-rod {
+  position: absolute;
+  left: 12px;
+  top: 18px;
+  width: 7px;
+  height: 120px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--color-cream-2), var(--color-cream), var(--color-muted));
+  transform-origin: bottom center;
+  transition: transform 0.35s var(--ease-out);
+}
+
+.lever-knob {
+  position: absolute;
+  left: -8px;
+  top: -18px;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--color-danger), var(--color-red) 55%, var(--color-red-deep));
+}
+
+.cabinet.is-pulling .lever-rod {
+  transform: scaleY(-0.6);
+}
+
+.cabinet.is-loading .machine {
+  min-height: 300px;
 }
 
 .skeleton {
   height: 18px;
-  border-radius: 2px;
-  background: var(--color-ink-wash);
-  margin: var(--space-xs) 0;
+  margin: var(--space-xs) auto;
+  border-radius: var(--radius-sm);
+  background: var(--color-line);
 }
 
 .skeleton-big {
@@ -503,35 +533,24 @@ a.brand {
   width: 70%;
 }
 
-/* ---------- Panneaux (fond nuit, plats) ---------- */
+/* ---------- Cartes ---------- */
+.card,
 .panel {
-  background: var(--color-night-2);
-  border: var(--rule) solid var(--color-night-3);
-  border-radius: var(--radius-card);
-  padding: var(--space-sm);
+  background: var(--color-panel);
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
 }
 
+.card > :last-child,
 .panel > :last-child {
   margin-bottom: 0;
 }
 
-.panel h2 {
-  font-size: var(--text-lg);
-}
-
-/* Écrans d'une seule carte (accès réservé, ville introuvable) : le titre de page est dans la carte. */
-.panel h1 {
-  font-size: var(--text-display-s);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-/* Tirage : aplat lie-de-vin, texte crème, aucun or dans le bloc */
+/* Tirage : carte rouge (pas d'or dedans) */
 .panel-draw {
-  background: var(--color-wine);
-  border-color: var(--color-wine);
-  color: var(--color-on-wine);
-  box-shadow: var(--shadow-hard);
+  background: var(--color-red-deep);
+  border-color: var(--color-red);
 }
 
 .panel-draw h2 {
@@ -541,20 +560,16 @@ a.brand {
 }
 
 .panel-draw .hint {
-  color: var(--color-on-wine);
-}
-
-.panel-draw :focus-visible {
-  outline-color: var(--color-on-wine);
+  color: var(--color-cream);
 }
 
 .panel-prize {
   border-color: var(--color-gold);
-  box-shadow: var(--shadow-hard);
+  box-shadow: 0 0 0 2px var(--color-gold), 0 0 24px var(--color-gold-deep);
 }
 
 .panel-result {
-  border-color: var(--color-fir);
+  border-color: var(--color-mint);
 }
 
 .panel-admin {
@@ -563,9 +578,140 @@ a.brand {
 
 .panel-admin h3 {
   margin: var(--space-2xs) 0 0;
-  font-size: var(--text-md);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+}
+
+.panel h1 {
+  font-size: var(--text-xl);
+}
+
+/* ---------- Achat : jetons, chances, levier ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.chip {
+  --chip: var(--chip-1);
+  position: relative;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background: repeating-conic-gradient(var(--chip) 0 30deg, var(--color-cream) 30deg 45deg);
+  box-shadow: 0 4px 0 var(--color-shadow);
+  transition: transform var(--dur-short) var(--ease-out);
+}
+
+.chip-2 {
+  --chip: var(--chip-2);
+}
+
+.chip-3 {
+  --chip: var(--chip-3);
+}
+
+.chip-4 {
+  --chip: var(--chip-4);
+}
+
+.chip-5 {
+  --chip: var(--chip-5);
+}
+
+.chip::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: var(--chip);
+  border: 2px dashed var(--color-cream);
+  opacity: 1;
+}
+
+.chip b {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-lg);
+  color: var(--color-cream);
+}
+
+.chip:hover:not(:disabled),
+.chip[aria-pressed="true"] {
+  transform: translateY(-3px);
+}
+
+.chip[aria-pressed="true"] {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 4px;
+}
+
+.chip:focus-visible {
+  outline: 3px solid var(--color-cream);
+  outline-offset: 4px;
+}
+
+.chip:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+/* Petits écrans : les 5 jetons tiennent sur une ligne. */
+@media (max-width: 420px) {
+  .chips {
+    gap: var(--space-2xs);
+  }
+  .chip {
+    width: 48px;
+    height: 48px;
+  }
+  .chip::after {
+    inset: 7px;
+  }
+}
+
+@media (max-width: 359px) {
+  .chips {
+    gap: 6px;
+  }
+  .chip {
+    width: 42px;
+    height: 42px;
+  }
+  .chip::after {
+    inset: 6px;
+  }
+  .chip b {
+    font-size: var(--text-md);
+  }
+}
+
+.odds {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: var(--space-xs);
+  border-radius: var(--radius-md);
+  background: var(--color-panel-2);
+  font-size: var(--text-sm);
+}
+
+.odds b {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-lg);
+  color: var(--color-mint);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Boutons ---------- */
@@ -576,8 +722,8 @@ a.brand {
   gap: var(--space-2xs);
   min-height: 46px;
   padding: var(--space-2xs) var(--space-md);
-  border: var(--rule) solid transparent;
-  border-radius: var(--radius-control);
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
   font: inherit;
   font-weight: 700;
   text-decoration: none;
@@ -585,7 +731,7 @@ a.brand {
   white-space: nowrap;
   cursor: pointer;
   transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out),
-    transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+    transform 0.1s var(--ease-out), box-shadow 0.1s var(--ease-out);
 }
 
 .btn:disabled {
@@ -593,44 +739,77 @@ a.brand {
   opacity: 0.5;
 }
 
+/* Le levier : bouton principal rouge en relief */
+.btn-lever {
+  background: var(--color-red);
+  color: var(--color-cream);
+  font-family: var(--font-display);
+  font-weight: 400;
+  box-shadow: 0 6px 0 var(--color-red-deep);
+}
+
+/* Bouton d'achat : « Tirer le levier » en grand, le prix en dessous (deux lignes voulues, jamais coupées). */
+.btn-lever.btn-lg {
+  flex-direction: column;
+  gap: 0;
+  padding-block: var(--space-2xs);
+  line-height: 1.15;
+}
+
+.btn-price {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.btn-lever:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn-lever:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--color-red-deep);
+}
+
+.btn-lever:focus-visible,
+.btn-gold:focus-visible {
+  outline-color: var(--color-cream);
+}
+
 .btn-gold {
   background: var(--color-gold);
   color: var(--color-ink);
-  box-shadow: var(--shadow-button);
+  box-shadow: 0 5px 0 var(--color-gold-deep);
 }
 
 .btn-gold:hover:not(:disabled) {
-  background: var(--color-gold-hover);
+  filter: brightness(1.06);
+}
+
+.btn-gold:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--color-gold-deep);
 }
 
 .btn-wine {
-  background: var(--color-wine);
-  color: var(--color-on-wine);
-  box-shadow: var(--shadow-button);
+  background: var(--color-red);
+  color: var(--color-cream);
+  box-shadow: 0 5px 0 var(--color-red-deep);
 }
 
-.btn-wine:hover:not(:disabled) {
-  background: var(--color-wine-hover);
-}
-
-.btn-gold:active:not(:disabled),
 .btn-wine:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--color-shadow);
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--color-red-deep);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--color-snow);
-  border-color: var(--color-night-3);
+  color: var(--color-cream);
+  border-color: var(--color-line);
 }
 
 .btn-ghost:hover:not(:disabled) {
   border-color: var(--color-gold);
-}
-
-.btn-ghost:active:not(:disabled) {
-  transform: translateY(1px);
 }
 
 .btn-block {
@@ -638,7 +817,7 @@ a.brand {
 }
 
 .btn-lg {
-  min-height: 54px;
+  min-height: 58px;
   font-size: var(--text-lg);
 }
 
@@ -665,61 +844,25 @@ a.brand {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2xs);
-  padding: var(--space-2xs) var(--space-xs);
-  border: var(--rule) solid var(--color-night-3);
-  border-radius: 999px;
-  background: var(--color-night-2);
+  padding: var(--space-2xs) var(--space-sm) var(--space-2xs) var(--space-2xs);
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-panel);
   font-size: var(--text-sm);
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .wallet-dot {
-  width: 8px;
-  height: 8px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: var(--color-fir);
-  box-shadow: 0 0 0 3px var(--color-fir-halo);
+  background: conic-gradient(var(--color-gold), var(--color-red), var(--color-gold));
 }
 
 .wallet-balance {
   color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- Choix de la quantité ---------- */
-.stepper {
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) 54px;
-  align-items: center;
-  border: var(--rule) solid var(--color-night-3);
-  border-radius: var(--radius-control);
-  overflow: hidden;
-}
-
-.stepper-btn {
-  height: 54px;
-  border: none;
-  background: var(--color-night-3);
-  color: var(--color-snow);
-  font-size: var(--text-xl);
-  cursor: pointer;
-  transition: background-color var(--dur-short) var(--ease-out);
-}
-
-.stepper-btn:hover:not(:disabled) {
-  background: var(--color-night);
-}
-
-.stepper-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.stepper-value {
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--text-lg);
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
 
@@ -729,10 +872,10 @@ a.brand {
   gap: var(--space-xs);
   align-items: center;
   padding: var(--space-sm);
-  margin-bottom: var(--space-md);
-  border-radius: var(--radius-card);
-  background: var(--color-night-2);
-  border: var(--rule) solid var(--color-gold-deep);
+  margin: 0 0 var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  border: 2px solid var(--color-gold-deep);
 }
 
 .notice p {
@@ -749,153 +892,88 @@ a.brand {
   }
 }
 
-/* ---------- Titres de section publics : losange or devant ---------- */
-.how h2::before,
-.transparency h2::before,
-.city-list-title::before {
-  content: "◆";
-  display: inline-block;
-  margin-right: 0.4em;
-  font-size: 0.7em;
-  vertical-align: 0.12em;
-}
-
-.transparency h2::before,
-.city-list-title::before {
-  color: var(--color-gold);
-}
-
-/* ---------- Comment ça marche : aplat or qui déborde de la marge ---------- */
-.how {
-  --on-block: var(--color-ink);
-  margin: var(--space-2xl) calc(var(--gutter) * -1) 0;
-  padding: var(--space-xl) var(--gutter);
-  background: var(--color-gold);
-  color: var(--on-block);
-}
-
-.how a {
-  color: var(--on-block);
-}
-
-.how :focus-visible {
-  outline-color: var(--on-block);
-}
-
-@media (min-width: 1168px) {
-  /* Sur grand écran, l'aplat dépasse de 24 px de chaque côté de la colonne. */
-  .how {
-    margin-inline: calc(var(--space-md) * -1);
-    padding-inline: var(--space-md);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-hard);
-  }
-}
-
-.how-layout {
-  display: grid;
-  gap: var(--space-lg);
-  align-items: start;
-  margin-top: var(--space-md);
-}
-
+/* ---------- Comment ça marche ---------- */
 .steps {
   list-style: none;
   counter-reset: step;
   padding: 0;
-  margin: 0;
-  max-width: 62ch;
+  margin: 0 0 var(--space-sm);
+  display: grid;
+  gap: var(--space-xs);
 }
 
 .steps li {
   counter-increment: step;
   display: grid;
-  grid-template-columns: 3rem minmax(0, 1fr);
+  grid-template-columns: 34px minmax(0, 1fr);
   column-gap: var(--space-xs);
-  padding: var(--space-sm) 0;
-  border-top: var(--rule) solid var(--on-block);
-}
-
-.steps li:first-child {
-  padding-top: 0;
-  border-top: none;
+  font-size: var(--text-sm);
 }
 
 .steps li::before {
   content: counter(step);
   grid-row: span 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--color-gold);
+  color: var(--color-ink);
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--text-2xl);
-  line-height: 0.9;
-  font-variant-numeric: tabular-nums;
 }
 
-.steps h3 {
-  margin-bottom: var(--space-3xs);
+.steps strong {
+  font-size: var(--text-md);
 }
 
-.steps p {
-  margin: 0;
-}
-
-@media (min-width: 900px) {
-  .how-layout {
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    gap: var(--space-xl);
-  }
+.steps span {
+  color: var(--color-muted);
 }
 
 .tutorial {
-  border: var(--rule) solid var(--on-block);
-  border-radius: var(--radius-card);
-  padding: 0 var(--space-sm);
+  border-top: 2px solid var(--color-line);
 }
 
 .tutorial summary {
   cursor: pointer;
-  padding: var(--space-xs) 0;
-  font-weight: 700;
   min-height: 44px;
+  padding: var(--space-xs) 0 0;
+  font-weight: 700;
 }
 
 .tutorial ol {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-sm);
+  margin: var(--space-xs) 0 0;
+  padding-left: 1.2em;
+  font-size: var(--text-sm);
 }
 
 .tutorial li {
-  position: relative;
-  padding-left: 1.4em;
   margin-bottom: var(--space-2xs);
-}
-
-.tutorial li::before {
-  content: "❋";
-  position: absolute;
-  left: 0;
 }
 
 /* ---------- Transparence ---------- */
 .transparency {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-2xl);
 }
 
-/* Séparateur d'ornements avant la section */
-.transparency::before {
-  content: "✱ ✱ ✱ ✱";
-  display: block;
-  text-align: center;
-  letter-spacing: 0.6em;
-  color: var(--color-gold);
-  margin-bottom: var(--space-xl);
+.transparency > h2 {
+  font-size: var(--text-xl);
+}
+
+.lead {
+  max-width: 62ch;
+  color: var(--color-muted);
 }
 
 .transparency-grid {
   display: grid;
   gap: var(--space-sm);
   margin-top: var(--space-md);
+}
+
+.transparency-grid > * {
+  min-width: 0;
 }
 
 @media (min-width: 900px) {
@@ -908,9 +986,9 @@ a.brand {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   overflow-wrap: anywhere;
-  background: var(--color-night);
+  background: var(--color-reel-window);
   padding: var(--space-2xs) var(--space-xs);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .players {
@@ -936,8 +1014,8 @@ a.brand {
 
 .players-bar {
   height: 10px;
-  border-radius: 2px;
-  background: var(--color-night-3);
+  border-radius: 3px;
+  background: var(--color-lamp-off);
   overflow: hidden;
 }
 
@@ -963,7 +1041,7 @@ a.brand {
 
 .activity li {
   padding: var(--space-2xs) 0;
-  border-bottom: var(--rule) solid var(--color-night-3);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .activity li:last-child {
@@ -988,16 +1066,13 @@ a.brand {
 .data-table td {
   text-align: left;
   padding: var(--space-2xs) var(--space-xs) var(--space-2xs) 0;
-  border-bottom: var(--rule) solid var(--color-night-3);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .history th,
 .data-table th {
   color: var(--color-muted);
   font-weight: 700;
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .data-table td {
@@ -1008,18 +1083,18 @@ a.brand {
   overflow-x: auto;
 }
 
-/* ---------- Accueil : l'index des villes ---------- */
+/* ---------- Accueil : les villes ---------- */
 .city-list-title {
-  font-size: var(--text-lg);
-  margin: 0 0 var(--space-sm);
+  margin: var(--space-lg) 0 var(--space-sm);
 }
 
 .city-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-width: 860px;
-  border-bottom: var(--rule) solid var(--color-gold);
+  max-width: 820px;
+  display: grid;
+  gap: var(--space-xs);
 }
 
 .city-row {
@@ -1027,105 +1102,85 @@ a.brand {
   grid-template-columns: minmax(0, 1fr) auto;
   column-gap: var(--space-sm);
   row-gap: var(--space-3xs);
-  align-items: baseline;
-  padding: var(--space-sm) var(--space-2xs);
-  border-top: var(--rule) solid var(--color-gold);
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-panel);
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-lg);
   color: inherit;
   text-decoration: none;
-  transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+  transition: border-color var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
 }
 
-/* Au survol, la ligne devient un aplat or (comme une affiche qu'on retourne). */
 .city-row:hover {
-  background: var(--color-gold);
-  color: var(--color-ink);
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
 }
 
 .city-row:active {
-  background: var(--color-gold-hover);
-  color: var(--color-ink);
+  transform: none;
 }
 
-.city-row:hover .city-status,
-.city-row:active .city-status {
-  color: var(--color-ink);
-}
-
-.city-row:focus-visible {
-  outline-offset: 0;
+/* La ville où l'on peut jouer s'allume. */
+.city-row.is-live {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 2px var(--color-gold-deep), 0 0 22px var(--color-gold-deep);
 }
 
 .city-name {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  line-height: 1.05;
-  text-transform: uppercase;
+  font-size: var(--text-lg);
+  line-height: 1.1;
   overflow-wrap: anywhere;
   min-width: 0;
 }
 
 .city-pot {
+  grid-row: 1;
+  grid-column: 2;
   font-family: var(--font-display);
-  font-weight: 800;
   font-size: var(--text-lg);
+  color: var(--color-gold);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   text-align: right;
-  grid-row: 1;
-  grid-column: 2;
 }
 
 .city-status {
   grid-column: 1 / -1;
   font-size: var(--text-sm);
-  font-weight: 700;
   color: var(--color-muted);
   font-variant-numeric: tabular-nums;
 }
 
 .city-status-open {
-  color: var(--color-gold);
+  color: var(--color-mint);
+  font-weight: 700;
+}
+
+.city-status-open::before {
+  content: "● ";
 }
 
 .city-status-draw {
-  color: var(--color-snow);
+  color: var(--color-cream);
 }
 
-@media (min-width: 700px) {
-  .city-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) 8rem;
-    padding: var(--space-md) var(--space-xs);
-  }
-  .city-status {
-    grid-column: auto;
-  }
-  .city-pot {
-    grid-row: auto;
-    grid-column: auto;
-  }
-}
-
-/* ---------- Connexion : une affiche ---------- */
+/* ---------- Connexion ---------- */
 .page-narrow .panel {
-  background: var(--color-night-2);
   border-color: var(--color-gold);
-  box-shadow: var(--shadow-poster);
-  padding: var(--space-md);
-  margin-right: 6px;
+  box-shadow: 0 8px 0 var(--color-gold-deep);
 }
 
-.page-narrow .panel h1 {
-  font-size: var(--text-display-s);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-/* ---------- Formulaires (connexion, admin, mairie) ---------- */
+/* ---------- Admin et mairie ---------- */
 .admin-grid {
   display: grid;
   gap: var(--space-sm);
   align-items: start;
+}
+
+.admin-grid > * {
+  min-width: 0;
 }
 
 @media (min-width: 900px) {
@@ -1168,10 +1223,10 @@ a.brand {
 .search-input {
   font: inherit;
   font-weight: 400;
-  color: var(--color-snow);
-  background: var(--color-night);
-  border: var(--rule) solid var(--color-night-3);
-  border-radius: var(--radius-control);
+  color: var(--color-cream);
+  background: var(--color-reel-window);
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-md);
   padding: var(--space-2xs) var(--space-xs);
   min-height: 46px;
   transition: border-color var(--dur-short) var(--ease-out);
@@ -1234,7 +1289,7 @@ a.brand {
 }
 
 .file-input:focus-within .btn {
-  outline: 3px solid var(--color-snow);
+  outline: 3px solid var(--color-cream);
   outline-offset: 3px;
 }
 
@@ -1264,7 +1319,7 @@ a.brand {
   justify-content: space-between;
   align-items: center;
   gap: var(--space-xs);
-  border-bottom: var(--rule) solid var(--color-night-3);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .participant-list span {
@@ -1272,7 +1327,7 @@ a.brand {
   min-width: 0;
 }
 
-/* ---------- Annonce du gagnant ---------- */
+/* ---------- Annonce du gagnant : JACKPOT ! ---------- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -1286,34 +1341,32 @@ a.brand {
 .winner-card {
   width: min(460px, 100%);
   text-align: center;
-  background: var(--color-paper);
-  color: var(--color-ink);
-  border-radius: var(--radius-ticket);
+  background: radial-gradient(circle at 50% 30%, var(--color-panel-2), var(--color-panel));
+  border: var(--frame) solid var(--color-gold);
+  border-radius: var(--radius-machine);
   padding: var(--space-xl) var(--space-md) var(--space-md);
-  border-top: 10px solid var(--color-wine);
-  box-shadow: var(--shadow-ticket);
+  box-shadow: 0 10px 0 var(--color-gold-deep);
   animation: winner-in 0.4s var(--ease-out);
 }
 
-.winner-card :focus-visible {
-  outline-color: var(--color-ink);
-}
-
 .winner-kicker {
-  color: var(--color-wine);
+  color: var(--color-muted);
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
-.winner-card h2 {
-  font-size: var(--text-2xl);
+.winner-title {
+  font-family: var(--font-logo);
+  font-size: clamp(2rem, 9vw, 2.8rem);
+  color: var(--color-gold);
+}
+
+.winner-reels {
+  margin: var(--space-sm) 0;
 }
 
 .winner-prize {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(2.4rem, 12vw, 3.5rem);
+  font-size: clamp(1.8rem, 8vw, 2.4rem);
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
@@ -1348,11 +1401,11 @@ a.brand {
   max-width: 480px;
   margin: 0 auto;
   padding: var(--space-sm);
-  border-radius: var(--radius-card);
-  background: var(--color-paper);
+  border-radius: var(--radius-lg);
+  background: var(--color-cream);
   color: var(--color-ink);
-  border: var(--rule) solid var(--color-ink);
-  box-shadow: var(--shadow-hard);
+  border: 3px solid var(--color-gold);
+  box-shadow: 0 6px 0 var(--color-gold-deep);
 }
 
 .toast :focus-visible {
@@ -1360,14 +1413,13 @@ a.brand {
 }
 
 .toast-success {
-  --toast-accent: var(--color-fir);
+  --toast-accent: var(--chip-2);
 }
 
 .toast-error {
-  --toast-accent: var(--color-wine);
+  --toast-accent: var(--color-red);
 }
 
-/* État : un petit carré de couleur devant le titre, pas de bande sur le côté. */
 .toast-success .toast-title::before,
 .toast-error .toast-title::before {
   content: "";
@@ -1375,7 +1427,7 @@ a.brand {
   width: 10px;
   height: 10px;
   margin-right: var(--space-2xs);
-  border-radius: 2px;
+  border-radius: 50%;
   background: var(--toast-accent);
   vertical-align: 0.05em;
 }
@@ -1397,7 +1449,7 @@ a.brand {
 }
 
 .toast-link {
-  color: var(--color-wine);
+  color: var(--color-red-deep);
   font-size: var(--text-sm);
 }
 
@@ -1429,7 +1481,7 @@ a.brand {
   }
 }
 
-/* ---------- Pied de page : bandeau défilant (Ft8) ---------- */
+/* ---------- Pied de page : bandeau défilant ---------- */
 .site-footer {
   margin-top: var(--space-xl);
 }
@@ -1438,37 +1490,31 @@ a.brand {
   overflow: hidden;
   background: var(--color-gold);
   color: var(--color-ink);
-  border-block: var(--rule) solid var(--color-ink);
-  padding: var(--space-xs) 0;
+  padding: var(--space-2xs) 0;
 }
 
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee var(--dur-marquee) linear infinite;
+  animation: marquee 32s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
 }
 
 .marquee-text {
   flex: none;
   padding-right: 0.5em;
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--text-lg);
+  font-size: var(--text-sm);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .marquee-dot {
-  display: inline-block;
-  margin: 0 0.5em;
-  font-size: 0.7em;
-  vertical-align: 0.12em;
-}
-
-/* Le bandeau s'arrête au survol (WCAG 2.2.2). */
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
+  margin: 0 0.6em;
 }
 
 @keyframes marquee {
@@ -1485,7 +1531,7 @@ a.brand {
   font-size: var(--text-sm);
 }
 
-/* ---------- Mouvement réduit ---------- */
+/* ---------- Mouvement réduit : tout est figé ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1493,6 +1539,9 @@ a.brand {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .bulbs i:nth-child(odd) {
+    background: var(--color-gold);
   }
   .marquee-track {
     animation: none;

@@ -1,146 +1,81 @@
 # Design — BlockLucky
 
-Le système de design figé de BlockLucky. Toute modification d'une page part de ce fichier.
-On ne le régénère pas page par page : on le complète ou on l'amende quand le système doit évoluer.
+Le système de design de BlockLucky. Toute modification d'une page part de ce fichier.
 Les valeurs exactes vivent dans [`src/tokens.css`](src/tokens.css) ; ce fichier dit comment s'en servir.
+Version 2 (9 novembre 2026) : « machine à sous », validée sur maquette cliquable. Remplace le registre « fête populaire ».
 
-## Genre
+## Intention
 
-Éditorial, registre « fête populaire » : une affiche de tombola de village, la nuit.
-Inspiré du thème Carnival de Hallmark (aplats francs, ornements typographiques, ombres nettes),
-transposé sur le fond prune de la marque au lieu d'un papier clair.
+Donner **envie de jouer**, tout en restant **évident pour un débutant** qui n'a jamais touché à une blockchain.
+L'univers est celui d'une salle de jeux le soir : ampoules, rouleaux, jetons, levier.
+Le jeu porte le décor ; les textes, eux, restent simples, en français courant, sans jargon.
 
-## Public, usage, ton
-
-- **Public** : les habitants d'une ville (souvent novices en blockchain), leur mairie, un administrateur.
-- **Usage principal** : acheter un ticket pour la loterie de sa ville, puis suivre le tirage.
-- **Ton** : fête populaire. Chaleureux, franc, lisible ; jamais « fintech ».
+- **Public** : les habitants d'une ville (souvent novices), leur mairie, un administrateur.
+- **Action principale** : prendre des tickets pour la loterie de sa ville, puis suivre le tirage.
+- **Anti-objectifs** : un site qui ressemble à un vrai casino d'argent (rappeler partout que les ethers sont fictifs),
+  un décor qui cache l'action, des métaphores qui rendent le sens flou (« jeton » est toujours expliqué : 1 jeton = 1 ticket).
 
 ## Familles de pages
 
-| Type | Pages | Forme | Décor autorisé |
+| Type | Pages | Forme | Décor |
 |---|---|---|---|
-| Public, accueil | `/` | Marquee Hero : grand titre d'affiche, puis l'index des villes en lignes | Ornements, aplat or au survol |
-| Public, loterie | `/ville/<nom>` | Stat-Led : la cagnotte en très grand chiffre sur le billet, puis les sections | Billet, aplat or (« Comment ça marche »), aplat lie-de-vin (tirage), ornements |
-| Formulaire | `/connexion` | Une seule affiche (carte avec ombre nette) | Ombre nette, aucun autre décor |
-| Outils | `/admin`, `/mairie` | Deux colonnes inégales, panneaux plats | Aucun : la fonction porte la page |
+| Accueil | `/` | Titre, puis une ligne par ville ; la ville en vente s'allume | Ampoules, bandeau défilant |
+| Loterie | `/ville/<nom>` | La **machine** (cagnotte, 3 rouleaux, rampe de lampes, levier) à gauche ; l'achat, l'explication et le direct à droite ; la transparence en dessous | Complet |
+| Formulaire | `/connexion` | Une seule carte | Ampoules et bandeau seulement |
+| Outils | `/admin`, `/mairie` | Panneaux simples | Ampoules et bandeau seulement |
 
-## Thème
+Sur téléphone, la page de loterie s'empile dans l'ordre : machine, achat (avant la machine quand la vente est ouverte), explication, direct, transparence.
 
-| Variable | Valeur | Rôle |
-|---|---|---|
-| `--color-night` | `oklch(21.2% 0.058 295)` | Fond (ciel d'hiver) |
-| `--color-night-2` | `oklch(25.4% 0.070 296)` | Panneaux |
-| `--color-night-3` | `oklch(31.1% 0.091 292)` | Filets, bordures, champs |
-| `--color-snow` | `oklch(95.7% 0.016 310)` | Texte principal |
-| `--color-muted` | `oklch(76.3% 0.055 304)` | Texte secondaire (sur fond nuit seulement) |
-| `--color-paper` | `oklch(96.8% 0.033 84)` | Papier du billet |
-| `--color-ink` | `oklch(23.8% 0.031 46)` | Encre sur papier et sur or |
-| `--color-ink-soft` | `oklch(44% 0.057 56)` | Encre secondaire sur papier |
-| `--color-gold` | `oklch(82.1% 0.151 81)` | Accent 1 : actions, aplats, ornements |
-| `--color-wine` | `oklch(50.6% 0.176 17)` | Accent 2 : tirage, ombres du billet, aplats |
-| `--color-fir` | `oklch(56.9% 0.119 155)` | Succès |
-| `--color-danger` | `oklch(75.8% 0.145 29)` | Erreurs (texte sur fond nuit) |
+## Couleurs
 
-Règles de couleur :
-
-- **Duo-ton** : un bloc est rempli d'or **ou** de lie-de-vin, jamais des deux.
-- **Lie-de-vin jamais en texte sur fond nuit** (contraste insuffisant) : il sert d'aplat (texte crème dessus) ou d'ombre.
-- **Pas de blanc ni de noir purs** : le crème (`--color-on-wine`, `--color-snow`) et l'encre teintée les remplacent.
-- **Pas de dégradé** décoratif, pas d'ombre floue.
+| Variable | Rôle |
+|---|---|
+| `--color-night` | Fond, rouge très sombre |
+| `--color-panel`, `--color-panel-2`, `--color-line` | Cartes, cases, filets |
+| `--color-cream` | Texte principal, fond des rouleaux |
+| `--color-muted` | Texte secondaire |
+| `--color-gold`, `--color-gold-deep` | Cadres de la machine, ampoules, focus, chiffres clés |
+| `--color-red`, `--color-red-deep` | Bouton principal (levier), symboles des rouleaux |
+| `--color-mint` | Uniquement l'état « vente ouverte » et les chances de gagner |
 
 ## Typographie
 
-- **Titres** : Bricolage Grotesque 800, en capitales (`text-transform: uppercase`), interlettrage serré
-  (`-0.01em` pour le titre de page, `0.02em` pour les titres de section). Toujours romain, jamais d'italique.
-- **Texte** : Atkinson Hyperlegible 400 / 700, en casse normale, 17 px de base.
-- **Mono** : police système (`ui-monospace`) pour les adresses de contrat.
-- **Chiffres** : `tabular-nums` partout où un nombre peut changer (cagnotte, compte à rebours, listes).
-- **Taille des titres de page** : `--text-display` jusqu'à 50 caractères ; au-delà, `--text-display-s`.
+- **Bungee** : titres, chiffres, boutons, enseignes. Capitales natives.
+- **Bungee Shade** : le logo seulement.
+- **Atkinson Hyperlegible** : tout le texte courant, les aides, les formulaires.
+- Les trois polices viennent de Google Fonts et couvrent les accents français.
 
-## Espacements
+## Éléments signature
 
-Échelle de 4 px nommée (`--space-3xs` 4 px → `--space-3xl` 112 px). Les pages utilisent les noms, jamais de valeurs brutes.
-Les sections publiques ne sont pas toutes espacées pareil : l'aplat « Comment ça marche » respire plus que la transparence.
+1. **Ampoules** en haut de page qui « courent » (or), fixes si l'utilisateur demande moins d'animations.
+2. **Machine** : cadre or épais, ombre portée or foncé, enseigne « Loterie n° X » en haut.
+3. **Trois rouleaux** crème : joueurs, temps restant, mes tickets (tickets vendus si pas connecté). Ils tournent quand un chiffre change.
+4. **Rampe de lampes** : une lampe par place (participants sur maximum).
+5. **Levier** décoratif sur le côté de la machine, qui s'abaisse au moment de l'achat.
+6. **Jetons** de casino ronds, 5 couleurs, pour choisir le nombre de tickets.
+7. **Bouton levier** rouge en relief : « Tirer le levier · 0,002 ETH ».
+8. **Bandeau or** défilant en pied de page.
 
-## Signature (à garder sur les pages publiques)
+## Mouvement
 
-1. **Billet de tombola** : papier crème, talon or perforé, ombre nette lie-de-vin.
-2. **Ombres nettes** : `4px 4px 0` (ou `6px 6px 0` pour le billet), jamais floues.
-3. **Aplats qui débordent** de la marge comme des affiches collées.
-4. **Ornements typographiques** : `◆` devant les titres de section, `✱ ✱ ✱` comme séparateur, `❋` comme puce.
-5. **Filets pleins de 2 px**, pas de filets fins.
-6. **Bandeau défilant** en pied de page, figé si l'utilisateur demande moins d'animations.
-7. **Guirlande** (points or et lie-de-vin) en haut de chaque page.
-
-## Animation
-
-- Easings : `--ease-out` `cubic-bezier(0.22, 1, 0.36, 1)`, `--ease-in-out` `cubic-bezier(0.65, 0, 0.35, 1)`.
-- Une seule animation continue : le bandeau du pied de page. Le reste ne bouge pas.
-- Transitions courtes (`--dur-short` 150 ms) sur la couleur et le transform uniquement.
-- `prefers-reduced-motion: reduce` : bandeau figé, transitions coupées.
+- Easing `--ease-out` `cubic-bezier(0.22, 1, 0.36, 1)`. Pas de rebond sur les boutons.
+- Animations autorisées : ampoules, point « vente ouverte », rouleaux au changement de valeur, levier, bandeau.
+- `prefers-reduced-motion: reduce` : tout est figé.
 
 ## Micro-interactions
 
-- **Succès silencieux** quand le résultat se voit ; message seulement pour les transactions (asynchrones).
-- **Annuler plutôt que confirmer** pour une action réversible (retrait d'un habitant) ;
-  confirmation seulement pour l'irréversible (suppression d'une ville).
-- **Focus** : contour or de 3 px, instantané, jamais animé ; contour encre sur les aplats or.
-- **Bouton pressé** : il descend de 2 px et son ombre se réduit d'autant.
+- Bouton levier : il s'enfonce de 5 px au clic.
+- Jeton choisi : soulevé et entouré d'or (`aria-pressed`).
+- Les chances de gagner s'affichent **avant** l'achat et se mettent à jour avec le nombre de jetons.
+- Focus : contour or de 3 px, instantané ; contour crème sur les éléments or ou rouges.
+- Retrait d'un habitant : immédiat avec « Annuler » ; suppression d'une ville : confirmation.
 
-## Boutons
+## Textes
 
-- **Principal** : aplat or, texte encre, rayon 6 px, ombre nette `3px 3px 0` couleur `--color-shadow`.
-- **Tirage** : aplat lie-de-vin, texte crème, même forme.
-- **Secondaire** : contour 2 px `--color-night-3`, texte neige ; contour or au survol.
-- Libellés courts (verbe d'abord), jamais sur deux lignes.
-
-## Ce que toutes les pages partagent
-
-La guirlande, l'en-tête façon journal, le bandeau de pied de page, les couleurs, les deux polices,
-la forme des boutons, les champs de formulaire et le contour de focus.
-
-## Ce que les pages peuvent varier
-
-La forme (selon la famille ci-dessus) et la présence d'aplats colorés, uniquement sur les pages publiques.
+- Vouvoiement partout, comme le reste du site et les messages d'erreur (« Combien de jetons ? », « Vos chances »).
+- Toujours rappeler « ethers fictifs, aucun vrai argent » près de l'achat.
+- Pas de chiffres inventés : tout ce qui est affiché vient du contrat ou de l'API.
 
 ## Exports
 
-### tokens.css
-
-Voir [`src/tokens.css`](src/tokens.css), importé par `src/app/layout.jsx` avant `src/styles.css`.
-
-### Tailwind v4 `@theme` (si le projet passe à Tailwind)
-
-```css
-@theme {
-  --color-night: oklch(21.2% 0.058 295);
-  --color-snow: oklch(95.7% 0.016 310);
-  --color-paper: oklch(96.8% 0.033 84);
-  --color-ink: oklch(23.8% 0.031 46);
-  --color-gold: oklch(82.1% 0.151 81);
-  --color-wine: oklch(50.6% 0.176 17);
-  --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
-  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-}
-```
-
-### DTCG `tokens.json`
-
-```json
-{
-  "color": {
-    "night": { "$value": "oklch(21.2% 0.058 295)", "$type": "color" },
-    "snow": { "$value": "oklch(95.7% 0.016 310)", "$type": "color" },
-    "paper": { "$value": "oklch(96.8% 0.033 84)", "$type": "color" },
-    "ink": { "$value": "oklch(23.8% 0.031 46)", "$type": "color" },
-    "gold": { "$value": "oklch(82.1% 0.151 81)", "$type": "color" },
-    "wine": { "$value": "oklch(50.6% 0.176 17)", "$type": "color" }
-  },
-  "font": {
-    "display": { "$value": "Bricolage Grotesque", "$type": "fontFamily" },
-    "body": { "$value": "Atkinson Hyperlegible", "$type": "fontFamily" }
-  }
-}
-```
+Les variables sont dans [`src/tokens.css`](src/tokens.css), importé par `src/app/layout.jsx` avant `src/styles.css`.
