@@ -12,10 +12,16 @@ export const WALLET = /^0x[0-9a-fA-F]{40}$/;
 
 export const json = (data, status = 200) => Response.json(data, { status });
 
+/** Durée de vie d'une session (RGPD : durée de conservation limitée). */
+const SESSION_DAYS = 30;
+
 export async function currentUser() {
   const token = (await cookies()).get("sid")?.value;
   if (!token) return null;
-  const [session] = await query("SELECT role, email FROM sessions WHERE token = ?", [token]);
+  const [session] = await query(
+    "SELECT role, email FROM sessions WHERE token = ? AND created_at > NOW() - INTERVAL ? DAY",
+    [token, SESSION_DAYS]
+  );
   if (!session) return null;
   if (session.role === "admin") return { role: "admin", email: session.email };
   const [user] = await query("SELECT id, email, role, city_id AS cityId FROM users WHERE email = ?", [session.email]);
@@ -23,9 +29,11 @@ export async function currentUser() {
 }
 
 export async function openSession(role, email) {
+  // Purge des sessions expirées à chaque nouvelle connexion
+  await query("DELETE FROM sessions WHERE created_at <= NOW() - INTERVAL ? DAY", [SESSION_DAYS]);
   const token = crypto.randomBytes(32).toString("hex");
   await query("INSERT INTO sessions (token, role, email) VALUES (?, ?, ?)", [token, role, email]);
-  (await cookies()).set("sid", token, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+  (await cookies()).set("sid", token, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * SESSION_DAYS });
 }
 
 export async function closeSession() {

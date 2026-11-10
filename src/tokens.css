@@ -47,7 +47,7 @@
   --color-header-mark: var(--color-primary);
 
   /* Polices : une seule famille, conçue pour les services publics */
-  --font-body: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-public-sans), "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-heading: var(--font-body);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 

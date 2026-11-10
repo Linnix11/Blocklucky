@@ -1,3 +1,4 @@
+import { Fraunces, Public_Sans, Source_Serif_4 } from "next/font/google";
 import { Shell } from "@/components/Shell";
 import "@/tokens.css";
 import "@/styles.css";
@@ -13,6 +14,14 @@ const TICKET_ICON =
       "</svg>"
   );
 
+/**
+ * Polices téléchargées au build et servies par notre serveur (next/font) : le navigateur n'appelle
+ * jamais Google, aucune adresse IP de visiteur ne lui est transmise (RGPD).
+ */
+const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-public-sans", display: "swap" });
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap" });
+const sourceSerif = Source_Serif_4({ subsets: ["latin"], variable: "--font-source-serif", display: "swap" });
+
 export const metadata = {
   title: "BlockLucky, la loterie des villes",
   description: "BlockLucky, la loterie des villes : un tirage transparent et vérifiable sur la blockchain.",
@@ -23,15 +32,7 @@ export const viewport = { themeColor: "#ffffff" };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Public+Sans:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="fr" className={`${publicSans.variable} ${fraunces.variable} ${sourceSerif.variable}`}>
       <body>
         <Shell>{children}</Shell>
       </body>

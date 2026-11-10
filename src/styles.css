@@ -1385,3 +1385,53 @@ input:focus-visible {
 .admin-form .theme-option label {
   font-weight: 400;
 }
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-md);
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-md) var(--gutter) 0;
+  font-size: var(--text-sm);
+}
+
+/* Pages de texte (mentions légales, confidentialité, accessibilité) */
+.legal {
+  max-width: 72ch;
+}
+
+.legal h2 {
+  margin-top: var(--space-lg);
+}
+
+.legal ul {
+  padding-left: 1.2em;
+}
+
+.legal li {
+  margin-bottom: var(--space-2xs);
+}
+
+.legal table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  margin: var(--space-xs) 0;
+}
+
+.legal th,
+.legal td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-2xs) var(--space-xs) var(--space-2xs) 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.todo {
+  background: var(--color-warn-wash);
+  color: var(--color-warn);
+  font-weight: 600;
+  padding: 0 4px;
+  border-radius: var(--radius-sm);
+}

@@ -90,6 +90,11 @@ export function Shell({ children }) {
       {mounted ? children : <main className="page" />}
 
       <footer className="site-footer">
+        <nav className="footer-links" aria-label="Informations légales">
+          <a href="/mentions-legales">Mentions légales</a>
+          <a href="/confidentialite">Confidentialité</a>
+          <a href="/accessibilite">Accessibilité : non conforme</a>
+        </nav>
         <p className="footer-note">
           BlockLucky, un projet Epitech Digital School avec les mairies partenaires. Loteries de démonstration
           sur réseau de test : les ethers utilisés n'ont aucune valeur. Tirage au sort vérifiable par Chainlink.

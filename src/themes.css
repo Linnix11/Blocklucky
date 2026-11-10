@@ -24,7 +24,7 @@
   --color-strong-hover: #6f181f;
   --color-notice-line: #c9dccf;
   --color-overlay: #1f2a22cc;
-  --font-heading: "Fraunces", Georgia, serif;
+  --font-heading: var(--font-fraunces), Georgia, serif;
 }
 
 /* Littoral : bleu océan, sable, écume */
@@ -67,7 +67,7 @@
   --color-strong-hover: #170f0e;
   --color-notice-line: #e2c9cc;
   --color-overlay: #2a1f1dcc;
-  --font-heading: "Source Serif 4", Georgia, serif;
+  --font-heading: var(--font-source-serif), Georgia, serif;
 }
 
 /* Nuit : thème sombre, pour le soir et les écrans d'affichage */
