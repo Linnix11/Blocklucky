@@ -23,6 +23,7 @@ const SCHEMA = [
     contract_address CHAR(42) NOT NULL,
     block_number INT NOT NULL DEFAULT 0,
     theme VARCHAR(30) NOT NULL DEFAULT 'sobre',
+    custom_theme TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS users (
@@ -50,7 +51,10 @@ const SCHEMA = [
  * Colonnes ajoutées après la première mise en ligne : ajoutées aux bases existantes si elles manquent.
  * (Vérification par information_schema : « ADD COLUMN IF NOT EXISTS » n'existe pas dans MySQL.)
  */
-const MIGRATIONS = [{ table: "cities", column: "theme", sql: "ALTER TABLE cities ADD COLUMN theme VARCHAR(30) NOT NULL DEFAULT 'sobre'" }];
+const MIGRATIONS = [
+  { table: "cities", column: "theme", sql: "ALTER TABLE cities ADD COLUMN theme VARCHAR(30) NOT NULL DEFAULT 'sobre'" },
+  { table: "cities", column: "custom_theme", sql: "ALTER TABLE cities ADD COLUMN custom_theme TEXT NULL" },
+];
 
 async function migrate() {
   for (const { table, column, sql } of MIGRATIONS) {

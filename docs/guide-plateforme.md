@@ -79,7 +79,8 @@ Un seul projet **Next.js 16** à la racine du dépôt (interface + API), plus le
 | POST | `/api/mairie/round` | mairie | Ouvre une loterie |
 | POST | `/api/mairie/draw` | mairie | Lance le tirage |
 | POST | `/api/mairie/retry` | mairie | Relance le tirage (1 h sans réponse de Chainlink) |
-| POST | `/api/mairie/theme` | mairie | Change le design de la page publique (`{ theme }`) |
+| POST | `/api/mairie/theme` | mairie | Change le design de la page publique (`{ theme }`, ou `{ theme: "custom", custom }`) |
+| POST | `/api/mairie/theme/generate` | mairie | Propose un design personnalisé avec Gemini (`{ description }`), sans l'enregistrer |
 
 ### Designs de la page publique
 
@@ -93,6 +94,18 @@ d'enregistrer.
 - Ajouter un design : une entrée dans `src/themes.js` et un bloc `:root[data-theme="<id>"]` dans `src/themes.css`.
 - Base : colonne `cities.theme` (`sobre` par défaut), ajoutée automatiquement aux bases existantes au démarrage.
 - L'accueil, la connexion et les espaces admin et mairie restent toujours en design Sobre.
+
+**Design personnalisé par IA (Gemini).** Si aucun design ne convient, la mairie décrit le style voulu
+(« Aucun design ne convient ? Décrivez le vôtre ») ; le serveur demande une proposition à Gemini, la mairie
+voit un aperçu, puis l'adopte (« Utiliser ce design ») ou en demande une autre.
+- Sécurité : Gemini ne renvoie **que des réglages** (5 couleurs, une police parmi celles du site, angles,
+  en-tête), jamais de CSS ni de code. Le serveur les valide et **corrige les contrastes** (texte ≥ 7:1, boutons
+  et liens ≥ 4,5:1) avant tout enregistrement (`src/lib/customTheme.js`). La description de la mairie est
+  traitée comme une donnée dans la consigne, pas comme une instruction.
+- Coûts : 10 propositions par heure et par ville au plus. Clé : variable `GEMINI_API_KEY` (serveur uniquement) ;
+  sans clé, la fonction affiche simplement qu'elle n'est pas configurée. Modèle : `GEMINI_MODEL`
+  (défaut `gemini-3.8-flash`).
+- Base : colonne `cities.custom_theme` (JSON), ajoutée automatiquement ; `theme = 'custom'` quand il est actif.
 
 ### Base de données (MySQL)
 

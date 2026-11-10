@@ -89,6 +89,10 @@ export default function Page() {
             nœud Ethereum qui reçoit votre adresse IP. <Todo>nom du fournisseur (Alchemy, Infura…) et pays</Todo>
           </li>
           <li>
+            <strong>Google (Gemini)</strong>, uniquement si votre mairie fait générer un design personnalisé : reçoit
+            la description du style rédigée par la mairie, sans donnée sur les habitants.
+          </li>
+          <li>
             <strong>MetaMask</strong>, si vous l'utilisez : c'est une application que vous installez vous-même, soumise à
             ses propres conditions.
           </li>

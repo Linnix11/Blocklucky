@@ -1435,3 +1435,124 @@ input:focus-visible {
   padding: 0 4px;
   border-radius: var(--radius-sm);
 }
+
+/* ---------- Design personnalisé (espace mairie) ---------- */
+.custom-design {
+  border-top: 1px solid var(--color-line);
+  padding-top: var(--space-xs);
+}
+
+.custom-design summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+  min-height: var(--touch);
+  display: flex;
+  align-items: center;
+}
+
+.custom-design[open] summary {
+  margin-bottom: var(--space-xs);
+}
+
+.custom-proposal {
+  margin-top: var(--space-md);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-3xs);
+}
+
+.field > span:first-child {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  resize: vertical;
+}
+
+textarea:focus-visible {
+  border-color: var(--color-primary);
+}
+
+/* Aperçu : un mini-site aux couleurs de la proposition (variables posées sur ce cadre uniquement) */
+.custom-preview {
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+}
+
+.custom-preview-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-sm);
+  background: var(--color-header-bg);
+  color: var(--color-header-ink);
+  border-bottom: 1px solid var(--color-line);
+  font-weight: 700;
+}
+
+.custom-preview-mark {
+  width: 18px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--color-header-mark);
+}
+
+.custom-preview-body {
+  padding: var(--space-sm);
+}
+
+.custom-preview-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-2xs);
+}
+
+.custom-preview-card {
+  display: grid;
+  gap: var(--space-3xs);
+  padding: var(--space-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+}
+
+.custom-preview-number {
+  color: var(--color-festive);
+  font-weight: 700;
+}
+
+.custom-preview-pot {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.custom-preview-text {
+  color: var(--color-ink-2);
+}
+
+.custom-preview-button {
+  justify-self: start;
+  margin-top: var(--space-2xs);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+}

@@ -6,6 +6,7 @@ import { AdminPanel } from "../components/AdminPanel";
 import { ThemePicker } from "../components/ThemePicker";
 import { useApp } from "../components/Shell";
 import { themeOrDefault } from "../themes";
+import { CUSTOM_THEME, customThemeVars } from "../lib/customTheme";
 import { cityDeployment } from "./CityPage";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { deVille } from "../lib/format";
@@ -89,7 +90,7 @@ function Lottery({ city }) {
 /** Design de la page publique : la mairie le choisit parmi le catalogue (src/themes.js). */
 function Appearance({ city, onChange }) {
   const { loadCities } = useApp();
-  const saved = themeOrDefault(city.theme);
+  const saved = city.theme === CUSTOM_THEME && city.customTheme ? CUSTOM_THEME : themeOrDefault(city.theme);
   const [theme, setTheme] = useState(saved);
   const [status, setStatus] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -117,7 +118,7 @@ function Appearance({ city, onChange }) {
         l'enregistrer.
       </p>
       <form className="stack" onSubmit={save}>
-        <ThemePicker value={theme} onChange={setTheme} previewSlug={city.slug} />
+        <ThemePicker value={theme} onChange={setTheme} previewSlug={city.slug} custom={city.customTheme} />
         {status && (
           <p className={status.type === "error" ? "form-error" : "hint"} role="status">
             {status.text}
@@ -127,7 +128,119 @@ function Appearance({ city, onChange }) {
           {busy ? "Enregistrement…" : theme === saved ? "Design actuel" : "Enregistrer ce design"}
         </button>
       </form>
+      <CustomDesign
+        onSaved={async () => {
+          await Promise.all([onChange(), loadCities()]);
+          setTheme(CUSTOM_THEME);
+          setStatus({ type: "ok", text: "Design personnalisé enregistré : la page publique l'affiche dès maintenant." });
+        }}
+      />
     </section>
+  );
+}
+
+const DESCRIPTION_MAX = 600;
+
+/** Variables CSS du design (sans color-scheme, que React n'accepte pas sous ce nom dans `style`). */
+const previewStyle = (theme) =>
+  Object.fromEntries(Object.entries(customThemeVars(theme)).filter(([name]) => name.startsWith("--")));
+
+/** Aperçu miniature d'un design personnalisé : ses variables CSS ne s'appliquent qu'à ce cadre. */
+function CustomPreview({ theme }) {
+  return (
+    <div className="custom-preview" style={previewStyle(theme)} aria-label={`Aperçu du design ${theme.name}`} role="img">
+      <div className="custom-preview-header">
+        <span className="custom-preview-mark" />
+        <span>BlockLucky</span>
+      </div>
+      <div className="custom-preview-body">
+        <p className="custom-preview-title">Loterie de votre ville</p>
+        <div className="custom-preview-card">
+          <span className="custom-preview-number">Loterie n° 1</span>
+          <span className="custom-preview-pot">0,004 ETH</span>
+          <span className="custom-preview-text">Toute la cagnotte est reversée au gagnant.</span>
+          <span className="custom-preview-button">Acheter 2 tickets</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** « Aucun design ne convient ? » : la mairie décrit son style, Gemini propose un design, elle l'adopte ou non. */
+function CustomDesign({ onSaved }) {
+  const [description, setDescription] = useState("");
+  const [proposal, setProposal] = useState(null);
+  const [state, setState] = useState(null); // { type: "busy" | "error", text }
+
+  const generate = async (event) => {
+    event.preventDefault();
+    setState({ type: "busy", text: "Gemini prépare une proposition (10 à 20 secondes)…" });
+    try {
+      const { theme } = await api("/mairie/theme/generate", { method: "POST", body: { description } });
+      setProposal(theme);
+      setState(null);
+    } catch (e) {
+      setState({ type: "error", text: e.message });
+    }
+  };
+
+  const adopt = async () => {
+    setState({ type: "busy", text: "Enregistrement…" });
+    try {
+      await api("/mairie/theme", { method: "POST", body: { theme: CUSTOM_THEME, custom: proposal } });
+      setProposal(null);
+      setState(null);
+      await onSaved();
+    } catch (e) {
+      setState({ type: "error", text: e.message });
+    }
+  };
+
+  const busy = state?.type === "busy";
+  return (
+    <details className="custom-design">
+      <summary>Aucun design ne convient ? Décrivez le vôtre</summary>
+      <form className="stack" onSubmit={generate}>
+        <label className="field">
+          <span>Style souhaité</span>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            maxLength={DESCRIPTION_MAX}
+            rows={4}
+            required
+            minLength={10}
+            placeholder="Par exemple : bleu marine et or, élégant, pour une ville d'art et d'histoire au bord de la Loire."
+          />
+          <span className="hint">
+            Couleurs, ambiance, caractère de la ville… Gemini (Google) propose un design, toujours lisible et
+            accessible. N'indiquez pas de données personnelles. {description.length}/{DESCRIPTION_MAX}
+          </span>
+        </label>
+        <button type="submit" className="btn btn-ghost btn-block" disabled={busy || description.trim().length < 10}>
+          {proposal ? "Proposer autre chose" : "Générer une proposition"}
+        </button>
+      </form>
+
+      {state && (
+        <p className={state.type === "error" ? "form-error" : "hint"} role="status">
+          {state.type === "busy" && <span className="spinner" aria-hidden="true" />} {state.text}
+        </p>
+      )}
+
+      {proposal && (
+        <div className="stack custom-proposal">
+          <p>
+            <strong>{proposal.name}</strong>
+            {proposal.description && <> : {proposal.description}</>}
+          </p>
+          <CustomPreview theme={proposal} />
+          <button type="button" className="btn btn-primary btn-block" onClick={adopt} disabled={busy}>
+            Utiliser ce design
+          </button>
+        </div>
+      )}
+    </details>
   );
 }
 
