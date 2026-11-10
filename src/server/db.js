@@ -22,6 +22,7 @@ const SCHEMA = [
     slug VARCHAR(120) NOT NULL UNIQUE,
     contract_address CHAR(42) NOT NULL,
     block_number INT NOT NULL DEFAULT 0,
+    theme VARCHAR(30) NOT NULL DEFAULT 'sobre',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS users (
@@ -45,11 +46,28 @@ const SCHEMA = [
   )`,
 ];
 
+/**
+ * Colonnes ajoutées après la première mise en ligne : ajoutées aux bases existantes si elles manquent.
+ * (Vérification par information_schema : « ADD COLUMN IF NOT EXISTS » n'existe pas dans MySQL.)
+ */
+const MIGRATIONS = [{ table: "cities", column: "theme", sql: "ALTER TABLE cities ADD COLUMN theme VARCHAR(30) NOT NULL DEFAULT 'sobre'" }];
+
+async function migrate() {
+  for (const { table, column, sql } of MIGRATIONS) {
+    const [rows] = await pool.query(
+      "SELECT 1 FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?",
+      [table, column]
+    );
+    if (rows.length === 0) await pool.query(sql);
+  }
+}
+
 let ready;
-/** Crée les tables au premier appel. */
+/** Crée les tables et applique les migrations au premier appel. */
 function init() {
   ready ??= (async () => {
     for (const sql of SCHEMA) await pool.query(sql);
+    await migrate();
   })().catch((error) => {
     ready = null; // nouvel essai au prochain appel
     throw error;

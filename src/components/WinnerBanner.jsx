@@ -2,11 +2,16 @@ import { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import { explorerLink, formatDate, formatEth, sameAddress, shortAddress } from "../lib/format";
 
-// Couleurs du design (tokens.css) : bleu, rouge du ticket, or doux. canvas-confetti ne lit pas les variables CSS.
-const FESTIVE_COLORS = ["#1F4E8C", "#A3242F", "#E8B04B", "#E8EFF8"];
+/** Couleurs du design de la ville : canvas-confetti ne lit pas les variables CSS, on les lit ici. */
+function themeColors() {
+  const style = getComputedStyle(document.documentElement);
+  return ["--color-primary", "--color-festive", "--color-primary-wash", "--color-line-strong"]
+    .map((name) => style.getPropertyValue(name).trim())
+    .filter(Boolean);
+}
 
 function celebrate() {
-  const options = { colors: FESTIVE_COLORS, disableForReducedMotion: true, zIndex: 60 };
+  const options = { colors: themeColors(), disableForReducedMotion: true, zIndex: 60 };
   confetti({ ...options, particleCount: 90, spread: 70, origin: { y: 0.35 } });
 }
 

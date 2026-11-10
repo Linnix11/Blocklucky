@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { TARGET } from "../config";
 import { explorerLink, shortAddress } from "../lib/format";
+import { ThemePicker } from "../components/ThemePicker";
+import { DEFAULT_THEME, THEMES } from "../themes";
 
-const EMPTY = { name: "", email: "", password: "", contractAddress: "" };
+const EMPTY = { name: "", email: "", password: "", contractAddress: "", theme: DEFAULT_THEME };
 
 /** Admin : création et suppression des mairies. Chaque mairie reçoit sa propre loterie (contrat). */
 export function AdminPage({ onChange }) {
@@ -76,6 +78,11 @@ export function AdminPage({ onChange }) {
               Contrat existant (facultatif)
               <input value={form.contractAddress} onChange={update("contractAddress")} placeholder="0x… vide = nouveau déploiement" />
             </label>
+            <div className="theme-field">
+              <span>Design de la page publique</span>
+              <ThemePicker value={form.theme} onChange={(theme) => setForm((f) => ({ ...f, theme }))} name="new-city-theme" />
+              <span className="hint">La mairie pourra le changer à tout moment depuis son espace.</span>
+            </div>
             {status && (
               <p className={status.type === "error" ? "form-error" : "hint"} role="status">
                 {status.text}
@@ -101,6 +108,7 @@ export function AdminPage({ onChange }) {
                     <th>Ville</th>
                     <th>Compte</th>
                     <th>Inscrits</th>
+                    <th>Design</th>
                     <th>Contrat</th>
                     <th aria-label="Actions" />
                   </tr>
@@ -115,6 +123,7 @@ export function AdminPage({ onChange }) {
                         </td>
                         <td data-label="Compte">{city.mairieEmail}</td>
                         <td data-label="Inscrits">{city.participants}</td>
+                        <td data-label="Design">{THEMES.find((t) => t.id === city.theme)?.name ?? "Sobre"}</td>
                         <td data-label="Contrat">
                           {link ? (
                             <a href={link} target="_blank" rel="noreferrer">

@@ -13,7 +13,7 @@
   /* Texte */
   --color-ink: #14213d; /* bleu nuit, 15:1 sur blanc */
   --color-ink-2: #4a5568; /* texte secondaire, 7,5:1 sur blanc */
-  --color-ink-3: #6b7685; /* indications, 4,7:1 sur blanc */
+  --color-ink-3: #5f6a79; /* indications, 5,5:1 sur blanc, 5:1 sur le fond */
 
   /* Action principale : bleu institutionnel */
   --color-primary: #1f4e8c; /* 8,3:1 avec le blanc */
@@ -33,8 +33,22 @@
   --color-danger-wash: #fdecea;
   --color-overlay: #14213dcc;
 
+  /* Couleurs dérivées, redéfinies par chaque design (themes.css) */
+  --color-on-primary: #ffffff; /* texte sur la couleur d'action */
+  --color-strong: #14213d; /* bouton « fort » (tirage) */
+  --color-strong-hover: #0b1427;
+  --color-on-strong: #ffffff;
+  --color-notice-line: #c7d6ea;
+  --color-warn-line: #efd4a3;
+  --color-header-bg: var(--color-surface);
+  --color-header-ink: var(--color-ink);
+  --color-header-ink-2: var(--color-ink-3);
+  --color-header-link: var(--color-primary);
+  --color-header-mark: var(--color-primary);
+
   /* Polices : une seule famille, conçue pour les services publics */
   --font-body: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-heading: var(--font-body);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Tailles */

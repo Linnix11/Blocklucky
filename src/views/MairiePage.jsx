@@ -3,6 +3,9 @@ import { api } from "../lib/api";
 import { useBlockLucky } from "../hooks/useBlockLucky";
 import { useNow } from "../hooks/useNow";
 import { AdminPanel } from "../components/AdminPanel";
+import { ThemePicker } from "../components/ThemePicker";
+import { useApp } from "../components/Shell";
+import { themeOrDefault } from "../themes";
 import { cityDeployment } from "./CityPage";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { deVille } from "../lib/format";
@@ -28,7 +31,10 @@ export function MairiePage() {
       </div>
       <div className="admin-grid">
         <Participants list={info.participants} onChange={load} />
-        <Lottery city={info.city} />
+        <div className="stack">
+          <Lottery city={info.city} />
+          <Appearance city={info.city} onChange={load} />
+        </div>
       </div>
     </main>
   );
@@ -77,6 +83,51 @@ function Lottery({ city }) {
         actions={actions}
       />
     </div>
+  );
+}
+
+/** Design de la page publique : la mairie le choisit parmi le catalogue (src/themes.js). */
+function Appearance({ city, onChange }) {
+  const { loadCities } = useApp();
+  const saved = themeOrDefault(city.theme);
+  const [theme, setTheme] = useState(saved);
+  const [status, setStatus] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  const save = async (event) => {
+    event.preventDefault();
+    setBusy(true);
+    setStatus(null);
+    try {
+      await api("/mairie/theme", { method: "POST", body: { theme } });
+      await Promise.all([onChange(), loadCities()]);
+      setStatus({ type: "ok", text: "Design enregistré : la page publique l'affiche dès maintenant." });
+    } catch (e) {
+      setStatus({ type: "error", text: e.message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="panel stack" aria-labelledby="appearance-title">
+      <h2 id="appearance-title">Apparence de la page publique</h2>
+      <p className="muted">
+        Choisissez le design que verront les habitants. « Aperçu » ouvre la page de la loterie avec ce design, sans
+        l'enregistrer.
+      </p>
+      <form className="stack" onSubmit={save}>
+        <ThemePicker value={theme} onChange={setTheme} previewSlug={city.slug} />
+        {status && (
+          <p className={status.type === "error" ? "form-error" : "hint"} role="status">
+            {status.text}
+          </p>
+        )}
+        <button type="submit" className="btn btn-primary btn-block" disabled={busy || theme === saved}>
+          {busy ? "Enregistrement…" : theme === saved ? "Design actuel" : "Enregistrer ce design"}
+        </button>
+      </form>
+    </section>
   );
 }
 

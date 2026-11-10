@@ -29,6 +29,7 @@ body {
 h1,
 h2,
 h3 {
+  font-family: var(--font-heading);
   line-height: 1.2;
   margin: 0 0 var(--space-2xs);
   font-weight: 700;
@@ -104,8 +105,14 @@ a:hover {
 
 /* ---------- En-tête ---------- */
 .site-header {
-  background: var(--color-surface);
+  background: var(--color-header-bg);
+  color: var(--color-header-ink);
   border-bottom: 1px solid var(--color-line);
+}
+
+.site-header .account-nav a,
+.site-header .link-button {
+  color: var(--color-header-link);
 }
 
 .masthead-main {
@@ -123,12 +130,12 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2xs);
-  color: var(--color-ink);
+  color: var(--color-header-ink);
   text-decoration: none;
 }
 
 .brand:hover {
-  color: var(--color-ink);
+  color: var(--color-header-ink);
 }
 
 .brand-mark {
@@ -144,13 +151,14 @@ a:hover {
 }
 
 .brand-name {
+  font-family: var(--font-heading);
   font-weight: 700;
   font-size: var(--text-lg);
 }
 
 .brand-tagline {
   font-size: var(--text-xs);
-  color: var(--color-ink-3);
+  color: var(--color-header-ink-2);
 }
 
 .account-nav {
@@ -168,6 +176,7 @@ a:hover {
 
 .account-email {
   display: none;
+  color: var(--color-header-ink-2);
 }
 
 @media (min-width: 720px) {
@@ -350,6 +359,7 @@ a:hover {
 }
 
 .pot-amount {
+  font-family: var(--font-heading);
   font-size: var(--text-pot);
   font-weight: 700;
   line-height: 1.05;
@@ -517,7 +527,7 @@ a:hover {
 .quantity-option[aria-pressed="true"] {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .quantity-option:disabled {
@@ -566,22 +576,22 @@ a:hover {
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .btn-strong {
-  background: var(--color-ink);
-  color: #fff;
+  background: var(--color-strong);
+  color: var(--color-on-strong);
 }
 
 .btn-strong:hover:not(:disabled) {
-  background: #0b1427;
-  color: #fff;
+  background: var(--color-strong-hover);
+  color: var(--color-on-strong);
 }
 
 .btn-ghost {
@@ -653,7 +663,7 @@ a:hover {
   margin: 0 0 var(--space-md);
   border-radius: var(--radius-lg);
   background: var(--color-primary-wash);
-  border: 1px solid #c7d6ea;
+  border: 1px solid var(--color-notice-line);
 }
 
 .notice p {
@@ -662,7 +672,7 @@ a:hover {
 
 .notice-warn {
   background: var(--color-warn-wash);
-  border-color: #efd4a3;
+  border-color: var(--color-warn-line);
 }
 
 @media (min-width: 720px) {
@@ -1135,6 +1145,7 @@ input:focus-visible {
 }
 
 .winner-prize {
+  font-family: var(--font-heading);
   font-size: 2.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -1262,4 +1273,115 @@ input:focus-visible {
     border-right-color: currentColor;
     opacity: 0.5;
   }
+}
+
+/* ---------- Choix du design (espace mairie, création de mairie) ---------- */
+.theme-picker {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.theme-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: border-color var(--dur-short), background-color var(--dur-short);
+}
+
+.theme-option:has(input:checked) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-wash);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+.theme-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-option:has(input:focus-visible) {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.theme-option label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  min-height: var(--touch);
+  cursor: pointer;
+}
+
+.theme-swatches {
+  flex: none;
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--color-line-strong);
+}
+
+.theme-swatches span {
+  width: 14px;
+  height: 36px;
+}
+
+.theme-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.theme-name {
+  font-weight: 700;
+}
+
+.theme-default {
+  font-weight: 400;
+  color: var(--color-ink-2);
+}
+
+.theme-description {
+  font-size: var(--text-sm);
+  color: var(--color-ink-2);
+}
+
+.theme-preview {
+  flex: none;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-sm);
+  border-left: 1px solid var(--color-line);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.admin-form .theme-picker,
+.admin-form .theme-field {
+  grid-column: 1 / -1;
+}
+
+.theme-field {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.theme-field > span {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* Dans les formulaires, les libellés sont en gras : pas les cartes de design */
+.admin-form .theme-option label {
+  font-weight: 400;
 }

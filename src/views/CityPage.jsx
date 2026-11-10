@@ -15,10 +15,26 @@ import { TxStatus } from "../components/TxStatus";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { deVille } from "../lib/format";
 import { STATE } from "../config";
+import { themeOrDefault } from "../themes";
 
 /** Contrat d'une ville : son adresse, plus la config du réseau (coordinateur VRF, mock en local). */
 export function cityDeployment(city) {
   return { ...(addresses[String(TARGET_CHAIN_ID)] || {}), BlockLucky: city.address, blockNumber: city.blockNumber };
+}
+
+/**
+ * Applique le design choisi par la mairie à toute la page (en-tête compris), le temps de la visite.
+ * `?design=<id>` dans l'adresse affiche un autre design sans l'enregistrer (aperçu depuis l'espace mairie).
+ */
+function useCityTheme(saved) {
+  useEffect(() => {
+    const preview = new URLSearchParams(window.location.search).get("design");
+    const root = document.documentElement;
+    root.dataset.theme = themeOrDefault(preview || saved);
+    return () => {
+      delete root.dataset.theme;
+    };
+  }, [saved]);
 }
 
 /** Loterie d'une ville : seuls les habitants inscrits par la mairie peuvent acheter des tickets. */
@@ -29,6 +45,7 @@ export function CityPage({ city, me }) {
   const { data, derived, wallet, network, tx, txInProgress } = lottery;
   const [allowed, setAllowed] = useState(false);
   usePageTitle(`Loterie ${deVille(city.name)}`);
+  useCityTheme(city.theme);
   // Vente ouverte : sur mobile, le panneau d'achat passe avant le billet (voir .play-grid.is-selling).
   const selling = Boolean(data && data.state === STATE.OPEN && !data.canDraw && data.endTime > now);
 

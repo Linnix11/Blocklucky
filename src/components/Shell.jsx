@@ -13,10 +13,10 @@ function BrandMark() {
     <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
       <path
         d="M4 8a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v4a4 4 0 0 0 0 8v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4a4 4 0 0 0 0-8z"
-        fill="#1F4E8C"
+        fill="var(--color-header-mark)"
       />
-      <path d="M21 9v14" stroke="#fff" strokeWidth="1.5" strokeDasharray="2 2" />
-      <circle cx="13" cy="16" r="3.2" fill="#fff" />
+      <path d="M21 9v14" stroke="var(--color-header-bg)" strokeWidth="1.5" strokeDasharray="2 2" />
+      <circle cx="13" cy="16" r="3.2" fill="var(--color-header-bg)" />
     </svg>
   );
 }

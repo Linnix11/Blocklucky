@@ -79,6 +79,20 @@ Un seul projet **Next.js 16** à la racine du dépôt (interface + API), plus le
 | POST | `/api/mairie/round` | mairie | Ouvre une loterie |
 | POST | `/api/mairie/draw` | mairie | Lance le tirage |
 | POST | `/api/mairie/retry` | mairie | Relance le tirage (1 h sans réponse de Chainlink) |
+| POST | `/api/mairie/theme` | mairie | Change le design de la page publique (`{ theme }`) |
+
+### Designs de la page publique
+
+Chaque ville choisit le design de sa page publique parmi cinq : **Sobre** (par défaut), **Fêtes de fin d'année**,
+**Littoral**, **Patrimoine** et **Nuit** (sombre). L'admin le choisit à la création de la mairie ; la mairie le change
+ensuite dans `/mairie`, section « Apparence de la page publique », avec un aperçu (`/ville/<nom>?design=<id>`) avant
+d'enregistrer.
+
+- Catalogue : `src/themes.js` (identifiants, noms, descriptions). Couleurs et polices : `src/themes.css`, qui ne fait
+  que redéfinir les variables de `src/tokens.css`. Contrastes vérifiés pour chaque design (texte ≥ 4,5:1).
+- Ajouter un design : une entrée dans `src/themes.js` et un bloc `:root[data-theme="<id>"]` dans `src/themes.css`.
+- Base : colonne `cities.theme` (`sobre` par défaut), ajoutée automatiquement aux bases existantes au démarrage.
+- L'accueil, la connexion et les espaces admin et mairie restent toujours en design Sobre.
 
 ### Base de données (MySQL)
 
