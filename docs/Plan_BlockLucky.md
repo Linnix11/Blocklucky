@@ -2,7 +2,7 @@
 
 > Rush de 48 h, Epitech Digital School, pour la ville d'EtherBay.
 > Ce document résume le projet de bout en bout : objectifs, périmètre, organisation, décisions et risques.
-> Le cadrage détaillé est dans `CLAUDE.md`, la sécurité dans `securite.md`, la démo dans `soutenance.md`.
+> La sécurité est détaillée dans `securite.md`, la démo dans `soutenance.md`.
 
 ## 1. Le besoin
 

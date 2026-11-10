@@ -1,13 +1,12 @@
 # Phase 0 : cadrage technique et vérifications préalables
 
 > Objectif : lever les incertitudes techniques **avant** d'écrire la moindre ligne du projet,
-> conformément à la règle 7 du `CLAUDE.md` (vérifier les versions au lieu de les deviner).
+> en vérifiant chaque version dans la documentation officielle au lieu de la deviner.
 > Vérifications faites le 02/11/2026 dans un projet prototype jetable (hors dépôt).
 
 ## 1. Emplacement du projet
 
-Le projet est à la racine du dépôt, selon l'arborescence de la section 8 du cadrage.
-La fiche de cadrage `CLAUDE.md` y est placée.
+Le projet est à la racine du dépôt.
 
 ## 2. Environnement
 

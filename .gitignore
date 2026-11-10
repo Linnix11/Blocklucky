@@ -32,3 +32,6 @@ next-env.d.ts
 
 # Maquettes de brainstorming (locales)
 .superpowers/
+
+# Fichier généré automatiquement par next dev
+AGENTS.md
