@@ -7,6 +7,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "test:api": "bash scripts/test-api.sh",
     "coverage": "hardhat coverage",
     "node": "hardhat node",
     "simulate": "hardhat run scripts/simulate.js --network localhost",
@@ -22,7 +23,7 @@
     "dev": "next dev"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.9"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "6.1.2",
@@ -37,6 +38,8 @@
     "ethers": "6.17.0",
     "mysql2": "3.24.6",
     "next": "16.4.5",
+    "nodemailer": "10.2.1",
+    "qrcode": "1.5.4",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   }

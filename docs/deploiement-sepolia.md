@@ -83,7 +83,7 @@ Le script :
 1. vérifie que la souscription existe et affiche son solde ;
 2. déploie BlockLucky et attend 5 confirmations ;
 3. vérifie le code source sur Etherscan (badge vert « Contract Source Code Verified ») ;
-4. écrit l'ABI et l'adresse dans `frontend/src/contracts/` (à commiter pour l'interface en ligne).
+4. écrit l'ABI et l'adresse dans `src/contracts/` (à commiter pour l'interface en ligne).
 
 Si la vérification Etherscan échoue (Etherscan parfois lent), le script affiche la commande à relancer.
 

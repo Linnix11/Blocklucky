@@ -1,5 +1,8 @@
 # CLAUDE.md : projet BlockLucky
 
+> **Note (novembre 2026)** : ce cadrage d'origine décrit une interface Vite dans `frontend/`. Le site est
+> désormais une application **Next.js** dans `src/` (pages, API et serveur). État actuel : `docs/HANDOVER.md`.
+
 > Ce fichier sert à la fois de **fiche de cadrage** du projet et d'**instructions pour Claude Code**.
 > Place-le **à la racine du dépôt** : Claude Code le lit automatiquement à chaque session.
 

@@ -1,5 +1,6 @@
 import { STATE } from "../config";
 import { deVille, formatDate, formatDuration, formatEth } from "../lib/format";
+import { useCountUp } from "../hooks/useCountUp";
 
 /** Ce qu'indiquent l'en-tête, la case « temps » et la phrase sous la cagnotte, selon l'état de la loterie. */
 function describe(data, now, cityName) {
@@ -32,6 +33,7 @@ function describe(data, now, cityName) {
  * la cagnotte, trois chiffres clés, le remplissage des places et, sur le talon, le prix du ticket.
  */
 export function LotteryStats({ data, now, cityName }) {
+  const pot = useCountUp(data?.pot);
   if (!data) {
     return (
       <section className="lottery-card is-loading" aria-busy="true" aria-label="Chargement de la loterie">
@@ -63,9 +65,13 @@ export function LotteryStats({ data, now, cityName }) {
         <h2 id="pot-title" className="pot-label">
           Cagnotte
         </h2>
-        <p className="pot-amount" aria-live="polite">
-          {formatEth(data.pot, { withUnit: false })}
+        {/* Le chiffre défile à l'écran ; les lecteurs d'écran n'entendent que le montant final. */}
+        <p className={`pot-amount${pot.bumped ? " is-bumped" : ""}`} aria-hidden="true">
+          {formatEth(pot.shown, { withUnit: false })}
           <small>ETH</small>
+        </p>
+        <p className="visually-hidden" aria-live="polite">
+          {formatEth(data.pot)}
         </p>
         <p className="pot-sub">{sub}</p>
 

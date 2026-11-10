@@ -1,0 +1,50 @@
+# Vérifications automatiques à chaque push et pull request : tests du contrat, construction du site, tests de l'API.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  contrat:
+    name: Contrat (tests Hardhat)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  site:
+    name: Site (construction + tests de l'API)
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Tests de l'API (construit le site, puis le démarre sur une base de test)
+        run: npm run test:api
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+      - name: Journal du site en cas d'échec
+        if: failure()
+        run: tail -100 cache/test-api-site.log cache/test-api-build.log || true

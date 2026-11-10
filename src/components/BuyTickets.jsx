@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { STATE } from "../config";
 import { formatEth } from "../lib/format";
+import { MyTickets } from "./MyTickets";
 
 const percent = (value) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: value < 10 ? 1 : 0 })} %`;
 
 /** Choix du nombre de tickets et achat. */
-export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConnect, now, allowed = true }) {
+export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConnect, now, allowed = true, proof = null }) {
   const [quantity, setQuantity] = useState(1);
 
   const myTickets = Number(data?.me?.myTickets ?? 0n);
@@ -44,6 +45,9 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
           {chanceNow !== null && <>, soit {percent(chanceNow)} de chances de gagner</>}.
         </p>
       )}
+
+      {/* Monté dès la connexion (il ne s'affiche qu'avec des tickets) : il sait ainsi quels billets sont nouveaux */}
+      {wallet.account && <MyTickets tickets={data.tickets} account={wallet.account} roundId={data.roundId} proof={proof} />}
 
       {blocker === "connect" ? (
         <div className="stack">

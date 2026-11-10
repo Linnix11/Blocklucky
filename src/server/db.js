@@ -45,6 +45,12 @@ const SCHEMA = [
     email VARCHAR(190) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
+  // Liens de confirmation envoyés à la première connexion d'un habitant (seule l'empreinte du jeton est gardée)
+  `CREATE TABLE IF NOT EXISTS confirmations (
+    token_hash CHAR(64) PRIMARY KEY,
+    email VARCHAR(190) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )`,
 ];
 
 /**
@@ -88,6 +94,16 @@ export async function query(sql, params) {
 export function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
   return `${salt}:${crypto.scryptSync(password, salt, 32).toString("hex")}`;
+}
+
+/** Empreinte SHA-256 (jetons de confirmation, comparaison du mot de passe admin). */
+export function sha256(value) {
+  return crypto.createHash("sha256").update(String(value)).digest("hex");
+}
+
+/** Comparaison en temps constant de deux chaînes (les empreintes ont toujours la même longueur). */
+export function sameSecret(a, b) {
+  return crypto.timingSafeEqual(Buffer.from(sha256(a), "hex"), Buffer.from(sha256(b), "hex"));
 }
 
 export function checkPassword(password, stored) {

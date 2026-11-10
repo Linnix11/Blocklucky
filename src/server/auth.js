@@ -6,6 +6,7 @@ import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { query } from "./db";
 import { reason } from "./chain";
+import { RateLimitError } from "./rateLimit";
 
 export const EMAIL = /^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+$/;
 export const WALLET = /^0x[0-9a-fA-F]{40}$/;
@@ -54,6 +55,7 @@ export function route(role, handler) {
       if (role && user?.role !== role) return json({ error: "Accès refusé" }, 403);
       return await handler(request, { user, params: await context?.params });
     } catch (error) {
+      if (error instanceof RateLimitError) return json({ error: error.message }, error.status);
       console.error(error);
       return json({ error: reason(error) }, 500);
     }

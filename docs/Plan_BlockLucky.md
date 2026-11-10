@@ -57,7 +57,7 @@ vérifiable** et reçoit **toute la cagnotte**.
 | 2. Contrat | H5 → H16 | Contrat complet, commenté, sécurisé | `contracts/BlockLucky.sol` | ✅ |
 | 3. Tests | H16 → H21 | 43 tests, couverture, Slither, simulation | `test/`, `scripts/simulate.js` | ✅ |
 | 4. Déploiement | H21 → H23 | Scripts, guide, souscription Chainlink | `scripts/deploy.js`, `docs/deploiement-sepolia.md` | 🟡 déploiement Sepolia à faire |
-| 5. Interface | H23 → H33 | Site React mobile d'abord | `frontend/` | 🟡 testé en local, Sepolia et Vercel à faire |
+| 5. Interface | H23 → H33 | Site React mobile d'abord | `src/` (Next.js) | 🟡 testé en local, Sepolia et Vercel à faire |
 | 6. Documentation | H33 → H40 | README, dossier sécurité | `README.md`, `docs/securite.md` | 🟡 adresse du contrat à ajouter |
 | 7. Soutenance | H40 → H48 | Démo, plan B, questions du DSI | `docs/soutenance.md`, `npm run demo:locale` | 🟡 répétition sur Sepolia à faire |
 

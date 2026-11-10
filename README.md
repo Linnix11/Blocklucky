@@ -84,7 +84,8 @@ Toutes depuis la racine du projet.
 
 | Commande | Rôle |
 |---|---|
-| `npm test` | Lance les 43 tests du contrat |
+| `npm test` | Lance les 44 tests du contrat |
+| `npm run test:api` | Tests de l'API du site (rôles, connexion, listes) sur une base MySQL de test |
 | `npm run coverage` | Mesure la couverture du code par les tests |
 | `REPORT_GAS=true npm test` | Affiche le coût en gas de chaque fonction |
 | `npm run demo:locale` | **Démo de secours en une commande** : blockchain locale, loterie ouverte et interface |
@@ -138,9 +139,8 @@ Guide pas à pas (faucets, souscription Chainlink, consumer) : **[docs/deploieme
 
 | | |
 |---|---|
-| Adresse du contrat | *à compléter après le déploiement* |
-| Code vérifié sur Etherscan | *lien à compléter* |
-| Interface en ligne | *lien Vercel à compléter* |
+| Contrat de démonstration | [`0x82bCD7a9716a3fe6f9dAA0ce94C7DcC809221b5c`](https://sepolia.etherscan.io/address/0x82bCD7a9716a3fe6f9dAA0ce94C7DcC809221b5c#code) (une loterie par ville est ensuite déployée depuis l'espace admin) |
+| Interface en ligne | [block.axionstudio.fr](https://block.axionstudio.fr) |
 | Coordinateur Chainlink VRF v2.5 | [`0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B`](https://sepolia.etherscan.io/address/0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B) |
 
 Guide complet de la plateforme (comptes, Hostinger, démo, dépannage) : [docs/guide-plateforme.md](docs/guide-plateforme.md).
@@ -148,6 +148,7 @@ Guide complet de la plateforme (comptes, Hostinger, démo, dépannage) : [docs/g
 Mise en ligne (Hostinger, application Node.js, préréglage Next.js) : build `npm run build`, démarrage `npm start`.
 Variables : `NEXT_PUBLIC_CHAIN_ID`, `SEPOLIA_RPC_URL`, `PRIVATE_KEY`, `VRF_COORDINATOR`, `VRF_SUBSCRIPTION_ID`, `VRF_KEY_HASH`,
 `ADMIN_EMAIL`, `ADMIN_PASSWORD` et `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD` (voir `.env.example`).
+Conseillé : `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM` et `SITE_URL`, pour confirmer par mail la première connexion des habitants.
 
 Comptes : l'admin (`/admin`, identifiants `ADMIN_EMAIL`/`ADMIN_PASSWORD`) crée les mairies, et le serveur déploie la loterie de
 chacune. Chaque mairie (`/mairie`) importe en CSV les mails ou adresses 0x des habitants autorisés à jouer

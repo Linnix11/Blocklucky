@@ -12,6 +12,9 @@ import { BrowserProvider, Contract, JsonRpcProvider, Network, parseEther } from 
 import { LOTTERY_ABI, MOCK_VRF_ABI, STATE, TARGET, TARGET_CHAIN_ID } from "../config";
 import { humanizeError, isUserRejection } from "../lib/errors";
 import { formatEth, sameAddress } from "../lib/format";
+import { fetchDrawProof } from "../lib/drawProof";
+
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 const POLL_INTERVAL_MS = 4000;
 const HISTORY_SIZE = 8;
@@ -50,6 +53,7 @@ export function useBlockLucky(deployment) {
   const [loadError, setLoadError] = useState(null);
   const [activity, setActivity] = useState([]);
   const [announcement, setAnnouncement] = useState(null);
+  const [proof, setProof] = useState(null);
   const [tx, setTx] = useState(IDLE_TX);
 
   const accountRef = useRef(null);
@@ -213,6 +217,42 @@ export function useBlockLucky(deployment) {
   useEffect(() => {
     refresh();
   }, [account, refresh]);
+
+  // ---------- Preuve du dernier tirage (recalcul public, voir lib/drawProof.js) ----------
+  const drawnRound = data?.history[0]?.roundId === data?.roundId && data?.state === STATE.CLOSED ? data?.history[0] : null;
+  const drawnRoundId = drawnRound && drawnRound.winner !== ZERO_ADDRESS ? drawnRound.roundId : null;
+  useEffect(() => {
+    if (drawnRoundId === null || !readContract || !deployment?.VRFCoordinator) {
+      setProof(null);
+      return undefined;
+    }
+    let current = true;
+    let timer;
+    // Un nœud public peut refuser une requête de temps en temps : on réessaie après 5 s puis 15 s.
+    const RETRY_MS = [5000, 15000];
+    const attempt = (n) =>
+      fetchDrawProof({
+        lottery: readContract,
+        provider: readProvider,
+        coordinator: deployment.VRFCoordinator,
+        roundId: drawnRoundId,
+        fromBlock: deployment.blockNumber ?? 0,
+      })
+        .then((result) => current && setProof(result))
+        .catch((error) => {
+          if (!current) return;
+          if (n < RETRY_MS.length) timer = setTimeout(() => attempt(n + 1), RETRY_MS[n]);
+          else {
+            console.warn("Preuve du tirage introuvable.", error);
+            setProof(null);
+          }
+        });
+    attempt(0);
+    return () => {
+      current = false;
+      clearTimeout(timer);
+    };
+  }, [drawnRoundId, readContract, readProvider, deployment]);
 
   // ---------- Portefeuille ----------
   useEffect(() => {
@@ -419,6 +459,7 @@ export function useBlockLucky(deployment) {
     clearTx,
     announcement,
     dismissAnnouncement,
+    proof,
     connect,
     switchNetwork,
     buyTickets,

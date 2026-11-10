@@ -40,17 +40,30 @@ export const POST = route("admin", async (request) => {
   if ((await query("SELECT 1 FROM users WHERE email = ?", [email])).length) return json({ error: "Ce mail a déjà un compte" }, 409);
 
   const deployed = existing ? { address: existing, blockNumber: 0 } : await deploy();
-  const result = await query("INSERT INTO cities (name, slug, contract_address, block_number, theme) VALUES (?, ?, ?, ?, ?)", [
-    name,
-    slug,
-    deployed.address,
-    deployed.blockNumber,
-    theme,
-  ]);
-  await query("INSERT INTO users (email, password_hash, role, city_id) VALUES (?, ?, 'mairie', ?)", [
-    email,
-    hashPassword(password),
-    result.insertId,
-  ]);
-  return json({ id: result.insertId, slug, address: deployed.address });
+  let cityId;
+  try {
+    const result = await query("INSERT INTO cities (name, slug, contract_address, block_number, theme) VALUES (?, ?, ?, ?, ?)", [
+      name,
+      slug,
+      deployed.address,
+      deployed.blockNumber,
+      theme,
+    ]);
+    cityId = result.insertId;
+    await query("INSERT INTO users (email, password_hash, role, city_id) VALUES (?, ?, 'mairie', ?)", [
+      email,
+      hashPassword(password),
+      cityId,
+    ]);
+  } catch (error) {
+    // Le contrat est déjà sur la blockchain (et payé) : on annule l'enregistrement mais on donne son adresse,
+    // pour recréer la ville avec ce contrat sans en déployer un second.
+    console.error(error);
+    if (cityId) await query("DELETE FROM cities WHERE id = ?", [cityId]).catch(() => {});
+    const dup = error?.code === "ER_DUP_ENTRY";
+    const cause = dup ? "cette ville ou ce mail vient d'être créé par ailleurs" : "erreur de la base";
+    const hint = existing ? "" : ` La loterie a quand même été déployée : recréez la ville en indiquant le contrat ${deployed.address}.`;
+    return json({ error: `Enregistrement impossible (${cause}).${hint}`, address: deployed.address }, dup ? 409 : 500);
+  }
+  return json({ id: cityId, slug, address: deployed.address });
 });

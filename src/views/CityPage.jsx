@@ -27,7 +27,7 @@ export function cityDeployment(city) {
  * Applique le design choisi par la mairie à toute la page (en-tête compris), le temps de la visite.
  * `?design=<id>` dans l'adresse affiche un autre design sans l'enregistrer (aperçu depuis l'espace mairie).
  */
-function useCityTheme(saved, custom) {
+export function useCityTheme(saved, custom) {
   useEffect(() => {
     const preview = new URLSearchParams(window.location.search).get("design");
     const wanted = preview || saved;
@@ -104,6 +104,7 @@ export function CityPage({ city, me }) {
             onConnect={lottery.connect}
             now={now}
             allowed={allowed}
+            proof={lottery.proof}
           />
           <HowItWorks network={network} />
         </div>
@@ -116,9 +117,16 @@ export function CityPage({ city, me }) {
         network={network}
         deployment={deployment}
         account={wallet.account}
+        proof={lottery.proof}
       />
 
-      <WinnerAnnouncement announcement={lottery.announcement} account={wallet.account} onClose={lottery.dismissAnnouncement} />
+      <WinnerAnnouncement
+        announcement={lottery.announcement}
+        proof={lottery.proof}
+        tickets={data?.tickets}
+        account={wallet.account}
+        onClose={lottery.dismissAnnouncement}
+      />
       <TxStatus tx={tx} network={network} onClose={lottery.clearTx} />
     </main>
   );

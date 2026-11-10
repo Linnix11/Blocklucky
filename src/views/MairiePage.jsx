@@ -28,6 +28,10 @@ export function MairiePage() {
         <h1>Mairie {deVille(info.city.name)}</h1>
         <p className="network-tag">
           <a href={`/ville/${info.city.slug}`}>Voir la page publique de la loterie →</a>
+          {" · "}
+          <a href={`/ville/${info.city.slug}/ecran`} target="_blank" rel="noreferrer">
+            Ouvrir le mode grand écran (projection) →
+          </a>
         </p>
       </div>
       <div className="admin-grid">

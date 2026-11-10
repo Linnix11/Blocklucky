@@ -21,7 +21,7 @@ Connexion unique pour tous : **`/connexion`**.
 
 - **Admin** : identifiants dans les variables `ADMIN_EMAIL` et `ADMIN_PASSWORD` (pas en base).
 - **Mairie** : mail et mot de passe choisis par l'admin à la création de la mairie.
-- **Habitant** : son mail doit être dans la liste de sa mairie. À la **première connexion**, le mot de passe saisi devient le sien.
+- **Habitant** : son mail doit être dans la liste de sa mairie. À la **première connexion**, il choisit son mot de passe : directement en démo, ou en ouvrant le lien de confirmation reçu par mail si le serveur envoie des mails (`SMTP_HOST`, voir `.env.example`). Après 5 essais ratés depuis un même poste, ce poste est bloqué 15 minutes pour ce mail.
   Un habitant peut aussi jouer sans se connecter si son **adresse MetaMask** (0x…) est dans la liste.
 
 > Le contrôle « seuls les inscrits jouent » est fait par le site et le serveur, pas par le contrat :

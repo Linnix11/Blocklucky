@@ -1,4 +1,58 @@
 import { explorerLink, formatDate, formatEth, sameAddress, shortAddress } from "../lib/format";
+import { ticketLabel } from "../lib/drawProof";
+
+/** Grand nombre lisible : « 0x1f3a…9c2e » (le nombre entier reste dans l'infobulle). */
+function shortHex(value) {
+  const hex = `0x${value.toString(16).padStart(64, "0")}`;
+  return <span title={hex}>{`${hex.slice(0, 8)}…${hex.slice(-6)}`}</span>;
+}
+
+/**
+ * Le calcul du tirage, refait par le navigateur du visiteur à partir des données publiques (lib/drawProof.js).
+ * Chaque étape renvoie à ce que chacun peut contrôler sur Etherscan.
+ */
+function DrawCheck({ proof, network, account }) {
+  const label = ticketLabel(proof.index, proof.ticketCount);
+  const proofHref = explorerLink(network.explorer, "tx", proof.fulfillTx);
+  return (
+    <div className="panel panel-check">
+      <h3>Vérifier le tirage n° {String(proof.roundId)}</h3>
+      <ol className="check-steps">
+        <li>
+          <span className="check-label">Graine publiée par Chainlink</span>
+          <code>{shortHex(proof.seed)}</code>
+          {proofHref && (
+            <a href={proofHref} target="_blank" rel="noreferrer" className="activity-link">
+              preuve
+            </a>
+          )}
+        </li>
+        <li>
+          <span className="check-label">Nombre livré au contrat</span>
+          <code>keccak256(graine, 0) = {shortHex(proof.word)}</code>
+        </li>
+        <li>
+          <span className="check-label">Reste de la division par {proof.ticketCount} tickets</span>
+          <code>
+            {String(proof.index)} → ticket {label}
+          </code>
+        </li>
+        <li>
+          <span className="check-label">Ticket {label}</span>
+          <code>
+            <AddressLink network={network} address={proof.computedWinner} account={account} />
+          </code>
+        </li>
+      </ol>
+      <p className={`check-verdict${proof.matches ? " is-ok" : " is-ko"}`} role="status">
+        {proof.matches
+          ? "C'est bien le gagnant enregistré par le contrat."
+          : "Attention : ce calcul ne correspond pas au gagnant enregistré."}
+      </p>
+      <p className="hint">Votre navigateur vient de refaire ce calcul lui-même, à partir des données publiques de la blockchain.</p>
+    </div>
+  );
+}
 
 function AddressLink({ network, address, account }) {
   const label = sameAddress(address, account) ? "vous" : shortAddress(address);
@@ -48,7 +102,7 @@ function describe(event, network, account) {
 }
 
 /** Tout ce qui permet de vérifier la loterie : contrat, tickets, journal en direct, historique. */
-export function Transparency({ data, derived, activity, network, deployment, account }) {
+export function Transparency({ data, derived, activity, network, deployment, account, proof }) {
   if (!data || !deployment) return null;
   const contractHref = explorerLink(network.explorer, "address", deployment.BlockLucky);
   const totalTickets = data.tickets.length;
@@ -62,6 +116,8 @@ export function Transparency({ data, derived, activity, network, deployment, acc
       </p>
 
       <div className="transparency-grid">
+        {proof && <DrawCheck proof={proof} network={network} account={account} />}
+
         <div className="panel">
           <h3>Le contrat</h3>
           <p className="mono-address">{deployment.BlockLucky}</p>

@@ -146,7 +146,8 @@ en production. 🔒 = secret.
 | Slither 0.11.6 | 10 alertes, les mêmes qu'avant, toutes justifiées dans `docs/securite.md` (annexe D) |
 | `npm run build` (Next.js) | ✅ Construit sans erreur |
 | Site avec MySQL et Sepolia | En ligne (block.axionstudio.fr) ; je n'ai pas pu le tester depuis mon environnement |
-| API (connexion, rôles, listes) | ❌ **Aucun test automatique** |
+| API (connexion, rôles, listes) | ✅ `npm run test:api` : 11 tests (rôles, accès entre villes, CSV, limite d'essais, lien de confirmation par mail, suppression) |
+| CI GitHub | ✅ `.github/workflows/ci.yml` : tests du contrat, construction du site et tests de l'API à chaque push |
 
 ## 8. Décisions à connaître
 
@@ -184,10 +185,10 @@ en production. 🔒 = secret.
    les cagnottes (le contrat ne le permet pas), mais l'attaquant peut annuler la souscription
    (récupérer son solde et **bloquer les tirages**), ouvrir des loteries ou céder la propriété des
    contrats. Parades : compte dédié avec peu d'ETH, souscription approvisionnée au fil de l'eau.
-6. **Comptes habitants revendicables.** À la première connexion, n'importe qui connaissant un mail
+6. ~~**Comptes habitants revendicables.**~~ **Réglé si `SMTP_HOST` est renseigné** : lien de confirmation par mail (24 h, usage unique) ; le mot de passe est choisi en ouvrant le lien. Sans SMTP (démo), l'ancien fonctionnement reste. À la première connexion, n'importe qui connaissant un mail
    inscrit peut choisir le mot de passe à la place de l'habitant (pas de vérification par mail).
    Parade : lien de confirmation envoyé par mail.
-7. **Connexion** : pas de limite au nombre d'essais de mot de passe, sessions jamais purgées en base
+7. ~~**Connexion**~~ **Réglé** : 5 essais ratés par mail depuis une même IP (seul ce poste est bloqué, pas le vrai titulaire) et 50 par mail au total, par quart d'heure ; sessions expirées purgées, mot de passe admin comparé en temps constant. Ancien constat : pas de limite au nombre d'essais de mot de passe, sessions jamais purgées en base
    (cookie de 30 jours), mot de passe admin comparé en clair depuis le `.env`. Parades : limitation des
    essais, expiration des sessions, mot de passe admin long.
 8. ~~Les documents disent que « la mairie » est propriétaire du contrat~~ **Réglé** : `docs/securite.md`
@@ -195,13 +196,13 @@ en production. 🔒 = secret.
 
 ### P3 : finitions
 
-9. README : renseigner l'adresse du contrat, le lien Etherscan et l'URL du site
+9. ~~README~~ **Réglé**. Ancien constat : renseigner l'adresse du contrat, le lien Etherscan et l'URL du site
    (https://block.axionstudio.fr ; la ligne « lien Vercel » est obsolète).
-10. Références à l'ancien dossier `frontend/` dans `docs/Plan_BlockLucky.md` (ligne 60) et
+10. ~~Références à l'ancien dossier `frontend/`~~ **Réglé**. Ancien constat : références dans `docs/Plan_BlockLucky.md` (ligne 60) et
     `docs/deploiement-sepolia.md` (ligne 86) : remplacer par `src/contracts/`.
-11. `CLAUDE.md` (cadrage d'origine) décrit encore Vite et `frontend/` : à garder comme historique ou à
+11. ~~`CLAUDE.md`~~ **Réglé** (note en tête). Ancien constat : `CLAUDE.md` (cadrage d'origine) décrit encore Vite et `frontend/` : à garder comme historique ou à
     mettre à jour.
-12. Ajouter quelques tests de l'API (rôles, accès refusé, import CSV).
+12. ~~Ajouter quelques tests de l'API~~ **Réglé** (`npm run test:api`).
 13. Recapturer les écrans du README avec la nouvelle interface et Sepolia.
 
 ## 10. Prochaines étapes conseillées
