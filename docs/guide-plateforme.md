@@ -104,7 +104,9 @@ voit un aperçu, puis l'adopte (« Utiliser ce design ») ou en demande une autr
   traitée comme une donnée dans la consigne, pas comme une instruction.
 - Coûts : 10 propositions par heure et par ville au plus. Clé : variable `GEMINI_API_KEY` (serveur uniquement) ;
   sans clé, la fonction affiche simplement qu'elle n'est pas configurée. Modèle : `GEMINI_MODEL`
-  (défaut `gemini-3.8-flash`).
+  (défaut `gemini-3.8-flash`), réflexion réglée au minimum pour répondre vite ; délai d'attente :
+  `GEMINI_TIMEOUT_MS` (défaut 45 000). En cas d'échec, le journal du serveur (Hostinger) indique la durée et la
+  cause : délai dépassé, ou Google injoignable depuis l'hébergeur.
 - Base : colonne `cities.custom_theme` (JSON), ajoutée automatiquement ; `theme = 'custom'` quand il est actif.
 
 ### Base de données (MySQL)

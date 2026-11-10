@@ -174,7 +174,7 @@ function CustomDesign({ onSaved }) {
 
   const generate = async (event) => {
     event.preventDefault();
-    setState({ type: "busy", text: "Gemini prépare une proposition (10 à 20 secondes)…" });
+    setState({ type: "busy", text: "Gemini prépare une proposition (cela peut prendre jusqu'à une minute)…" });
     try {
       const { theme } = await api("/mairie/theme/generate", { method: "POST", body: { description } });
       setProposal(theme);
