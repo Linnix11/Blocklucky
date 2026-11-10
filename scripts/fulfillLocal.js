@@ -21,7 +21,9 @@ async function main() {
     throw new Error("Aucun tirage en attente (la loterie n'est pas en CALCULATING).");
   }
 
-  const vrf = await ethers.getContractAt("VRFCoordinatorV2_5Mock", VRFCoordinator);
+  // Compte n° 19 (et non n° 0) : le compte n° 0 est celui du serveur, qui numérote lui-même ses transactions.
+  const signers = await ethers.getSigners();
+  const vrf = await ethers.getContractAt("VRFCoordinatorV2_5Mock", VRFCoordinator, signers[signers.length - 1]);
   const roundId = await lottery.roundId();
   await (await vrf.fulfillRandomWords(await lottery.lastRequestId(), address)).wait();
 

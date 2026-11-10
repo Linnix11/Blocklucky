@@ -18,7 +18,7 @@ créer des mairies, à chaque mairie de gérer sa loterie et sa liste d'habitant
 | Contrats sur Sepolia | ✅ Contrat EtherBay d'origine vérifié (`0x82bC…1b5c`, paie Chainlink en LINK) ; chaque ville créée depuis l'admin a son propre contrat (paie en ETH) |
 | Site Next.js + API + MySQL | ✅ En ligne sur **https://block.axionstudio.fr** (Hostinger) ; se construit sans erreur ; aucun test automatique de l'API |
 | Documentation | 🟡 Complète, quelques passages à mettre à jour (section 9, P3) |
-| Soutenance | 🟡 Préparée ; **démo de secours à réparer** (section 9, P1) |
+| Soutenance | 🟡 Préparée ; démo de secours en une commande (`npm run demo:locale`, MySQL requis) |
 
 ## 2. Le besoin
 
@@ -167,15 +167,13 @@ en production. 🔒 = secret.
    **0,3 ETH** (Chainlink réserve le pire cas avant de répondre), sinon les tirages restent « en cours ».
    Le contrat d'origine `0x82bC…1b5c` paie, lui, en **LINK** (environ 35 LINK de réserve) : pour la
    démo, utiliser une ville créée depuis l'admin.
-2. **La démo de secours `npm run demo:locale` est obsolète.** Elle lance blockchain et site, mais le
-   site lit désormais les villes dans MySQL et le serveur a besoin des variables locales : sans cela,
-   l'accueil reste vide (d'après le code). Suivre plutôt `docs/guide-plateforme.md` section 5, et la
-   répéter une fois sur l'ordinateur de la soutenance. En dernier recours : `npm run simulate` et la
-   vidéo `docs/captures/demo-locale-mobile.mp4` (ancienne interface).
-3. **La liste blanche n'est appliquée que par le site, pas par le contrat** (c'est écrit dans le
-   guide). `enterLottery` reste ouverte à toute adresse qui appelle le contrat directement. À dire
-   honnêtement au jury, ou à corriger dans le contrat (liste d'adresses autorisées gérée par le
-   propriétaire), avec de nouveaux tests.
+2. ~~La démo de secours est obsolète~~ **Réglé** : `npm run demo:locale` prépare tout (blockchain, base
+   `blocklucky_demo`, mairie, habitants, loterie, site). Prérequis : MySQL démarré. À répéter une fois sur
+   l'ordinateur de la soutenance.
+3. **La liste blanche n'est appliquée que par le site, pas par le contrat.** Choix assumé et **documenté**
+   (`docs/securite.md`, question « Seuls les habitants inscrits peuvent-ils jouer ? », et question bonus de
+   `docs/soutenance.md`) : un contrôle dans le contrat casserait la connexion par mail. Piste pour de
+   l'argent réel : une signature du serveur par achat, vérifiée par le contrat.
 4. **Répéter la démo du guide** (section 6 : admin → mairie → import CSV → loterie → achat → tirage)
    en production, et chronométrer la réponse de Chainlink.
 
@@ -192,9 +190,8 @@ en production. 🔒 = secret.
 7. **Connexion** : pas de limite au nombre d'essais de mot de passe, sessions jamais purgées en base
    (cookie de 30 jours), mot de passe admin comparé en clair depuis le `.env`. Parades : limitation des
    essais, expiration des sessions, mot de passe admin long.
-8. **`docs/securite.md` et `docs/soutenance.md` disent que « la mairie » est propriétaire du contrat.**
-   C'est maintenant le serveur. Le message reste vrai (le propriétaire ne peut ni choisir le gagnant,
-   ni toucher aux fonds), mais il faut l'adapter avant la soutenance.
+8. ~~Les documents disent que « la mairie » est propriétaire du contrat~~ **Réglé** : `docs/securite.md`
+   et `docs/soutenance.md` décrivent maintenant le rôle de la clé du serveur et ce que son vol permettrait.
 
 ### P3 : finitions
 
@@ -210,8 +207,8 @@ en production. 🔒 = secret.
 ## 10. Prochaines étapes conseillées
 
 1. Approvisionner la souscription Chainlink en ETH (P1.1) et répéter la démo du guide en production (P1.4).
-2. Réparer ou remplacer la démo de secours (P1.2).
-3. Décider pour la liste blanche (P1.3) et mettre à jour `docs/securite.md` et `docs/soutenance.md` (P2.8).
+2. Répéter la démo de secours sur l'ordinateur de la soutenance (P1.2, réparée).
+3. Liste blanche (P1.3) et rôle du serveur (P2.8) : documentés dans `docs/securite.md` et `docs/soutenance.md`.
 4. Finitions P3, puis répétition générale avec `docs/soutenance.md`.
 
 ## 11. Où trouver quoi

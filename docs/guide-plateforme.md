@@ -180,6 +180,12 @@ Puis lancez le site avec les valeurs locales : `NEXT_PUBLIC_CHAIN_ID=31337`, `RP
 
 Site : http://localhost:3000
 
+**Tout en une commande (démo de secours)** : `npm run demo:locale`, avec MySQL démarré. Le script lance la
+blockchain locale, déploie la loterie, crée une base `blocklucky_demo` (effacée à chaque lancement), la mairie
+d'EtherBay (`mairie@etherbay.demo` / `demo1234`), inscrit les comptes de test n° 1 à 9 comme habitants, ouvre
+une loterie et démarre le site. Admin : `admin@demo.local` / `demo1234`. Utilisateur MySQL différent de « root »
+sans mot de passe : `DB_USER=… DB_PASSWORD=… npm run demo:locale`.
+
 ---
 
 ## 6. Faire une démo (5 minutes, une seule personne)

@@ -14,30 +14,52 @@
    réservé. Si Chainlink ne répond pas, n'importe qui peut relancer le tirage après 1 h.
 4. **Les règles ne changent pas en cours de route.** Prix, plafond et date de fin sont fixés à l'ouverture
    et ne sont plus modifiables jusqu'au tirage.
-5. **Tout est vérifié automatiquement.** 43 tests couvrent 100 % du code, dont des attaques simulées, et
+5. **Tout est vérifié automatiquement.** 44 tests couvrent 100 % du code, dont des attaques simulées, et
    l'outil d'analyse Slither ne relève aucune faille.
 
 ## Les questions qu'un DSI se pose
 
-### « La mairie, ou un employé indélicat, peut-elle truquer le tirage ? »
+### « Qui détient les clés, et que peut faire la mairie ? »
 
-Non. Le compte de la mairie n'a qu'un seul pouvoir : **ouvrir** une loterie et en fixer les règles.
-Le gagnant est désigné par un calcul public (`nombre aléatoire modulo nombre de tickets`) à partir d'un
-nombre fourni uniquement par Chainlink. Un test automatique vérifie la liste exacte des fonctions du
-contrat : aucune ne permet de choisir le gagnant ou de déplacer les fonds.
+Chaque ville a son propre contrat. Son **propriétaire** (`owner`) est le compte du **serveur de la
+plateforme** (`PRIVATE_KEY`), qui signe les actions demandées par la mairie depuis son espace : ouvrir une
+loterie, lancer ou relancer le tirage. Les mairies n'ont donc besoin ni de portefeuille, ni de
+connaissances en blockchain.
+
+Ce propriétaire n'a qu'un seul pouvoir métier : **ouvrir** une loterie et en fixer les règles. Lancer le
+tirage n'est pas un privilège : n'importe qui peut le faire une fois la vente terminée, y compris depuis
+Etherscan. Le gagnant est désigné par un calcul public (`nombre aléatoire modulo nombre de tickets`) à
+partir d'un nombre fourni uniquement par Chainlink. Un test automatique vérifie la liste exacte des
+fonctions du contrat : aucune ne permet de choisir le gagnant ou de déplacer les fonds.
 
 **Faille évitée :** le composant Chainlink habituellement utilisé (`VRFConsumerBaseV2Plus`) contient une
 fonction réservée au propriétaire qui permet de remplacer Chainlink par n'importe quel autre contrat.
 Un propriétaire malhonnête aurait pu y brancher un faux « hasard ». Nous ne l'utilisons pas (annexe B.1).
 
-### « Et si la clé de la mairie est volée ? »
+### « Et si la clé du serveur est volée ? »
 
-Le voleur obtiendrait le seul pouvoir de la mairie : ouvrir de nouvelles loteries, et seulement quand
-aucune n'est en cours. Il pourrait aussi transférer ou abandonner la propriété du contrat, ce qui
-empêcherait la mairie d'ouvrir les loteries suivantes (il faudrait alors redéployer). Mais il ne pourrait
-**ni toucher à la cagnotte, ni influencer un tirage** : la loterie en cours irait à son terme normalement. La propriété se
-transfère en deux étapes (`Ownable2Step`) pour éviter de la confier par erreur à une mauvaise adresse.
-Recommandation : garder la clé de la mairie sur un portefeuille matériel ou un coffre multi-signatures.
+C'est la clé la plus sensible : elle est propriétaire de **tous** les contrats des villes et de la
+souscription Chainlink. Un voleur pourrait :
+- ouvrir des loteries (seulement quand aucune n'est en cours) ou céder la propriété des contrats ;
+- annuler la souscription Chainlink et récupérer son solde, ce qui **bloquerait les tirages** en cours.
+
+Il ne pourrait en revanche **ni toucher aux cagnottes, ni choisir un gagnant** : le contrat ne le permet
+à personne. Parades : un compte dédié avec peu d'ETH, une souscription approvisionnée au fil de l'eau, la
+clé stockée uniquement dans les variables d'environnement de l'hébergeur. Pour un vrai évènement : clé
+dans un coffre matériel (HSM) ou portefeuille multi-signatures. La propriété se transfère en deux étapes
+(`Ownable2Step`), pour éviter de la confier par erreur à une mauvaise adresse.
+
+### « Seuls les habitants inscrits peuvent-ils jouer ? »
+
+Sur le site, oui : la mairie importe la liste de ses habitants (mails ou adresses de portefeuille) et le
+site refuse l'achat aux autres. **Mais le contrat, lui, accepte toute adresse** : une personne qui
+l'appelle directement (depuis Etherscan, par exemple) peut acheter un ticket sans être inscrite.
+
+C'est un choix assumé pour la démonstration. Une liste inscrite dans le contrat empêcherait un habitant
+inscrit par son mail de jouer avec le portefeuille de son choix, coûterait une transaction par habitant
+ajouté et exposerait publiquement la liste des adresses autorisées. Pour un vrai évènement avec de
+l'argent réel, il faudrait au contraire un contrôle dans le contrat : par exemple une signature du
+serveur, propre à chaque achat, que le contrat vérifierait (piste future).
 
 ### « Un pirate peut-il vider le contrat ? »
 
@@ -155,7 +177,7 @@ Si l'envoi échoue, les gains sont crédités (`PrizeCredited`) et récupérable
 
 ## C. Relance du tirage (`retryDraw`)
 
-**Problème :** si Chainlink ne répond jamais (par exemple une souscription VRF sans LINK), la loterie
+**Problème :** si Chainlink ne répond jamais (par exemple une souscription VRF sans fonds), la loterie
 resterait en `CALCULATING` et la cagnotte serait bloquée pour toujours.
 
 **Solution :** `retryDraw()`, ouverte à **tous**, utilisable seulement en `CALCULATING` et
