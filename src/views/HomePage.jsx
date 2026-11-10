@@ -74,9 +74,9 @@ export function HomePage({ cities }) {
   return (
     <main className="page">
       <div className="intro">
-        <h1>Le jackpot de votre ville</h1>
+        <h1>La loterie de votre ville</h1>
         <p className="network-tag">
-          Chaque ville a sa loterie. Le tirage est fait par Chainlink et toute la cagnotte va au gagnant.
+          Chaque ville organise sa loterie. Le tirage au sort est public et vérifiable, et toute la cagnotte revient au gagnant.
         </p>
       </div>
       <h2 className="city-list-title">Choisissez votre ville</h2>
@@ -87,7 +87,7 @@ export function HomePage({ cities }) {
       ) : (
         <>
           {cities.every((city) => statuses[city.id] && describeStatus(statuses[city.id], now).tone !== "open") && (
-            <p className="notice">Aucune vente en cours pour l'instant. La prochaine loterie s'allumera ici.</p>
+            <p className="notice">Aucune vente en cours pour l'instant. La prochaine loterie sera annoncée ici.</p>
           )}
           <ul className="city-list" aria-label="Villes">
             {cities.map((city) => {

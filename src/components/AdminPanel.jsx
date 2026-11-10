@@ -62,18 +62,18 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
         data.tickets.length === 0 ? (
           <>
             <p className="hint">Aucun ticket vendu : la loterie sera clôturée sans gagnant, sans appel à Chainlink.</p>
-            <button type="button" className="btn btn-wine btn-block" onClick={actions.draw} disabled={txInProgress}>
+            <button type="button" className="btn btn-strong btn-block" onClick={actions.draw} disabled={txInProgress}>
               Clôturer la loterie
             </button>
           </>
         ) : (
-          <button type="button" className="btn btn-wine btn-block" onClick={actions.draw} disabled={txInProgress}>
+          <button type="button" className="btn btn-strong btn-block" onClick={actions.draw} disabled={txInProgress}>
             Lancer le tirage
           </button>
         )
       ) : derived.isCalculating ? (
         retryIn <= 0 ? (
-          <button type="button" className="btn btn-wine btn-block" onClick={actions.retry} disabled={txInProgress}>
+          <button type="button" className="btn btn-strong btn-block" onClick={actions.retry} disabled={txInProgress}>
             Relancer le tirage (Chainlink n'a pas répondu)
           </button>
         ) : (
@@ -115,7 +115,7 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
             Durée (minutes)
             <input type="number" min="1" step="1" required value={form.durationMinutes} onChange={update("durationMinutes")} />
           </label>
-          <button type="submit" className="btn btn-gold btn-block" disabled={txInProgress}>
+          <button type="submit" className="btn btn-primary btn-block" disabled={txInProgress}>
             Ouvrir la loterie
           </button>
         </form>

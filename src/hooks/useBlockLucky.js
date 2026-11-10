@@ -19,7 +19,8 @@ const ACTIVITY_SIZE = 25;
 const MAX_LOG_RANGE = 2000; // blocs lus par requête d'événements
 // Marge sous le dernier bloc : les nœuds RPC publics sont répartis sur plusieurs serveurs,
 // et celui qui répond à eth_getLogs peut avoir un ou deux blocs de retard sur celui qui a donné le numéro.
-const LOG_SAFETY_BLOCKS = 3;
+// En local, aucun bloc n'est produit sans transaction : sans marge à 0, le dernier tirage ne serait jamais lu.
+const LOG_SAFETY_BLOCKS = TARGET_CHAIN_ID === 31337 ? 0 : 3;
 
 const IDLE_TX = { status: "idle", label: "", successText: "", hash: null, error: null };
 

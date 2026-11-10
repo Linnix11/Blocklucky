@@ -33,10 +33,16 @@ export function CityPage({ city, me }) {
   const selling = Boolean(data && data.state === STATE.OPEN && !data.canDraw && data.endTime > now);
 
   useEffect(() => {
+    // Seule la réponse à la dernière demande compte : sinon une réponse plus ancienne (sans portefeuille)
+    // peut arriver après et refuser à tort un habitant inscrit.
+    let current = true;
     const query = wallet.account ? `?wallet=${wallet.account}` : "";
     api(`/cities/${city.slug}/access${query}`)
-      .then((r) => setAllowed(r.allowed))
-      .catch(() => setAllowed(false));
+      .then((r) => current && setAllowed(r.allowed))
+      .catch(() => current && setAllowed(false));
+    return () => {
+      current = false;
+    };
   }, [city.slug, wallet.account, me]);
 
   return (
@@ -45,7 +51,7 @@ export function CityPage({ city, me }) {
         <p className="network-tag">
           <a href="/">← Toutes les villes</a>
         </p>
-        <h1 className={city.name.length > 18 ? "is-long" : undefined}>Le jackpot {deVille(city.name)}</h1>
+        <h1 className={city.name.length > 18 ? "is-long" : undefined}>Loterie {deVille(city.name)}</h1>
         {selling && <p className="live-badge">Vente ouverte</p>}
         <p className="network-tag">{network.name}, ethers fictifs, aucun vrai argent en jeu</p>
         {/* Sans MetaMask, le bandeau juste en dessous explique quoi installer : pas de second bouton ici. */}
@@ -60,9 +66,9 @@ export function CityPage({ city, me }) {
         </div>
       )}
 
-      {/* Sur mobile, .play-side s'efface (display: contents) : pendant la vente, l'achat passe avant la machine. */}
+      {/* Sur mobile, .play-side s'efface (display: contents) : pendant la vente, l'achat passe avant le récapitulatif. */}
       <div className={`play-grid${selling ? " is-selling" : ""}`}>
-        <LotteryStats data={data} now={now} cityName={city.name} pulling={txInProgress} />
+        <LotteryStats data={data} now={now} cityName={city.name} />
         <div className="play-side">
           <WinnerBanner data={data} account={wallet.account} network={network} txInProgress={txInProgress} onWithdraw={lottery.withdrawPrize} />
           <DrawButton data={data} derived={derived} now={now} />

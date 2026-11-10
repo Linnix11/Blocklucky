@@ -11,7 +11,7 @@ export function ConnectWallet({ wallet, balance, onConnect }) {
   }
   if (!wallet.account) {
     return (
-      <button type="button" className="btn btn-gold" onClick={onConnect}>
+      <button type="button" className="btn btn-primary" onClick={onConnect}>
         Connecter mon portefeuille
       </button>
     );
@@ -34,7 +34,7 @@ export function WalletNotice({ wallet, network, onSwitch }) {
           <strong>Pour participer, il faut un portefeuille Ethereum.</strong> Vous pouvez suivre la loterie sans,
           mais pour acheter des tickets installez l'extension gratuite MetaMask.
         </p>
-        <a className="btn btn-gold" href="https://metamask.io/download/" target="_blank" rel="noreferrer">
+        <a className="btn btn-primary" href="https://metamask.io/download/" target="_blank" rel="noreferrer">
           Installer MetaMask
         </a>
       </div>
@@ -47,7 +47,7 @@ export function WalletNotice({ wallet, network, onSwitch }) {
           <strong>Votre portefeuille est sur un autre réseau.</strong> La loterie se joue sur {network.shortName},
           avec des ethers fictifs.
         </p>
-        <button type="button" className="btn btn-gold" onClick={onSwitch}>
+        <button type="button" className="btn btn-primary" onClick={onSwitch}>
           Passer sur {network.shortName}
         </button>
       </div>

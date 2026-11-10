@@ -9,7 +9,7 @@ export function HowItWorks({ network }) {
           <span>Une application gratuite qui garde vos ethers de test. On joue sans vrai argent.</span>
         </li>
         <li>
-          <strong>Posez vos jetons</strong>
+          <strong>Achetez vos tickets</strong>
           <span>De 1 à 5 tickets par personne. Chaque achat est visible par tous, plus bas dans la page.</span>
         </li>
         <li>
@@ -39,7 +39,7 @@ export function HowItWorks({ network }) {
               .
             </li>
           )}
-          <li>Revenez ici, cliquez sur « Connecter mon portefeuille », puis posez vos jetons.</li>
+          <li>Revenez ici, cliquez sur « Connecter mon portefeuille », puis achetez vos tickets.</li>
         </ol>
       </details>
     </section>

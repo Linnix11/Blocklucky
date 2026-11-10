@@ -57,7 +57,7 @@ export function LoginPage({ onLogin }) {
               {error}
             </p>
           )}
-          <button type="submit" className="btn btn-gold btn-block" disabled={busy}>
+          <button type="submit" className="btn btn-primary btn-block" disabled={busy}>
             {busy ? "Connexion…" : "Se connecter"}
           </button>
         </form>

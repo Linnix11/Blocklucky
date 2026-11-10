@@ -2,14 +2,12 @@ import { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import { explorerLink, formatDate, formatEth, sameAddress, shortAddress } from "../lib/format";
 
-// Couleurs du design (tokens.css) : or, rouge, crème, menthe. canvas-confetti ne lit pas les variables CSS.
-const FESTIVE_COLORS = ["#FFCC33", "#D81B24", "#FFF4E0", "#3EE8A8"];
+// Couleurs du design (tokens.css) : bleu, rouge du ticket, or doux. canvas-confetti ne lit pas les variables CSS.
+const FESTIVE_COLORS = ["#1F4E8C", "#A3242F", "#E8B04B", "#E8EFF8"];
 
 function celebrate() {
   const options = { colors: FESTIVE_COLORS, disableForReducedMotion: true, zIndex: 60 };
-  confetti({ ...options, particleCount: 120, spread: 80, origin: { y: 0.35 } });
-  setTimeout(() => confetti({ ...options, particleCount: 80, angle: 60, spread: 60, origin: { x: 0 } }), 250);
-  setTimeout(() => confetti({ ...options, particleCount: 80, angle: 120, spread: 60, origin: { x: 1 } }), 400);
+  confetti({ ...options, particleCount: 90, spread: 70, origin: { y: 0.35 } });
 }
 
 /** Annonce du gagnant en plein écran, avec confettis, quand le tirage vient d'avoir lieu. */
@@ -33,18 +31,13 @@ export function WinnerAnnouncement({ announcement, account, onClose }) {
       <div className="winner-card">
         <p className="winner-kicker">Loterie n° {String(announcement.roundId)}</p>
         <h2 id="winner-title" className="winner-title">
-          {isMe ? "Jackpot !" : "Nous avons un gagnant !"}
+          {isMe ? "Vous avez gagné !" : "Nous avons un gagnant !"}
         </h2>
-        <div className="reels winner-reels" aria-hidden="true">
-          <div className="reel"><span className="reel-value">7</span></div>
-          <div className="reel"><span className="reel-value">7</span></div>
-          <div className="reel"><span className="reel-value">7</span></div>
-        </div>
         <p className="winner-prize">{formatEth(announcement.prize)}</p>
         <p className="winner-address">
           {isMe ? "Les gains sont envoyés directement dans votre portefeuille." : <>pour le portefeuille {shortAddress(announcement.winner)}</>}
         </p>
-        <button ref={closeRef} type="button" className="btn btn-gold" onClick={onClose}>
+        <button ref={closeRef} type="button" className="btn btn-primary" onClick={onClose}>
           Fermer
         </button>
       </div>
@@ -68,7 +61,7 @@ export function WinnerBanner({ data, account, network, txInProgress, onWithdraw 
             L'envoi automatique de vos {formatEth(pending)} n'a pas abouti. Ils vous sont réservés : vous seul pouvez
             les récupérer.
           </p>
-          <button type="button" className="btn btn-gold btn-block btn-lg" onClick={onWithdraw} disabled={txInProgress}>
+          <button type="button" className="btn btn-primary btn-block btn-lg" onClick={onWithdraw} disabled={txInProgress}>
             Récupérer mes {formatEth(pending)}
           </button>
         </section>

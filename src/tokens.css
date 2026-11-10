@@ -1,56 +1,50 @@
-/* BlockLucky · design-system: design.md (version 2, « machine à sous »)
- * Toutes les couleurs, polices, tailles et durées du site.
+/* BlockLucky · système de design (version 3, « service public »)
+ * Une loterie organisée par une mairie : sobre, lisible, rassurante.
+ * Toutes les couleurs, polices, tailles et durées du site sont ici.
  */
 :root {
-  /* Salle de jeux, le soir */
-  --color-night: #120707;
-  --color-night-glow: #3a1010;
-  --color-panel: #261010;
-  --color-panel-2: #321515;
-  --color-line: #4f1f1f;
-  --color-shadow: #000000aa;
+  /* Fonds et surfaces */
+  --color-bg: #f4f6f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0f3f7;
+  --color-line: #d8dee6;
+  --color-line-strong: #b9c2ce;
 
   /* Texte */
-  --color-cream: #fff4e0;
-  --color-cream-2: #e9dcc6;
-  --color-muted: #d9bba8;
-  --color-ink: #2a0f0f; /* texte sur or et sur crème */
-  --color-ink-soft: #6b3a2a;
+  --color-ink: #14213d; /* bleu nuit, 15:1 sur blanc */
+  --color-ink-2: #4a5568; /* texte secondaire, 7,5:1 sur blanc */
+  --color-ink-3: #6b7685; /* indications, 4,7:1 sur blanc */
 
-  /* Accents */
-  --color-gold: #ffcc33;
-  --color-gold-deep: #b97f00;
-  --color-red: #d81b24; /* 4,7:1 avec le crème */
-  --color-red-deep: #7d0c0c;
-  --color-mint: #3ee8a8;
-  --color-mint-wash: #0f2e22;
-  --color-danger: #ff8f7a;
-  --color-bulb-off: #5a2a14;
-  --color-lamp-off: #3c1b1b;
-  --color-reel-window: #0d0404;
-  --color-overlay: #0b0303e6;
+  /* Action principale : bleu institutionnel */
+  --color-primary: #1f4e8c; /* 8,3:1 avec le blanc */
+  --color-primary-hover: #183f72;
+  --color-primary-wash: #e8eff8;
 
-  /* Jetons */
-  --chip-1: #d81b24;
-  --chip-2: #1f8a5b;
-  --chip-3: #2659d9;
-  --chip-4: #7b2bd1;
-  --chip-5: #1a1a1a;
+  /* Rappel du ticket de tombola (usage très limité) */
+  --color-festive: #a3242f;
+  --color-festive-wash: #fbecee;
 
-  /* Polices */
-  --font-display: "Bungee", "Arial Black", sans-serif;
-  --font-logo: "Bungee Shade", "Bungee", "Arial Black", sans-serif;
-  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* États */
+  --color-success: #1d6f46;
+  --color-success-wash: #e5f3eb;
+  --color-warn: #7a4a00;
+  --color-warn-wash: #fff3dc;
+  --color-danger: #b42318;
+  --color-danger-wash: #fdecea;
+  --color-overlay: #14213dcc;
+
+  /* Polices : une seule famille, conçue pour les services publics */
+  --font-body: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Tailles */
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-md: 1.0625rem;
   --text-lg: 1.25rem;
-  --text-xl: 1.6rem;
-  --text-title: clamp(1.7rem, 5.5vw, 2.6rem);
-  --text-jackpot: clamp(2.9rem, 12vw, 4.6rem);
+  --text-xl: 1.5rem;
+  --text-title: clamp(1.75rem, 5vw, 2.4rem);
+  --text-pot: clamp(2.6rem, 10vw, 3.75rem);
 
   /* Espacements (4 px) */
   --space-3xs: 0.25rem;
@@ -64,28 +58,24 @@
   --gutter: 1rem;
 
   /* Formes */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-machine: 26px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-pill: 999px;
-  --frame: 5px;
-  --reel-height: 86px;
+  --shadow-card: 0 1px 2px #14213d0f, 0 2px 8px #14213d0a;
+  --shadow-raised: 0 12px 32px #14213d29;
 
   /* Mouvement */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-short: 150ms;
-  --dur-reel: 900ms;
 
   /* Plans */
   --z-toast: 40;
   --z-overlay: 50;
 
-  color-scheme: dark;
-}
+  /* Mise en page */
+  --page-width: 1080px;
+  --touch: 48px;
 
-@media (min-width: 700px) {
-  :root {
-    --gutter: 1.25rem;
-  }
+  color-scheme: light;
 }

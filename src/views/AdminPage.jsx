@@ -81,7 +81,7 @@ export function AdminPage({ onChange }) {
                 {status.text}
               </p>
             )}
-            <button type="submit" className="btn btn-gold btn-block" disabled={busy}>
+            <button type="submit" className="btn btn-primary btn-block" disabled={busy}>
               {busy ? "Création en cours…" : "Créer la mairie"}
             </button>
           </form>
@@ -110,12 +110,12 @@ export function AdminPage({ onChange }) {
                     const link = explorerLink(TARGET.explorer, "address", city.address);
                     return (
                       <tr key={city.id}>
-                        <td>
+                        <td data-label="Ville">
                           <a href={`/ville/${city.slug}`}>{city.name}</a>
                         </td>
-                        <td>{city.mairieEmail}</td>
-                        <td>{city.participants}</td>
-                        <td>
+                        <td data-label="Compte">{city.mairieEmail}</td>
+                        <td data-label="Inscrits">{city.participants}</td>
+                        <td data-label="Contrat">
                           {link ? (
                             <a href={link} target="_blank" rel="noreferrer">
                               {shortAddress(city.address)}

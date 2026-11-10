@@ -7,16 +7,19 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 
 const AppContext = createContext(null);
 
-/** Bandeau défilant du pied de page (décoratif : le même texte figure en clair dans les pages). */
-const MARQUEE = [
-  "Tirage vérifiable par Chainlink",
-  "100 % de la cagnotte au gagnant",
-  "Ethers fictifs, aucun vrai argent",
-  "Une loterie par ville",
-];
-
-/** Ampoules de l'enseigne en haut de page (décoratives). */
-const BULBS = Array.from({ length: 48 }, (_, i) => i);
+/** Logo : un ticket de tombola, avec son talon perforé. */
+function BrandMark() {
+  return (
+    <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+      <path
+        d="M4 8a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v4a4 4 0 0 0 0 8v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4a4 4 0 0 0 0-8z"
+        fill="#1F4E8C"
+      />
+      <path d="M21 9v14" stroke="#fff" strokeWidth="1.5" strokeDasharray="2 2" />
+      <circle cx="13" cy="16" r="3.2" fill="#fff" />
+    </svg>
+  );
+}
 
 /** Session (me) et liste des villes, partagées par toutes les pages. */
 export const useApp = () => useContext(AppContext);
@@ -58,15 +61,14 @@ export function Shell({ children }) {
 
   return (
     <AppContext.Provider value={{ me, cities, loadMe, loadCities }}>
-      <div className="bulbs" aria-hidden="true">
-        {BULBS.map((i) => (
-          <i key={i} />
-        ))}
-      </div>
       <header className="site-header">
         <div className="masthead-main">
           <a className="brand" href="/">
-            <span className="brand-name">BlockLucky</span>
+            <BrandMark />
+            <span className="brand-text">
+              <span className="brand-name">BlockLucky</span>
+              <span className="brand-tagline">La loterie des villes</span>
+            </span>
           </a>
           <nav className="account-nav" aria-label="Compte">
             {me ? (
@@ -88,22 +90,9 @@ export function Shell({ children }) {
       {mounted ? children : <main className="page" />}
 
       <footer className="site-footer">
-        <div className="marquee" aria-hidden="true">
-          <div className="marquee-track">
-            {[0, 1].map((copy) => (
-              <span key={copy} className="marquee-text">
-                {MARQUEE.map((item) => (
-                  <span key={item}>
-                    {item} <span className="marquee-dot">★</span>{" "}
-                  </span>
-                ))}
-              </span>
-            ))}
-          </div>
-        </div>
         <p className="footer-note">
-          BlockLucky, un projet Epitech Digital School. Loteries de démonstration sur réseau de test : les ethers
-          utilisés n'ont aucune valeur.
+          BlockLucky, un projet Epitech Digital School avec les mairies partenaires. Loteries de démonstration
+          sur réseau de test : les ethers utilisés n'ont aucune valeur. Tirage au sort vérifiable par Chainlink.
         </p>
       </footer>
     </AppContext.Provider>
@@ -131,7 +120,7 @@ function AccessDenied({ role }) {
       <section className="panel stack" role="alert">
         <h1>Accès réservé</h1>
         <p>Connectez-vous avec un compte {role === "admin" ? "administrateur" : "mairie"}.</p>
-        <a className="btn btn-gold" href="/connexion">
+        <a className="btn btn-primary" href="/connexion">
           Se connecter
         </a>
       </section>

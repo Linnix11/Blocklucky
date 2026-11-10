@@ -4,7 +4,7 @@ import { formatEth } from "../lib/format";
 
 const percent = (value) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: value < 10 ? 1 : 0 })} %`;
 
-/** Choix du nombre de jetons (1 jeton = 1 ticket) et achat avec le bouton « levier ». */
+/** Choix du nombre de tickets et achat. */
 export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConnect, now, allowed = true }) {
   const [quantity, setQuantity] = useState(1);
 
@@ -36,7 +36,7 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
 
   return (
     <section className="card buy" aria-labelledby="buy-title">
-      <h2 id="buy-title">{saleOpen ? "Combien de jetons ?" : "Mes tickets"}</h2>
+      <h2 id="buy-title">{saleOpen ? "Acheter des tickets" : "Mes tickets"}</h2>
 
       {wallet.account && myTickets > 0 && (
         <p className="my-tickets">
@@ -49,10 +49,10 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
         <div className="stack">
           <p>
             {allowed
-              ? "Connectez votre portefeuille MetaMask pour poser vos jetons."
+              ? "Connectez votre portefeuille MetaMask pour acheter vos tickets."
               : "Réservé aux habitants inscrits par la mairie. Connectez le portefeuille déclaré à la mairie, ou connectez-vous avec votre mail."}
           </p>
-          <button type="button" className="btn btn-lever btn-block" onClick={onConnect} disabled={!wallet.available}>
+          <button type="button" className="btn btn-primary btn-block" onClick={onConnect} disabled={!wallet.available}>
             Connecter mon portefeuille
           </button>
           {!allowed && (
@@ -81,19 +81,21 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
             onBuy(quantity);
           }}
         >
-          <p className="hint">1 jeton = 1 ticket = {formatEth(data.ticketPrice)} de test. {maxPerWallet} maximum par personne.</p>
-          <div className="chips" role="group" aria-label="Nombre de tickets">
+          <p className="hint">
+            {formatEth(data.ticketPrice)} le ticket, {maxPerWallet} maximum par personne. Chaque ticket est une chance de plus.
+          </p>
+          <div className="quantity" role="group" aria-label="Nombre de tickets">
             {Array.from({ length: maxPerWallet }, (_, i) => i + 1).map((n) => (
               <button
                 key={n}
                 type="button"
-                className={`chip chip-${((n - 1) % 5) + 1}`}
+                className="quantity-option"
                 aria-pressed={quantity === n}
                 aria-label={`${n} ticket${n > 1 ? "s" : ""}`}
                 disabled={n > remaining}
                 onClick={() => setQuantity(n)}
               >
-                <b>{n}</b>
+                {n}
               </button>
             ))}
           </div>
@@ -103,11 +105,8 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
             <b>{percent(chanceAfter)}</b>
           </p>
 
-          <button type="submit" className="btn btn-lever btn-block btn-lg" disabled={txInProgress || notEnough}>
-            <span>Tirer le levier</span>
-            <span className="btn-price">
-              {quantity} ticket{quantity > 1 ? "s" : ""} · {formatEth(cost)}
-            </span>
+          <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={txInProgress || notEnough}>
+            Acheter {quantity} ticket{quantity > 1 ? "s" : ""} pour {formatEth(cost)}
           </button>
 
           {notEnough && (

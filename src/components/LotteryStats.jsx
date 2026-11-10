@@ -1,50 +1,42 @@
 import { STATE } from "../config";
-import { deVille, formatDuration, formatEth } from "../lib/format";
+import { deVille, formatDate, formatDuration, formatEth } from "../lib/format";
 
-const MAX_LAMPS = 20;
-
-/** Un rouleau de la machine. La clé change avec la valeur : le rouleau « tourne » à chaque nouveau chiffre. */
-function Reel({ value, label }) {
-  return (
-    <div className="reel">
-      <span key={value} className="reel-value">
-        {value}
-      </span>
-      <span className="reel-label">{label}</span>
-    </div>
-  );
-}
-
-/** Ce que dit le deuxième rouleau et la phrase sous la cagnotte, selon l'état de la loterie. */
+/** Ce qu'indiquent l'en-tête, la case « temps » et la phrase sous la cagnotte, selon l'état de la loterie. */
 function describe(data, now, cityName) {
   const secondsLeft = data.endTime - now;
   if (data.roundId === 0n) {
-    return { clock: "—", clockLabel: "pas encore ouverte", sub: `La mairie prépare la première loterie ${deVille(cityName)}.` };
+    return { status: "Bientôt", time: "—", timeLabel: "Ouverture", sub: `La mairie prépare la première loterie ${deVille(cityName)}.` };
   }
   if (data.state === STATE.CALCULATING) {
-    return { clock: "…", clockLabel: "tirage en cours", sub: "Chainlink tire le gagnant au sort." };
+    return { status: "Tirage en cours", time: "…", timeLabel: "Tirage", sub: "Chainlink tire le gagnant au sort." };
   }
   if (data.state === STATE.CLOSED) {
-    return { clock: "FIN", clockLabel: "loterie terminée", sub: "La prochaine loterie sera annoncée ici." };
+    return { status: "Terminée", time: "Fin", timeLabel: "Vente", sub: "La prochaine loterie sera annoncée ici." };
   }
   if (!data.canDraw && secondsLeft > 0) {
-    return { clock: formatDuration(secondsLeft), clockLabel: "avant la fin", sub: "à gagner · toute la cagnotte pour le gagnant", live: true };
+    return { status: `Fin le ${formatDate(data.endTime)}`, time: formatDuration(secondsLeft), timeLabel: "Fin dans", sub: "Toute la cagnotte est reversée au gagnant." };
   }
-  return data.tickets.length === 0
-    ? { clock: "0:00", clockLabel: "vente terminée", sub: "Aucun ticket vendu : la loterie sera clôturée sans gagnant." }
-    : { clock: "0:00", clockLabel: "vente terminée", sub: "Vente terminée : la mairie va lancer le tirage." };
+  return {
+    status: "Vente terminée",
+    time: "0:00",
+    timeLabel: "Fin dans",
+    sub:
+      data.tickets.length === 0
+        ? "Aucun ticket vendu : la loterie sera clôturée sans gagnant."
+        : "La vente est terminée : la mairie va lancer le tirage.",
+  };
 }
 
 /**
- * La machine à sous : cagnotte (jackpot), trois rouleaux (joueurs, temps, tickets), rampe de lampes et levier.
- * `pulling` abaisse le levier pendant un achat.
+ * Récapitulatif de la loterie, présenté comme un ticket de tombola :
+ * la cagnotte, trois chiffres clés, le remplissage des places et, sur le talon, le prix du ticket.
  */
-export function LotteryStats({ data, now, cityName, pulling = false }) {
+export function LotteryStats({ data, now, cityName }) {
   if (!data) {
     return (
-      <section className="cabinet is-loading" aria-busy="true" aria-label="Chargement de la loterie">
-        <div className="machine">
-          <p className="topper">Chargement…</p>
+      <section className="lottery-card is-loading" aria-busy="true" aria-label="Chargement de la loterie">
+        <div className="lottery-body">
+          <p className="pot-label">Chargement…</p>
           <div className="skeleton skeleton-big" />
           <div className="skeleton" />
         </div>
@@ -54,64 +46,74 @@ export function LotteryStats({ data, now, cityName, pulling = false }) {
 
   const participants = Number(data.participantsCount);
   const maxParticipants = Number(data.maxParticipants);
-  const lampCount = Math.min(MAX_LAMPS, Math.max(maxParticipants, 1));
-  const lampsOn = maxParticipants > 0 ? Math.round((Math.min(participants, maxParticipants) / maxParticipants) * lampCount) : 0;
+  const progress = maxParticipants > 0 ? Math.min(100, (participants / maxParticipants) * 100) : 0;
   const connected = Boolean(data.me);
   const myTickets = Number(data.me?.myTickets ?? 0n);
-  const { clock, clockLabel, sub, live } = describe(data, now, cityName);
+  const sold = data.tickets.length;
+  const { status, time, timeLabel, sub } = describe(data, now, cityName);
 
   return (
-    <section className={`cabinet${pulling ? " is-pulling" : ""}`} aria-labelledby="pot-title">
-      <div className="machine">
-        <p className="topper">{data.roundId === 0n ? "Bientôt" : `★ Loterie n° ${data.roundId} ★`}</p>
-        <h2 id="pot-title" className="visually-hidden">
+    <section className="lottery-card" aria-labelledby="pot-title">
+      <div className="lottery-head">
+        <span className="lottery-number">{data.roundId === 0n ? "Loterie" : `Loterie n° ${data.roundId}`}</span>
+        <span>{status}</span>
+      </div>
+
+      <div className="lottery-body">
+        <h2 id="pot-title" className="pot-label">
           Cagnotte
         </h2>
-        <p className="jackpot" aria-live="polite">
+        <p className="pot-amount" aria-live="polite">
           {formatEth(data.pot, { withUnit: false })}
           <small>ETH</small>
         </p>
-        <p className="jackpot-sub">{sub}</p>
-
-        <div className="reels">
-          <Reel value={participants} label={participants > 1 ? "joueurs" : "joueur"} />
-          <div className={`reel${live ? " is-live" : ""}`} aria-live="off">
-            <span className="reel-value">{clock}</span>
-            <span className="reel-label">{clockLabel}</span>
-          </div>
-          {connected ? (
-            <Reel value={myTickets} label={myTickets > 1 ? "mes tickets" : "mon ticket"} />
-          ) : (
-            <Reel value={data.tickets.length} label={data.tickets.length > 1 ? "tickets vendus" : "ticket vendu"} />
-          )}
-        </div>
+        <p className="pot-sub">{sub}</p>
 
         {data.roundId > 0n && (
-          <div className="rail">
-            <p>
-              <span>Places</span>
-              <b>
-                {participants} {participants > 1 ? "joueurs" : "joueur"} sur {maxParticipants}
-              </b>
-            </p>
-            <div className="lamps" aria-hidden="true">
-              {Array.from({ length: lampCount }, (_, i) => (
-                <i key={i} className={i < lampsOn ? "on" : undefined} />
-              ))}
+          <>
+            <dl className="facts">
+              <div className="fact">
+                <dt>Participants</dt>
+                <dd>{participants}</dd>
+              </div>
+              <div className="fact">
+                <dt>{timeLabel}</dt>
+                <dd aria-live="off">{time}</dd>
+              </div>
+              <div className="fact">
+                <dt>{connected ? "Mes tickets" : "Tickets vendus"}</dt>
+                <dd>{connected ? myTickets : sold}</dd>
+              </div>
+            </dl>
+
+            <div className="progress">
+              <p className="progress-label">
+                <span>Places occupées</span>
+                <b>
+                  {participants} sur {maxParticipants}
+                </b>
+              </p>
+              <div
+                className="progress-track"
+                role="progressbar"
+                aria-label="Places occupées"
+                aria-valuemin={0}
+                aria-valuemax={maxParticipants}
+                aria-valuenow={participants}
+              >
+                <div className="progress-bar" style={{ width: `${progress}%` }} />
+              </div>
             </div>
-            <p className="machine-price">
-              <span>Prix du ticket</span>
-              <b>{formatEth(data.ticketPrice)}</b>
-            </p>
-          </div>
+          </>
         )}
       </div>
-      <div className="lever" aria-hidden="true">
-        <span className="lever-base" />
-        <span className="lever-rod">
-          <span className="lever-knob" />
-        </span>
-      </div>
+
+      {data.roundId > 0n && (
+        <div className="lottery-stub">
+          <span>Prix du ticket</span>
+          <b>{formatEth(data.ticketPrice)}</b>
+        </div>
+      )}
     </section>
   );
 }
