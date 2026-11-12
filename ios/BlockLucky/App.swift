@@ -43,10 +43,14 @@ struct CitiesView: View {
                 Button { if me == nil { showAuth = true } else { showAccount = true } } label: {
                     Image(systemName: me == nil ? "person.crop.circle" : "person.crop.circle.badge.checkmark").font(.title3)
                 }
-                .accessibilityLabel(me == nil ? "Connexion" : me?.role == "mairie" ? "Espace mairie" : "Mon compte")
+                .accessibilityLabel(me == nil ? "Connexion" : me?.role == "mairie" ? "Espace mairie" : me?.role == "admin" ? "Administration" : "Mon compte")
             }
             .sheet(isPresented: $showAccount, onDismiss: { Task { await load() } }) {
-                if me?.role == "mairie" { MairieView(me: $me) } else { AccountView(me: $me) }
+                switch me?.role {
+                case "mairie": MairieView(me: $me)
+                case "admin": AdminView(me: $me)
+                default: AccountView(me: $me)
+                }
             }
             .fullScreenCover(isPresented: $showAuth, onDismiss: { Task { await load() } }) { AuthView(me: $me) }
             .refreshable { await load() }
@@ -135,6 +139,7 @@ struct CitiesView: View {
                 mine = cities.filter { $0.slug == demo }
             }
             if ProcessInfo.processInfo.environment["AUTH"] != nil, me == nil, !loaded { showAuth = true }
+            if DemoData.space != nil, !loaded { showAccount = true }
             #endif
             error = nil
             if path.isEmpty, let slug = ProcessInfo.processInfo.environment["CITY"] { path = [slug] }

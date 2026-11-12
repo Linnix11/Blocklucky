@@ -12,10 +12,12 @@
 		59D51782866009C10FB36BE2 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = C671AB603096F2E93DD99AA8 /* API.swift */; };
 		6156A15E22B1520E85E20322 /* MairieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8744EF47DA9DC8123E1434F8 /* MairieView.swift */; };
 		670E8DB356F9F65E6D959BFE /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0427B0DAF295C3C56EC89088 /* App.swift */; };
+		696B9481CF015ADC95C47624 /* AdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D8CF8C89A417A6407CDEA9 /* AdminView.swift */; };
 		780ABC25CEEE39B2CE224B78 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E85147A5109CD27B1F3E10C /* Assets.xcassets */; };
 		7AE8883775572858B28E1751 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FC1EEAEF8A662CAB9EB3DF /* Theme.swift */; };
 		9D47291F816902C1ABCA9809 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D6CA5306E315F18BB571B9 /* AuthView.swift */; };
 		BF22B0994BEE1E1866F72380 /* LotteryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8FEB4861F51B1D0B633673 /* LotteryView.swift */; };
+		CA4A482D484FA607ADE74852 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF05876728E203081DD11BB1 /* DemoData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,9 +28,11 @@
 		6E85147A5109CD27B1F3E10C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8744EF47DA9DC8123E1434F8 /* MairieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MairieView.swift; sourceTree = "<group>"; };
 		AF8FEB4861F51B1D0B633673 /* LotteryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotteryView.swift; sourceTree = "<group>"; };
+		BF05876728E203081DD11BB1 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		C671AB603096F2E93DD99AA8 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		CBC28A1DCA8E21F1A61F9226 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		D1AFE1080B771699FCDDD0C7 /* Chain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chain.swift; sourceTree = "<group>"; };
+		F3D8CF8C89A417A6407CDEA9 /* AdminView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -43,12 +47,14 @@
 		C8B53CEC0825DCB4BF35E5AA /* BlockLucky */ = {
 			isa = PBXGroup;
 			children = (
+				F3D8CF8C89A417A6407CDEA9 /* AdminView.swift */,
 				C671AB603096F2E93DD99AA8 /* API.swift */,
 				0427B0DAF295C3C56EC89088 /* App.swift */,
 				6E85147A5109CD27B1F3E10C /* Assets.xcassets */,
 				19D6CA5306E315F18BB571B9 /* AuthView.swift */,
 				D1AFE1080B771699FCDDD0C7 /* Chain.swift */,
 				CBC28A1DCA8E21F1A61F9226 /* Components.swift */,
+				BF05876728E203081DD11BB1 /* DemoData.swift */,
 				AF8FEB4861F51B1D0B633673 /* LotteryView.swift */,
 				8744EF47DA9DC8123E1434F8 /* MairieView.swift */,
 				24FC1EEAEF8A662CAB9EB3DF /* Theme.swift */,
@@ -136,10 +142,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				59D51782866009C10FB36BE2 /* API.swift in Sources */,
+				696B9481CF015ADC95C47624 /* AdminView.swift in Sources */,
 				670E8DB356F9F65E6D959BFE /* App.swift in Sources */,
 				9D47291F816902C1ABCA9809 /* AuthView.swift in Sources */,
 				04ECC678ECC3452A7A7E3C04 /* Chain.swift in Sources */,
 				5801FC1D29DBFBF16248EDFD /* Components.swift in Sources */,
+				CA4A482D484FA607ADE74852 /* DemoData.swift in Sources */,
 				BF22B0994BEE1E1866F72380 /* LotteryView.swift in Sources */,
 				6156A15E22B1520E85E20322 /* MairieView.swift in Sources */,
 				7AE8883775572858B28E1751 /* Theme.swift in Sources */,

@@ -37,8 +37,12 @@ struct APIError: LocalizedError {
 
 /// Appels à l'API du site. URLSession garde le cookie de session (`sid`) comme un navigateur.
 enum API {
-    static func call<T: Decodable>(_ path: String, method: String = "GET", body: [String: Any]? = nil) async throws -> T {
-        var request = URLRequest(url: SITE.appending(path: "api" + path))
+    static func call<T: Decodable>(_ path: String, method: String = "GET", body: [String: Any]? = nil,
+                                   timeout: TimeInterval = 60) async throws -> T {
+        #if DEBUG
+        if let demo = DemoData.response(path) { return try JSONDecoder().decode(T.self, from: demo) }
+        #endif
+        var request = URLRequest(url: URL(string: SITE.absoluteString + "/api" + path)!, timeoutInterval: timeout)
         request.httpMethod = method
         if let body {
             request.setValue("application/json", forHTTPHeaderField: "content-type")
@@ -85,8 +89,70 @@ enum API {
         }
     }
 
-    struct MairieData: Decodable { var city: City }
-    static func mairieCity() async throws -> City { try await (call("/mairie") as MairieData).city }
+    // MARK: Espace mairie
+
+    struct MairieData: Decodable { var city: City; var participants: [String] }
+    static func mairie() async throws -> MairieData { try await call("/mairie") }
+
+    /// Ajoute des habitants : mails et adresses 0x trouvés dans le texte (ou CSV). `replace` vide d'abord la liste.
+    struct Added: Decodable { var added: Int }
+    static func addParticipants(_ text: String, replace: Bool = false) async throws -> Int {
+        try await (call("/mairie/participants", method: "POST", body: ["csv": text, "replace": replace]) as Added).added
+    }
+    static func removeParticipant(_ identifier: String) async throws {
+        _ = try await call("/mairie/participants/" + encode(identifier), method: "DELETE") as [String: Bool]
+    }
+
+    /// Actions sur la loterie, signées par le serveur : "round" (ouverture), "draw" (tirage), "retry" (relance).
+    struct Tx: Decodable { var hash: String }
+    static func mairieAction(_ action: String, body: [String: Any]? = nil) async throws {
+        _ = try await call("/mairie/" + action, method: "POST", body: body ?? [:], timeout: 120) as Tx
+    }
+
+    /// Proposition de design par Gemini, à partir de la description de la mairie (rien n'est enregistré).
+    struct Generated: Decodable { var theme: CustomTheme }
+    static func generateTheme(_ description: String) async throws -> CustomTheme {
+        try await (call("/mairie/theme/generate", method: "POST", body: ["description": description], timeout: 90) as Generated).theme
+    }
+
+    // MARK: Espace admin
+
+    struct AdminCity: Decodable, Identifiable {
+        var id: Int
+        var name: String
+        var slug: String
+        var address: String?
+        var theme: String
+        var mairieEmail: String?
+        var participants: Int
+
+        enum CodingKeys: String, CodingKey { case id, name, slug, address, theme, mairieEmail, participants }
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            (id, name, slug) = (try c.decode(Int.self, forKey: .id), try c.decode(String.self, forKey: .name), try c.decode(String.self, forKey: .slug))
+            address = try c.decodeIfPresent(String.self, forKey: .address)
+            theme = try c.decode(String.self, forKey: .theme)
+            mairieEmail = try c.decodeIfPresent(String.self, forKey: .mairieEmail)
+            // COUNT(*) arrive en nombre ou en texte selon le pilote MySQL
+            participants = (try? c.decode(Int.self, forKey: .participants)) ?? Int((try? c.decode(String.self, forKey: .participants)) ?? "") ?? 0
+        }
+    }
+    static func adminCities() async throws -> [AdminCity] { try await call("/admin/cities") }
+
+    /// Crée une mairie et sa loterie. Sans adresse de contrat, le serveur en déploie un (une à deux minutes).
+    struct Created: Decodable { var id: Int; var slug: String; var address: String }
+    static func createCity(name: String, email: String, password: String, theme: String, contract: String) async throws -> Created {
+        var body: [String: Any] = ["name": name, "email": email, "password": password, "theme": theme]
+        if !contract.isEmpty { body["contractAddress"] = contract }
+        return try await call("/admin/cities", method: "POST", body: body, timeout: 300)
+    }
+    static func deleteCity(_ id: Int) async throws {
+        _ = try await call("/admin/cities/\(id)", method: "DELETE") as [String: Bool]
+    }
+
+    static func encode(_ s: String) -> String {
+        s.addingPercentEncoding(withAllowedCharacters: .alphanumerics.union(CharacterSet(charactersIn: "@._-"))) ?? s
+    }
 
     struct Saved: Decodable { var theme: String }
     static func saveTheme(_ theme: String, custom: CustomTheme? = nil) async throws {

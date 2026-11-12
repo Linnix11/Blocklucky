@@ -10,7 +10,7 @@ enum Chain {
         case state = "0xc19d93fb", roundId = "0x8cd221c9", ticketPrice = "0x1209b1f6", pot = "0x403c9fa8"
         case participants = "0xdd60c898", maxParticipants = "0x24924bf7", maxTickets = "0x2b2f0a0c"
         case timeLeft = "0x1300a6d1", canDraw = "0x3cc82e09", endTime = "0x3197cbb6"
-        case tickets = "0x4ed02622", results = "0x1b0c27da"
+        case tickets = "0x4ed02622", results = "0x1b0c27da", drawRequestedAt = "0xbc79683d"
     }
 
     /// Résultat d'une loterie terminée (`results[roundId]`). winner = nil : clôturée sans gagnant.
@@ -28,6 +28,10 @@ enum Chain {
         var ticketsSold = 0
         var canDraw = false
         var result: Result?
+        var drawRequestedAt = Date.distantPast
+
+        /// La relance du tirage est ouverte 1 h après la demande à Chainlink (DRAW_TIMEOUT du contrat).
+        var retryAt: Date { drawRequestedAt.addingTimeInterval(3600) }
 
         var progress: Double {
             maxParticipants == 0 ? 0 : min(1, NSDecimalNumber(decimal: participants / maxParticipants).doubleValue)
@@ -39,12 +43,14 @@ enum Chain {
         async let p = call(contract, .pot), n = call(contract, .participants), m = call(contract, .maxParticipants)
         async let w = call(contract, .maxTickets), e = call(contract, .endTime), d = call(contract, .canDraw)
         async let list = raw(contract, Selector.tickets.rawValue)
+        async let asked = call(contract, .drawRequestedAt)
         let v = try await [s, r, t, p, n, m, w, e, d]
         // Tableau dynamique : 1er mot = position, 2e mot = nombre d'entrées (1 entrée = 1 ticket).
         let ticketsHex = try await list
         var lottery = Lottery(state: int(v[0]), roundId: v[1], ticketPrice: v[2], pot: v[3], participants: v[4],
                               maxParticipants: v[5], maxTickets: v[6], endTime: Date(timeIntervalSince1970: Double(int(v[7]))),
                               ticketsSold: int(uint("0x" + word(ticketsHex, 1))), canDraw: v[8] != 0)
+        lottery.drawRequestedAt = Date(timeIntervalSince1970: Double(int(try await asked)))
         if lottery.state == 0, lottery.roundId > 0 {
             let hex = try await raw(contract, Selector.results.rawValue + pad(lottery.roundId))
             let winner = "0x" + word(hex, 0).suffix(40)
