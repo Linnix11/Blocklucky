@@ -142,6 +142,7 @@ a:hover {
   flex: none;
   width: 32px;
   height: 32px;
+  border-radius: 7px;
 }
 
 .brand-text {

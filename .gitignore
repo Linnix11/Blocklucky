@@ -35,3 +35,8 @@ next-env.d.ts
 
 # Fichier généré automatiquement par next dev
 AGENTS.md
+
+# App iPhone (Xcode)
+ios/build/
+ios/BlockLucky.xcodeproj/xcuserdata/
+ios/BlockLucky.xcodeproj/project.xcworkspace/xcuserdata/

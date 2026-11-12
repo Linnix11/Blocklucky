@@ -4,16 +4,6 @@ import "@/tokens.css";
 import "@/styles.css";
 import "@/themes.css";
 
-/** Icône d'onglet : un ticket de tombola bleu. */
-const TICKET_ICON =
-  "data:image/svg+xml," +
-  encodeURIComponent(
-    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>" +
-      "<path d='M4 8a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v4a4 4 0 0 0 0 8v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4a4 4 0 0 0 0-8z' fill='#1F4E8C'/>" +
-      "<circle cx='13' cy='16' r='3.2' fill='#fff'/>" +
-      "</svg>"
-  );
-
 /**
  * Polices téléchargées au build et servies par notre serveur (next/font) : le navigateur n'appelle
  * jamais Google, aucune adresse IP de visiteur ne lui est transmise (RGPD).
@@ -25,7 +15,7 @@ const sourceSerif = Source_Serif_4({ subsets: ["latin"], variable: "--font-sourc
 export const metadata = {
   title: "BlockLucky, la loterie des villes",
   description: "BlockLucky, la loterie des villes : un tirage transparent et vérifiable sur la blockchain.",
-  icons: { icon: TICKET_ICON },
+  // Icônes : src/app/icon.png (onglet) et src/app/apple-icon.png (écran d'accueil iPhone), lues par Next.js.
 };
 
 export const viewport = { themeColor: "#ffffff" };

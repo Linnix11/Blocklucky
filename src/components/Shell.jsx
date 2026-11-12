@@ -7,18 +7,9 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 
 const AppContext = createContext(null);
 
-/** Logo : un ticket de tombola, avec son talon perforé. */
+/** Logo : l'icône BlockLucky (ticket de tombola avec un bloc), la même que celle de l'app iPhone. */
 function BrandMark() {
-  return (
-    <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-      <path
-        d="M4 8a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v4a4 4 0 0 0 0 8v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4a4 4 0 0 0 0-8z"
-        fill="var(--color-header-mark)"
-      />
-      <path d="M21 9v14" stroke="var(--color-header-bg)" strokeWidth="1.5" strokeDasharray="2 2" />
-      <circle cx="13" cy="16" r="3.2" fill="var(--color-header-bg)" />
-    </svg>
-  );
+  return <img className="brand-mark" src="/logo.png" alt="" width="32" height="32" />;
 }
 
 /** Session (me) et liste des villes, partagées par toutes les pages. */
