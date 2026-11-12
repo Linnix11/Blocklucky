@@ -40,3 +40,6 @@ AGENTS.md
 ios/build/
 ios/BlockLucky.xcodeproj/xcuserdata/
 ios/BlockLucky.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Réglages d'outils locaux
+.claude/
