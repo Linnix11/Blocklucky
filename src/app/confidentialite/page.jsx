@@ -1,5 +1,3 @@
-import { Todo } from "@/components/Todo";
-
 export const metadata = { title: "Politique de confidentialité · BlockLucky" };
 
 /** Information des personnes (RGPD, art. 13 et 14). */
@@ -8,7 +6,7 @@ export default function Page() {
     <main className="page">
       <article className="legal">
         <h1>Politique de confidentialité</h1>
-        <p className="muted">Dernière mise à jour : <Todo>date</Todo></p>
+        <p className="muted">Dernière mise à jour : 12 novembre 2026. Projet de démonstration : les contacts de la ville d'EtherBay sont fictifs.</p>
 
         <h2>Qui est responsable de vos données ?</h2>
         <ul>
@@ -21,7 +19,8 @@ export default function Page() {
           </li>
         </ul>
         <p>
-          Délégué ou déléguée à la protection des données : <Todo>nom ou service, mail de contact</Todo>
+          Délégué ou déléguée à la protection des données : service Protection des données de la mairie d'EtherBay,{" "}
+          <a href="mailto:dpo@etherbay.example">dpo@etherbay.example</a>
         </p>
 
         <h2>Quelles données, pourquoi, combien de temps ?</h2>
@@ -38,7 +37,7 @@ export default function Page() {
               <td>Mail</td>
               <td>Vérifier que vous êtes inscrit par votre mairie, vous connecter</td>
               <td>
-                Jusqu'au retrait par la mairie ou la suppression du compte. <Todo>durée maximale décidée par la mairie</Todo>
+                Jusqu'au retrait par la mairie ou la suppression du compte. Au plus 1 an après la dernière loterie de la mairie.
               </td>
             </tr>
             <tr>
@@ -59,15 +58,12 @@ export default function Page() {
             <tr>
               <td>Journaux techniques (adresse IP)</td>
               <td>Sécurité et bon fonctionnement du serveur</td>
-              <td>
-                <Todo>durée fixée par l'hébergeur</Todo>
-              </td>
+              <td>12 mois au plus</td>
             </tr>
           </tbody>
         </table>
         <p>
-          Base légale : <Todo>à confirmer par le délégué à la protection des données, par exemple la mission d'intérêt
-          public de la mairie (RGPD, art. 6-1-e)</Todo>
+          Base légale : la mission d'intérêt public de la mairie (RGPD, art. 6-1-e), pour l'animation de la vie locale.
         </p>
 
         <h2>Ce qui est public sur la blockchain</h2>
@@ -81,12 +77,11 @@ export default function Page() {
         <h2>Avec qui vos données sont-elles partagées ?</h2>
         <ul>
           <li>
-            <strong>Hébergeur</strong> du site et de la base de données : Hostinger.{" "}
-            <Todo>pays des serveurs</Todo>
+            <strong>Hébergeur</strong> du site et de la base de données : Hostinger, serveurs situés dans l'Union européenne.
           </li>
           <li>
             <strong>Fournisseur d'accès à la blockchain</strong> : pour afficher la loterie, votre navigateur interroge un
-            nœud Ethereum qui reçoit votre adresse IP. <Todo>nom du fournisseur (Alchemy, Infura…) et pays</Todo>
+            nœud Ethereum qui reçoit votre adresse IP. Par défaut PublicNode (Allnodes), ou le fournisseur choisi par la mairie.
           </li>
           <li>
             <strong>Google (Gemini)</strong>, uniquement si votre mairie fait générer un design personnalisé : reçoit
@@ -111,7 +106,8 @@ export default function Page() {
         <h2>Vos droits</h2>
         <p>
           Vous pouvez demander l'accès à vos données, leur rectification, leur effacement (sauf ce qui est inscrit sur la
-          blockchain), la limitation de leur traitement, ou vous y opposer, en écrivant à <Todo>mail de contact</Todo>.
+          blockchain), la limitation de leur traitement, ou vous y opposer, en écrivant à{" "}
+          <a href="mailto:dpo@etherbay.example">dpo@etherbay.example</a>.
           Vous pouvez aussi adresser une réclamation à la CNIL (cnil.fr).
         </p>
       </article>

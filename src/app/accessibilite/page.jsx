@@ -1,5 +1,3 @@
-import { Todo } from "@/components/Todo";
-
 export const metadata = { title: "Déclaration d'accessibilité · BlockLucky" };
 
 /** Déclaration d'accessibilité (loi n° 2005-102, art. 47 ; RGAA ; directive européenne 2016/2102). */
@@ -9,11 +7,11 @@ export default function Page() {
       <article className="legal">
         <h1>Déclaration d'accessibilité</h1>
         <p>
-          <Todo>nom de l'organisme</Todo> s'engage à rendre son service accessible, conformément à l'article 47 de la loi
+          La mairie d'EtherBay (ville fictive, projet de démonstration) s'engage à rendre son service accessible, conformément à l'article 47 de la loi
           n° 2005-102 du 11 février 2005. Cette déclaration s'applique au site BlockLucky.
         </p>
         <p>
-          Schéma pluriannuel de mise en accessibilité et plan d'action : <Todo>lien ou document</Todo>
+          Schéma pluriannuel de mise en accessibilité et plan d'action : schéma 2026-2028 de la mairie d'EtherBay, disponible sur demande.
         </p>
 
         <h2>État de conformité</h2>
@@ -39,12 +37,13 @@ export default function Page() {
 
         <h2>Établissement de cette déclaration</h2>
         <p>
-          Déclaration établie le <Todo>date</Todo>. Technologies utilisées : HTML, CSS, JavaScript.
+          Déclaration établie le 12 novembre 2026. Technologies utilisées : HTML, CSS, JavaScript.
         </p>
 
         <h2>Retour d'information et contact</h2>
         <p>
-          Si vous n'arrivez pas à accéder à un contenu ou à un service, contactez <Todo>mail ou formulaire de contact</Todo>{" "}
+          Si vous n'arrivez pas à accéder à un contenu ou à un service, contactez{" "}
+          <a href="mailto:accessibilite@etherbay.example">accessibilite@etherbay.example</a>{" "}
           pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.
         </p>
 

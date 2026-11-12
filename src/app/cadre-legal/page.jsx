@@ -1,5 +1,3 @@
-import { Todo } from "@/components/Todo";
-
 export const metadata = { title: "Cadre légal · BlockLucky" };
 
 /**
@@ -122,7 +120,7 @@ export default function Page() {
         <h2>Avertissement</h2>
         <p>
           Cette page présente le cadre juridique de façon simplifiée, à titre d'information. Elle ne constitue pas un
-          avis juridique. <Todo>validation par le service juridique de la mairie ou par un avocat</Todo>
+          avis juridique. Avant toute loterie réelle, elle doit être validée par le service juridique de la mairie ou par un avocat.
         </p>
 
         <h2>Textes de référence</h2>

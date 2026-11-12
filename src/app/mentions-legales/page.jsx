@@ -1,17 +1,26 @@
-import { Todo } from "@/components/Todo";
-
 export const metadata = { title: "Mentions légales · BlockLucky" };
 
-/** Mentions légales (loi n° 2004-575 du 21 juin 2004, LCEN, art. 6). */
+/**
+ * Mentions légales (loi n° 2004-575 du 21 juin 2004, LCEN, art. 6).
+ * Éditeur et directeur de la publication fictifs (ville d'EtherBay, cas du projet) : à remplacer par les vraies
+ * informations de la mairie avant toute mise en production. Le numéro est dans la plage ARCEP réservée à la fiction.
+ */
 export default function Page() {
   return (
     <main className="page">
       <article className="legal">
         <h1>Mentions légales</h1>
+        <p className="muted">
+          Projet de démonstration : la ville d'EtherBay et les coordonnées ci-dessous sont fictives.
+        </p>
 
         <h2>Éditeur du site</h2>
         <p>
-          <Todo>nom de la mairie ou de l'organisme éditeur, adresse, téléphone, mail</Todo>
+          Mairie d'EtherBay
+          <br />1 place de l'Hôtel-de-Ville, 99000 EtherBay
+          <br />Téléphone : 01 99 00 12 34
+          <br />Mail : <a href="mailto:contact@etherbay.example">contact@etherbay.example</a>
+          <br />SIRET : 000 000 000 00000
         </p>
         <p>
           BlockLucky a été conçu par une équipe d'étudiants d'Epitech Digital School dans le cadre d'un partenariat avec
@@ -19,13 +28,14 @@ export default function Page() {
         </p>
 
         <h2>Directeur ou directrice de la publication</h2>
-        <p>
-          <Todo>nom et fonction (pour une mairie : en général le maire)</Todo>
-        </p>
+        <p>Camille Martin, maire d'EtherBay.</p>
 
         <h2>Hébergement</h2>
         <p>
-          Hostinger International Ltd. <Todo>adresse du siège, à vérifier sur le contrat d'hébergement</Todo>
+          Hostinger International Ltd.
+          <br />61 Lordou Vironos Street, 6023 Larnaca, Chypre
+          <br />
+          <a href="https://www.hostinger.fr">www.hostinger.fr</a>
         </p>
 
         <h2>Nature du service</h2>
