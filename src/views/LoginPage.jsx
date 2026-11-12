@@ -55,7 +55,7 @@ export function LoginPage({ onLogin }) {
   };
 
   return (
-    <main className="page page-narrow">
+    <main className="page page-narrow stack">
       <section className="panel stack" aria-labelledby="login-title">
         <h1 id="login-title">{token ? "Activer mon compte" : signup ? "Créer un compte" : "Connexion"}</h1>
         <p className="muted">
@@ -103,24 +103,6 @@ export function LoginPage({ onLogin }) {
             {busy ? "Un instant…" : token ? "Activer mon compte" : signup ? "Créer mon compte" : "Se connecter"}
           </button>
         </form>
-        {!token && (
-          <p className="muted">
-            {signup ? "Déjà un compte ? " : "Pas encore de compte ? "}
-            <button
-              type="button"
-              className="link-button"
-              onClick={() => {
-                setSignup(!signup);
-                setError(null);
-                setNotice(null);
-                setPassword("");
-                setConfirm("");
-              }}
-            >
-              {signup ? "Se connecter" : "Créer un compte"}
-            </button>
-          </p>
-        )}
         {token && (
           <p className="muted">
             Compte déjà activé ou lien expiré ?{" "}
@@ -140,6 +122,30 @@ export function LoginPage({ onLogin }) {
           </p>
         )}
       </section>
+      {!token && (
+        <section className="panel stack" aria-labelledby="switch-title">
+          <h2 id="switch-title">{signup ? "Déjà un compte ?" : "Pas encore de compte ?"}</h2>
+          <p className="muted">
+            {signup
+              ? "Connectez-vous avec votre mail et votre mot de passe."
+              : "Votre mairie vous a inscrit ? Créez votre compte en quelques secondes avec le mail que vous lui avez donné."}
+          </p>
+          <button
+            type="button"
+            className="btn btn-ghost btn-block"
+            onClick={() => {
+              setSignup(!signup);
+              setError(null);
+              setNotice(null);
+              setPassword("");
+              setConfirm("");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            {signup ? "Se connecter" : "Créer un compte"}
+          </button>
+        </section>
+      )}
     </main>
   );
 }
