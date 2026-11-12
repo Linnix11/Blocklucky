@@ -17,6 +17,27 @@ function wallet() {
   return signer;
 }
 
+/**
+ * Nonce déjà pris : une autre transaction est partie avec la même clé hors de ce serveur (script lancé depuis un Mac,
+ * deuxième instance du site…), donc le compteur du NonceManager est en retard sur la chaîne.
+ */
+const isNonceClash = (error) =>
+  ["NONCE_EXPIRED", "REPLACEMENT_UNDERPRICED"].includes(error?.code) || /nonce (too low|has already been used)/i.test(error?.message || "");
+
+/**
+ * Envoie UNE transaction ; si le nonce est déjà pris, relit le nonce sur la chaîne et renvoie une seule fois.
+ * Sans risque de doublon : ce refus arrive avant que la transaction soit acceptée par le réseau.
+ */
+async function sendTx(build) {
+  try {
+    return await build();
+  } catch (error) {
+    if (!isNonceClash(error)) throw error;
+    wallet().reset();
+    return build();
+  }
+}
+
 function lottery(address) {
   return new ethers.Contract(address, artifact.abi, wallet());
 }
@@ -26,27 +47,29 @@ async function deployLottery() {
   const signer = wallet();
   const { VRF_COORDINATOR, VRF_SUBSCRIPTION_ID, VRF_KEY_HASH } = process.env;
   const factory = new ethers.ContractFactory(artifact.abi, artifact.bytecode, signer);
-  const contract = await factory.deploy(VRF_COORDINATOR, VRF_SUBSCRIPTION_ID, VRF_KEY_HASH);
+  const contract = await sendTx(() => factory.deploy(VRF_COORDINATOR, VRF_SUBSCRIPTION_ID, VRF_KEY_HASH));
   const receipt = await contract.deploymentTransaction().wait();
   const address = await contract.getAddress();
   const vrf = new ethers.Contract(VRF_COORDINATOR, VRF_ABI, signer);
-  await (await vrf.addConsumer(VRF_SUBSCRIPTION_ID, address)).wait();
+  await (await sendTx(() => vrf.addConsumer(VRF_SUBSCRIPTION_ID, address))).wait();
   return { address, blockNumber: receipt.blockNumber };
 }
 
 async function startRound(address, { priceEth, maxParticipants, maxTicketsPerWallet, durationMinutes }) {
-  const tx = await lottery(address).startNewRound(
-    ethers.parseEther(String(priceEth)),
-    BigInt(maxParticipants),
-    BigInt(maxTicketsPerWallet),
-    BigInt(Math.round(Number(durationMinutes) * 60))
+  const tx = await sendTx(() =>
+    lottery(address).startNewRound(
+      ethers.parseEther(String(priceEth)),
+      BigInt(maxParticipants),
+      BigInt(maxTicketsPerWallet),
+      BigInt(Math.round(Number(durationMinutes) * 60))
+    )
   );
   await tx.wait();
   return tx.hash;
 }
 
 async function call(address, method) {
-  const tx = await lottery(address)[method]();
+  const tx = await sendTx(() => lottery(address)[method]());
   await tx.wait();
   return tx.hash;
 }
