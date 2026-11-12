@@ -16,6 +16,13 @@ export function celebrate() {
   confetti({ ...options, particleCount: 90, spread: 70, origin: { y: 0.35 } });
 }
 
+/** Petite gerbe de confettis depuis le bas de l'écran, après un achat. */
+export function cheer() {
+  const options = { colors: themeColors(), disableForReducedMotion: true, zIndex: 60, particleCount: 45, spread: 55, startVelocity: 38 };
+  confetti({ ...options, angle: 60, origin: { x: 0, y: 0.9 } });
+  confetti({ ...options, angle: 120, origin: { x: 1, y: 0.9 } });
+}
+
 const REEL_ROWS = 40; // lignes qui défilent avant de s'arrêter
 const REEL_MS = 3400; // durée du défilement (garder en phase avec .reel-strip dans styles.css)
 const PROOF_WAIT_MS = 2500; // attente maximale de la preuve avant de lancer le tambour sans numéros

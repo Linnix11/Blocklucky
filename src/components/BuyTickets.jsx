@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { STATE } from "../config";
 import { formatEth } from "../lib/format";
 import { MyTickets } from "./MyTickets";
+import { cheer } from "./WinnerBanner";
 
 const percent = (value) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: value < 10 ? 1 : 0 })} %`;
 
@@ -16,6 +17,14 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
   useEffect(() => {
     setQuantity((q) => Math.min(Math.max(1, q), Math.max(1, remaining)));
   }, [remaining]);
+
+  // Confettis quand mes tickets augmentent (achat confirmé), pas au premier affichage ni au changement de loterie
+  const seen = useRef(null);
+  useEffect(() => {
+    const key = `${data?.roundId}:${data?.me ? "on" : "off"}`;
+    if (seen.current && seen.current.key === key && myTickets > seen.current.count) cheer();
+    seen.current = { key, count: myTickets };
+  }, [myTickets, data?.roundId, data?.me]);
 
   if (!data || data.roundId === 0n) return null;
 

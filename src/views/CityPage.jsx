@@ -11,6 +11,7 @@ import { DrawButton } from "../components/DrawButton";
 import { WinnerAnnouncement, WinnerBanner } from "../components/WinnerBanner";
 import { Transparency } from "../components/Transparency";
 import { HowItWorks } from "../components/HowItWorks";
+import { LastWinners, Ticker } from "../components/Fairground";
 import { TxStatus } from "../components/TxStatus";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { deVille } from "../lib/format";
@@ -81,6 +82,8 @@ export function CityPage({ city, me }) {
         {wallet.available && <ConnectWallet wallet={wallet} balance={data?.me?.balance} onConnect={lottery.connect} />}
       </div>
 
+      <Ticker data={data} now={now} />
+
       <WalletNotice wallet={wallet} network={network} onSwitch={lottery.switchNetwork} />
 
       {lottery.loadError && (
@@ -91,7 +94,10 @@ export function CityPage({ city, me }) {
 
       {/* Sur mobile, .play-side s'efface (display: contents) : pendant la vente, l'achat passe avant le récapitulatif. */}
       <div className={`play-grid${selling ? " is-selling" : ""}`}>
-        <LotteryStats data={data} now={now} cityName={city.name} />
+        <div className="play-main">
+          <LotteryStats data={data} now={now} cityName={city.name} />
+          <LastWinners data={data} account={wallet.account} />
+        </div>
         <div className="play-side">
           <WinnerBanner data={data} account={wallet.account} network={network} txInProgress={txInProgress} onWithdraw={lottery.withdrawPrize} />
           <DrawButton data={data} derived={derived} now={now} />

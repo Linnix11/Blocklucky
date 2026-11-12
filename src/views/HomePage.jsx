@@ -73,11 +73,34 @@ export function HomePage({ cities }) {
 
   return (
     <main className="page">
-      <div className="intro">
-        <h1>La loterie de votre ville</h1>
-        <p className="network-tag">
-          Chaque ville organise sa loterie. Le tirage au sort est public et vérifiable, et toute la cagnotte revient au gagnant.
-        </p>
+      <div className="intro hero">
+        <div className="hero-text">
+          <p className="hero-kicker">Tombola des fêtes, version blockchain</p>
+          <h1>
+            La loterie de <span className="hl">votre ville</span>
+          </h1>
+          <p className="hero-lead">
+            Chaque ville organise sa loterie. Le tirage au sort est public et vérifiable, et toute la cagnotte revient au gagnant.
+          </p>
+        </div>
+        {/* Décor : trois billets de tombola qui flottent */}
+        <div className="hero-deco" aria-hidden="true">
+          <span className="deco-ticket deco-1">
+            <b>N° 007</b>
+            <i>BlockLucky</i>
+          </span>
+          <span className="deco-ticket deco-2">
+            <b>N° 042</b>
+            <i>Bonne chance</i>
+          </span>
+          <span className="deco-ticket deco-3">
+            <b>N° 128</b>
+            <i>Tirage public</i>
+          </span>
+          <span className="deco-ball deco-ball-1" />
+          <span className="deco-ball deco-ball-2" />
+          <span className="deco-ball deco-ball-3" />
+        </div>
       </div>
       <h2 className="city-list-title">Choisissez votre ville</h2>
       {cities === null ? (
@@ -107,6 +130,27 @@ export function HomePage({ cities }) {
           </ul>
         </>
       )}
+
+      <section className="home-steps" aria-labelledby="home-steps-title">
+        <h2 id="home-steps-title">Comment ça marche ?</h2>
+        <ol>
+          <li>
+            <span className="home-step-token" aria-hidden="true">1</span>
+            <strong>Je prends mes tickets</strong>
+            <span>De 1 à 5 tickets, payés en ethers de test : aucun vrai argent.</span>
+          </li>
+          <li>
+            <span className="home-step-token" aria-hidden="true">2</span>
+            <strong>La cagnotte grimpe</strong>
+            <span>Chaque achat s'affiche en direct, visible par tout le monde.</span>
+          </li>
+          <li>
+            <span className="home-step-token" aria-hidden="true">3</span>
+            <strong>Tirage public</strong>
+            <span>Chainlink tire le gagnant au sort, qui empoche toute la cagnotte.</span>
+          </li>
+        </ol>
+      </section>
     </main>
   );
 }

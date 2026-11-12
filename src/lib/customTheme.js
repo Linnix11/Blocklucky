@@ -131,6 +131,8 @@ export function customThemeVars(theme) {
     "--color-on-primary": onPrimary,
     "--color-festive": festive,
     "--color-festive-wash": mix(surface, festive, 0.1),
+    // Texte posé sur la couleur festive (bandeau rayé du ticket) : blanc ou fond sombre, selon le meilleur contraste.
+    "--color-on-festive": contrast("#ffffff", festive) >= contrast(dark ? bg : "#111111", festive) ? "#ffffff" : dark ? bg : "#111111",
     "--color-strong": ink,
     "--color-strong-hover": mix(ink, dark ? "#ffffff" : "#000000", 0.2),
     "--color-on-strong": surface,

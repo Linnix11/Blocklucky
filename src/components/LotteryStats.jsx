@@ -1,6 +1,26 @@
+import { useEffect, useRef, useState } from "react";
 import { STATE } from "../config";
 import { deVille, formatDate, formatDuration, formatEth } from "../lib/format";
 import { useCountUp } from "../hooks/useCountUp";
+
+const MAX_SEATS = 30; // au-delà, les places s'affichent en barre plutôt qu'en ampoules
+
+/** « +0,003 ETH » qui s'envole de la cagnotte à chaque achat (même loterie uniquement). */
+function usePotGains(pot, roundId) {
+  const [gains, setGains] = useState([]);
+  const previous = useRef(null);
+  useEffect(() => {
+    if (pot === undefined || pot === null) return;
+    const before = previous.current;
+    previous.current = { pot, roundId };
+    if (!before || before.roundId !== roundId || pot <= before.pot) return;
+    const gain = { id: `${roundId}-${pot}`, amount: pot - before.pot };
+    setGains((list) => [...list, gain]);
+    const timer = setTimeout(() => setGains((list) => list.filter((g) => g.id !== gain.id)), 1800);
+    return () => clearTimeout(timer);
+  }, [pot, roundId]);
+  return gains;
+}
 
 /** Ce qu'indiquent l'en-tête, la case « temps » et la phrase sous la cagnotte, selon l'état de la loterie. */
 function describe(data, now, cityName) {
@@ -34,6 +54,7 @@ function describe(data, now, cityName) {
  */
 export function LotteryStats({ data, now, cityName }) {
   const pot = useCountUp(data?.pot);
+  const gains = usePotGains(data?.pot, data?.roundId);
   if (!data) {
     return (
       <section className="lottery-card is-loading" aria-busy="true" aria-label="Chargement de la loterie">
@@ -53,9 +74,11 @@ export function LotteryStats({ data, now, cityName }) {
   const myTickets = Number(data.me?.myTickets ?? 0n);
   const sold = data.tickets.length;
   const { status, time, timeLabel, sub } = describe(data, now, cityName);
+  // Pendant la vente, les ampoules autour du ticket clignotent
+  const live = data.state === STATE.OPEN && !data.canDraw && data.endTime > now;
 
   return (
-    <section className="lottery-card" aria-labelledby="pot-title">
+    <section className={`lottery-card${live ? " is-live" : ""}`} aria-labelledby="pot-title">
       <div className="lottery-head">
         <span className="lottery-number">{data.roundId === 0n ? "Loterie" : `Loterie n° ${data.roundId}`}</span>
         <span>{status}</span>
@@ -66,10 +89,17 @@ export function LotteryStats({ data, now, cityName }) {
           Cagnotte
         </h2>
         {/* Le chiffre défile à l'écran ; les lecteurs d'écran n'entendent que le montant final. */}
-        <p className={`pot-amount${pot.bumped ? " is-bumped" : ""}`} aria-hidden="true">
-          {formatEth(pot.shown, { withUnit: false })}
-          <small>ETH</small>
-        </p>
+        <div className="pot-wrap">
+          <p className={`pot-amount${pot.bumped ? " is-bumped" : ""}`} aria-hidden="true">
+            {formatEth(pot.shown, { withUnit: false })}
+            <small>ETH</small>
+          </p>
+          {gains.map((gain) => (
+            <span key={gain.id} className="pot-gain" aria-hidden="true">
+              +{formatEth(gain.amount)}
+            </span>
+          ))}
+        </div>
         <p className="visually-hidden" aria-live="polite">
           {formatEth(data.pot)}
         </p>
@@ -84,7 +114,16 @@ export function LotteryStats({ data, now, cityName }) {
               </div>
               <div className="fact">
                 <dt>{timeLabel}</dt>
-                <dd aria-live="off">{time}</dd>
+                {/* Compte à rebours en tuiles, comme un panneau d'affichage */}
+                <dd aria-live="off" aria-label={time} className={/^[\d:]+$/.test(time) ? "flip" : undefined}>
+                  {/^[\d:]+$/.test(time)
+                    ? [...time].map((char, i) => (
+                        <span key={i} aria-hidden="true" className={char === ":" ? "flip-sep" : "flip-tile"}>
+                          {char}
+                        </span>
+                      ))
+                    : time}
+                </dd>
               </div>
               <div className="fact">
                 <dt>{connected ? "Mes tickets" : "Tickets vendus"}</dt>
@@ -99,16 +138,32 @@ export function LotteryStats({ data, now, cityName }) {
                   {participants} sur {maxParticipants}
                 </b>
               </p>
-              <div
-                className="progress-track"
-                role="progressbar"
-                aria-label="Places occupées"
-                aria-valuemin={0}
-                aria-valuemax={maxParticipants}
-                aria-valuenow={participants}
-              >
-                <div className="progress-bar" style={{ width: `${progress}%` }} />
-              </div>
+              {maxParticipants <= MAX_SEATS ? (
+                // Peu de places : une ampoule par place, qui s'allume quand quelqu'un la prend
+                <div
+                  className="seats"
+                  role="progressbar"
+                  aria-label="Places occupées"
+                  aria-valuemin={0}
+                  aria-valuemax={maxParticipants}
+                  aria-valuenow={participants}
+                >
+                  {Array.from({ length: maxParticipants }, (_, i) => (
+                    <span key={i} className={i < participants ? "is-on" : undefined} />
+                  ))}
+                </div>
+              ) : (
+                <div
+                  className="progress-track"
+                  role="progressbar"
+                  aria-label="Places occupées"
+                  aria-valuemin={0}
+                  aria-valuemax={maxParticipants}
+                  aria-valuenow={participants}
+                >
+                  <div className="progress-bar" style={{ width: `${progress}%` }} />
+                </div>
+              )}
             </div>
           </>
         )}

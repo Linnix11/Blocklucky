@@ -1,8 +1,9 @@
-import { Fraunces, Public_Sans, Source_Serif_4 } from "next/font/google";
+import { Bricolage_Grotesque, Fraunces, Public_Sans, Source_Serif_4 } from "next/font/google";
 import { Shell } from "@/components/Shell";
 import "@/tokens.css";
 import "@/styles.css";
 import "@/themes.css";
+import "@/festif.css";
 
 /**
  * Polices téléchargées au build et servies par notre serveur (next/font) : le navigateur n'appelle
@@ -11,6 +12,8 @@ import "@/themes.css";
 const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-public-sans", display: "swap" });
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap" });
 const sourceSerif = Source_Serif_4({ subsets: ["latin"], variable: "--font-source-serif", display: "swap" });
+// Police d'affiche pour les gros chiffres (cagnotte, compteurs, jetons) et le titre de l'accueil
+const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-bricolage", display: "swap" });
 
 export const metadata = {
   title: "BlockLucky, la loterie des villes",
@@ -22,7 +25,7 @@ export const viewport = { themeColor: "#ffffff" };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr" className={`${publicSans.variable} ${fraunces.variable} ${sourceSerif.variable}`}>
+    <html lang="fr" className={`${publicSans.variable} ${fraunces.variable} ${sourceSerif.variable} ${bricolage.variable}`}>
       <body>
         <Shell>{children}</Shell>
       </body>

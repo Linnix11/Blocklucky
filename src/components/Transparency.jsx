@@ -16,6 +16,12 @@ function DrawCheck({ proof, network, account }) {
   const proofHref = explorerLink(network.explorer, "tx", proof.fulfillTx);
   return (
     <div className="panel panel-check">
+      {/* Tampon décoratif : le verdict écrit reste plus bas (role="status") */}
+      {proof.matches && (
+        <span className="stamp" aria-hidden="true">
+          Vérifié
+        </span>
+      )}
       <h3>Vérifier le tirage n° {String(proof.roundId)}</h3>
       <ol className="check-steps">
         <li>
@@ -54,15 +60,26 @@ function DrawCheck({ proof, network, account }) {
   );
 }
 
+/** Jeton de couleur propre à chaque portefeuille (teinte tirée de l'adresse), pour reconnaître les joueurs d'un coup d'œil. */
+function Avatar({ address }) {
+  let hue = 0;
+  for (const char of String(address).toLowerCase()) hue = (hue * 31 + char.charCodeAt(0)) % 360;
+  return <span className="avatar" style={{ "--hue": hue }} aria-hidden="true" />;
+}
+
 function AddressLink({ network, address, account }) {
   const label = sameAddress(address, account) ? "vous" : shortAddress(address);
   const href = explorerLink(network.explorer, "address", address);
   return href ? (
-    <a href={href} target="_blank" rel="noreferrer" title={address}>
+    <a href={href} target="_blank" rel="noreferrer" title={address} className="who">
+      <Avatar address={address} />
       {label}
     </a>
   ) : (
-    <span title={address}>{label}</span>
+    <span title={address} className="who">
+      <Avatar address={address} />
+      {label}
+    </span>
   );
 }
 
