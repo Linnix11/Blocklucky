@@ -41,3 +41,20 @@ export async function sendConfirmation(to, link) {
     ].join("\n"),
   });
 }
+
+export async function sendPasswordReset(to, link) {
+  await transporter().sendMail({
+    from: process.env.MAIL_FROM || process.env.SMTP_USER,
+    to,
+    subject: "BlockLucky : nouveau mot de passe",
+    text: [
+      "Bonjour,",
+      "",
+      "Vous avez demandé à changer le mot de passe de votre compte BlockLucky. Ouvrez ce lien (valable 1 heure) :",
+      "",
+      link,
+      "",
+      "Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce mail : votre mot de passe ne change pas.",
+    ].join("\n"),
+  });
+}

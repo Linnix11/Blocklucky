@@ -51,6 +51,12 @@ const SCHEMA = [
     email VARCHAR(190) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
+  // Liens « mot de passe oublié » (seule l'empreinte du jeton est gardée, valable 1 heure)
+  `CREATE TABLE IF NOT EXISTS password_resets (
+    token_hash CHAR(64) PRIMARY KEY,
+    email VARCHAR(190) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )`,
 ];
 
 /**
