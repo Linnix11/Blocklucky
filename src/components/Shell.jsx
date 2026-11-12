@@ -83,6 +83,7 @@ export function Shell({ children }) {
       <footer className="site-footer">
         <nav className="footer-links" aria-label="Informations légales">
           <a href="/mentions-legales">Mentions légales</a>
+          <a href="/cadre-legal">Cadre légal</a>
           <a href="/confidentialite">Confidentialité</a>
           <a href="/accessibilite">Accessibilité : non conforme</a>
         </nav>
