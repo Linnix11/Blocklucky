@@ -1353,7 +1353,7 @@ body {
 }
 
 /* ---------- Connexion : le formulaire devient un billet ---------- */
-.page-narrow > .panel {
+.page-narrow > .panel:first-child {
   position: relative;
   margin-top: var(--space-lg);
   padding-top: calc(var(--space-md) + 26px);
@@ -1361,7 +1361,7 @@ body {
   box-shadow: var(--shadow-raised);
 }
 
-.page-narrow > .panel::before {
+.page-narrow > .panel:first-child::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1376,13 +1376,13 @@ body {
   );
 }
 
-.page-narrow > .panel h1 {
+.page-narrow > .panel:first-child h1 {
   font-family: var(--font-display);
   font-weight: 800;
   letter-spacing: -0.03em;
 }
 
-.page-narrow > .panel::after {
+.page-narrow > .panel:first-child::after {
   content: "★ BlockLucky ★";
   position: absolute;
   top: -16px;
@@ -1441,4 +1441,10 @@ body {
 /* Titres : ombre décalée façon affiche rétro */
 .intro h1 {
   text-shadow: 3px 3px 0 color-mix(in srgb, var(--color-festive) 28%, transparent);
+}
+
+/* Second encadré de la connexion (« Pas encore de compte ? ») : simple bordure pointillée */
+.page-narrow > .panel + .panel {
+  border: 2px dashed var(--color-line-strong);
+  box-shadow: none;
 }
