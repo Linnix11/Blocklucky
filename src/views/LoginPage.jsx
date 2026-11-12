@@ -20,6 +20,8 @@ export function LoginPage({ onLogin }) {
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [signup, setSignup] = useState(false);
+  const newPassword = token || signup;
 
   useEffect(() => {
     setToken(new URLSearchParams(window.location.search).get("jeton"));
@@ -47,21 +49,21 @@ export function LoginPage({ onLogin }) {
 
   const submit = (event) => {
     event.preventDefault();
-    if (token) {
-      if (password !== confirm) return setError("Les deux mots de passe ne correspondent pas.");
-      return run(() => api("/confirm", { method: "POST", body: { token, password } }));
-    }
-    return run(() => api("/login", { method: "POST", body: { email, password } }));
+    if (newPassword && password !== confirm) return setError("Les deux mots de passe ne correspondent pas.");
+    if (token) return run(() => api("/confirm", { method: "POST", body: { token, password } }));
+    return run(() => api("/login", { method: "POST", body: { email, password, signup } }));
   };
 
   return (
     <main className="page page-narrow">
       <section className="panel stack" aria-labelledby="login-title">
-        <h1 id="login-title">{token ? "Activer mon compte" : "Connexion"}</h1>
+        <h1 id="login-title">{token ? "Activer mon compte" : signup ? "Créer un compte" : "Connexion"}</h1>
         <p className="muted">
           {token
             ? "Choisissez le mot de passe de votre compte. Vous serez connecté juste après."
-            : "Habitants : utilisez le mail donné à votre mairie. À la première connexion, vous choisissez votre mot de passe (un lien de confirmation peut vous être envoyé par mail)."}
+            : signup
+              ? "Réservé aux habitants inscrits par leur mairie : utilisez le mail que vous lui avez donné, puis choisissez votre mot de passe."
+              : "Habitants : utilisez le mail donné à votre mairie. À la première connexion, vous choisissez votre mot de passe (un lien de confirmation peut vous être envoyé par mail)."}
         </p>
         <form className="admin-form admin-form-single" onSubmit={submit}>
           {!token && (
@@ -71,17 +73,17 @@ export function LoginPage({ onLogin }) {
             </label>
           )}
           <label>
-            {token ? "Nouveau mot de passe" : "Mot de passe"}
+            {newPassword ? "Nouveau mot de passe" : "Mot de passe"}
             <input
               type="password"
-              autoComplete={token ? "new-password" : "current-password"}
+              autoComplete={newPassword ? "new-password" : "current-password"}
               required
-              minLength={token ? 6 : undefined}
+              minLength={newPassword ? 6 : undefined}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          {token && (
+          {newPassword && (
             <label>
               Confirmer le mot de passe
               <input type="password" autoComplete="new-password" required value={confirm} onChange={(e) => setConfirm(e.target.value)} />
@@ -98,9 +100,27 @@ export function LoginPage({ onLogin }) {
             </div>
           )}
           <button type="submit" className="btn btn-primary btn-block" disabled={busy}>
-            {busy ? "Un instant…" : token ? "Activer mon compte" : "Se connecter"}
+            {busy ? "Un instant…" : token ? "Activer mon compte" : signup ? "Créer mon compte" : "Se connecter"}
           </button>
         </form>
+        {!token && (
+          <p className="muted">
+            {signup ? "Déjà un compte ? " : "Pas encore de compte ? "}
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => {
+                setSignup(!signup);
+                setError(null);
+                setNotice(null);
+                setPassword("");
+                setConfirm("");
+              }}
+            >
+              {signup ? "Se connecter" : "Créer un compte"}
+            </button>
+          </p>
+        )}
         {token && (
           <p className="muted">
             Compte déjà activé ou lien expiré ?{" "}

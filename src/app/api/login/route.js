@@ -38,6 +38,13 @@ export const POST = route(null, async (request) => {
     return json({ role, email });
   };
 
+  // Création de compte explicite (bouton « Créer un compte ») : refusée si le compte existe déjà.
+  // Le reste suit la première connexion : seuls les mails inscrits par une mairie peuvent créer un compte.
+  if (data.signup) {
+    const [exists] = isAdmin ? [true] : await query("SELECT 1 FROM users WHERE email = ?", [email]);
+    if (exists) return json({ error: "Un compte existe déjà avec ce mail : connectez-vous." }, 409);
+  }
+
   if (isAdmin) {
     if (!sameSecret(password, process.env.ADMIN_PASSWORD || "")) return refuse("Mot de passe incorrect");
     return accept("admin");
@@ -48,7 +55,7 @@ export const POST = route(null, async (request) => {
 
   // Première connexion d'un habitant inscrit par sa mairie
   const [listed] = await query("SELECT city_id FROM participants WHERE identifier = ? LIMIT 1", [email]);
-  if (!listed) return refuse("Ce mail n'est inscrit par aucune mairie");
+  if (!listed) return refuse("Ce mail n'est inscrit par aucune mairie : demandez à votre mairie de vous ajouter à la liste des habitants.");
 
   if (mailEnabled()) {
     // Le lien est construit avec SITE_URL uniquement : l'en-tête Host vient du visiteur et pourrait faire
