@@ -355,14 +355,18 @@ export function useBlockLucky(deployment) {
    * (« could not coalesce error »). Si notre estimation échoue, l'erreur du contrat remonte telle quelle, décodable.
    */
   const callWithGas = async (method, args, overrides = {}) => {
-    const from = account;
+    // Adresse relue auprès du portefeuille au dernier moment, en minuscules comme le faisait ethers :
+    // MetaMask mobile refuse un « from » qu'il ne reconnaît pas (« must provide an Ethereum address »).
+    const [current] = await ethereum.request({ method: "eth_accounts" });
+    const from = (current ?? account ?? "").toLowerCase();
+    if (!from) throw new Error("Connectez d'abord votre portefeuille.");
     const estimate = await readContract[method].estimateGas(...args, { ...overrides, from });
     const hash = await ethereum.request({
       method: "eth_sendTransaction",
       params: [
         {
           from,
-          to: deployment.BlockLucky,
+          to: deployment.BlockLucky.toLowerCase(),
           data: readContract.interface.encodeFunctionData(method, args),
           value: toQuantity(overrides.value ?? 0n),
           gas: toQuantity((estimate * 12n) / 10n),
