@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { setEurRate } from "@/lib/format";
 
 const AppContext = createContext(null);
 
@@ -29,7 +30,10 @@ export function Shell({ children }) {
   const loadCities = useCallback(() => api("/cities").then(setCities).catch(() => setCities([])), []);
 
   useEffect(() => {
-    setMounted(true);
+    // Le cours ETH → € est lu avant le premier affichage (1,5 s max) pour que tous les montants l'aient d'emblée.
+    // ponytail: cours figé jusqu'au rechargement de la page, suffisant pour une loterie de quelques minutes.
+    const rate = api("/eth-eur").then(({ eur }) => setEurRate(eur)).catch(() => {});
+    Promise.race([rate, new Promise((resolve) => setTimeout(resolve, 1500))]).then(() => setMounted(true));
     loadMe();
     loadCities();
     // Liens internes (<a href="/…">) : navigation sans rechargement

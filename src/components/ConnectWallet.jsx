@@ -20,7 +20,7 @@ export function ConnectWallet({ wallet, balance, onConnect }) {
     <div className="wallet-chip" title={wallet.account}>
       <span className="wallet-dot" aria-hidden="true" />
       <span>{shortAddress(wallet.account)}</span>
-      {balance !== undefined && balance !== null && <span className="wallet-balance">{formatEth(balance, { maxDigits: 3 })}</span>}
+      {balance !== undefined && balance !== null && <span className="wallet-balance">{formatEth(balance, { maxDigits: 3, eur: false })}</span>}
     </div>
   );
 }

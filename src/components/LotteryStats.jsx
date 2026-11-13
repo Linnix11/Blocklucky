@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { STATE } from "../config";
-import { deVille, formatDate, formatDuration, formatEth } from "../lib/format";
+import { deVille, formatDate, formatDuration, formatEth, formatEur } from "../lib/format";
 import { useCountUp } from "../hooks/useCountUp";
 
 const MAX_SEATS = 30; // au-delà, les places s'affichent en barre plutôt qu'en ampoules
@@ -94,9 +94,10 @@ export function LotteryStats({ data, now, cityName }) {
             {formatEth(pot.shown, { withUnit: false })}
             <small>ETH</small>
           </p>
+          {formatEur(data.pot) && <p className="pot-sub">{formatEur(data.pot)}</p>}
           {gains.map((gain) => (
             <span key={gain.id} className="pot-gain" aria-hidden="true">
-              +{formatEth(gain.amount)}
+              +{formatEth(gain.amount, { eur: false })}
             </span>
           ))}
         </div>
