@@ -6,7 +6,10 @@ export function HowItWorks({ network }) {
       <ol className="steps">
         <li>
           <strong>Connectez MetaMask</strong>
-          <span>Une application gratuite qui garde vos ethers de test. On joue sans vrai argent.</span>
+          <span>
+            Une application gratuite qui garde vos ethers de test. On joue sans vrai argent.{" "}
+            <a href="/blockchain">C'est quoi, la blockchain ?</a>
+          </span>
         </li>
         <li>
           <strong>Achetez vos tickets</strong>

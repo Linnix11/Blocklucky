@@ -86,6 +86,7 @@ export function Shell({ children }) {
 
       <footer className="site-footer">
         <nav className="footer-links" aria-label="Informations légales">
+          <a href="/blockchain">La blockchain, simplement</a>
           <a href="/regles">Règles du tirage</a>
           <a href="/mentions-legales">Mentions légales</a>
           <a href="/cadre-legal">Cadre légal</a>
