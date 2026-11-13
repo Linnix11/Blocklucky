@@ -17,7 +17,7 @@ Relevées dans la documentation officielle Chainlink le 02/11/2026
 | Key Hash (voie 500 gwei) | `0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae` |
 | Jeton LINK | `0x779877A7B0D9E8603169DdbD7836e478b4624789` |
 | Confirmations min. / max. | 3 / 200 (BlockLucky en demande 3) |
-| Gas max. du callback | 2 500 000 (BlockLucky en demande 300 000) |
+| Gas max. du callback | 2 500 000 (BlockLucky en demande 800 000) |
 | Prime (paiement en LINK) | 20 % |
 
 Ces valeurs sont déjà dans `scripts/lib/networkConfig.js` et `.env.example`.
@@ -60,11 +60,11 @@ git check-ignore .env
 1. Allez sur [vrf.chain.link](https://vrf.chain.link), réseau **Sepolia**, connectez le compte de test.
 2. **Create Subscription** → confirmez la transaction.
 3. **Fund subscription** → choisissez **ETH** (le contrat paie Chainlink en ETH, `nativePayment: true`) et
-   déposez au moins **0,3 ETH** de test. Les ETH Sepolia se minent sans limite sur
+   déposez au moins **0,65 ETH** de test. Les ETH Sepolia se minent sans limite sur
    [sepolia-faucet.pk910.de](https://sepolia-faucet.pk910.de), contrairement aux LINK (25 par jour).
    - Pourquoi autant ? Un tirage ne coûte qu'environ 0,01 ETH, mais les nœuds Chainlink ne répondent
-     que si le solde couvre le **pire cas** : 300 000 gas au prix maximal de la voie 500 gwei, soit environ
-     **0,17 ETH**. Si un tirage reste « Pending » sur vrf.chain.link, ajoutez des ETH : il repart tout seul.
+     que si le solde couvre le **pire cas** : (800 000 gas + 200 000 de vérification) au prix maximal de la
+     voie 500 gwei, plus 24 % de prime, soit environ **0,62 ETH**. Si un tirage reste « Pending » sur vrf.chain.link, ajoutez des ETH : il repart tout seul.
    - Les contrats déployés avant le 09/11/2026 (dont `0x82bC…1b5c`) paient encore en **LINK** : il leur faut
      environ **35 LINK** sur la souscription.
 4. Copiez l'**ID de la souscription** (un très grand nombre) → `VRF_SUBSCRIPTION_ID` dans `.env`.

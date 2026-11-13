@@ -63,6 +63,11 @@ function Lottery({ city }) {
 
   const actions = {
     start: (form) => run("Ouverture de la loterie", "round", form)(),
+    end: () => {
+      if (window.confirm("Arrêter la vente des tickets maintenant ? Le tirage pourra ensuite être lancé.")) {
+        run("Fin de la vente", "end")();
+      }
+    },
     draw: run("Lancement du tirage", "draw"),
     retry: run("Relance du tirage", "retry"),
   };

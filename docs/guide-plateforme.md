@@ -125,8 +125,8 @@ les LINK sont limités à 25 par jour.
 
 - Toutes les loteries utilisent la **même souscription** (`VRF_SUBSCRIPTION_ID`, `723574…9668`).
 - À approvisionner sur [vrf.chain.link](https://vrf.chain.link) : la souscription → **Actions** → **Fund subscription** → **ETH**.
-  Mettez au moins **0,3 ETH**.
-- Pourquoi autant ? Chainlink **réserve** le pire cas avant de répondre (300 000 gas à 500 gwei, environ 0,17 ETH),
+  Mettez au moins **0,65 ETH**.
+- Pourquoi autant ? Chainlink **réserve** le pire cas avant de répondre (800 000 gas + 200 000 de vérification à 500 gwei, plus 24 %, environ 0,62 ETH),
   puis ne **prélève** que le coût réel (environ 0,01 ETH). Sans réserve suffisante, le tirage reste « en cours ».
 - Les contrats déployés avant ce changement (par exemple `0x82bC…1b5c`) paient toujours en **LINK** (environ 35 LINK de réserve).
 
@@ -205,7 +205,7 @@ sans mot de passe : `DB_USER=… DB_PASSWORD=… npm run demo:locale`.
 
 ## 6. Faire une démo (5 minutes, une seule personne)
 
-Avant : souscription Chainlink avec au moins 0,3 ETH, et MetaMask sur **Sepolia** avec un peu d'ETH.
+Avant : souscription Chainlink avec au moins 0,65 ETH, et MetaMask sur **Sepolia** avec un peu d'ETH.
 
 1. **Admin** : `/connexion` avec `ADMIN_EMAIL` → `/admin` → **Nouvelle mairie** : nom de la ville, mail et mot de passe
    de la mairie, *Contrat existant* **vide**. Attendre 30 à 60 s (déploiement sur Sepolia).

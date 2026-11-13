@@ -167,7 +167,8 @@ Dans `fulfillRandomWords`, l'envoi au gagnant transmet au plus `PAYOUT_GAS_LIMIT
 et ne copie pas les données renvoyées (petit bloc `assembly`). Un gagnant malveillant (contrat)
 ne peut donc ni consommer tout le gas du tirage, ni le faire échouer avec une réponse géante.
 Si l'envoi échoue, les gains sont crédités (`PrizeCredited`) et récupérables avec `withdrawPrize()`.
-`CALLBACK_GAS_LIMIT = 300 000` laisse une large marge pour le reste du traitement.
+`CALLBACK_GAS_LIMIT = 800 000` : mesuré sur Sepolia le 13/11/2026, le tirage consomme ~510 000 gas
+(~620 000 si les gains sont crédités). À 300 000, Chainlink répondait mais le tirage échouait faute de gas.
 
 ### B.5 Petits ajouts
 

@@ -53,7 +53,9 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
     // =============================================================
 
     /// @notice Gas maximum accordé à Chainlink pour exécuter `fulfillRandomWords`.
-    uint32 public constant CALLBACK_GAS_LIMIT = 300_000;
+    /// @dev Mesuré sur Sepolia (13/11/2026) : ~510 000 gas, ~620 000 si les gains sont crédités.
+    ///      Sepolia facture désormais les nouvelles cases mémoire bien plus cher qu'en local (~130 000).
+    uint32 public constant CALLBACK_GAS_LIMIT = 800_000;
 
     /// @notice Nombre de blocs attendus avant que Chainlink ne réponde (protection contre les réorganisations).
     uint16 public constant REQUEST_CONFIRMATIONS = 3;
@@ -156,6 +158,9 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
     /// @notice La loterie s'est terminée sans aucun ticket vendu.
     event RoundClosedWithoutWinner(uint256 indexed roundId);
 
+    /// @notice La mairie a arrêté la vente des tickets avant la date prévue.
+    event RoundEndedEarly(uint256 indexed roundId, uint256 endTime);
+
     // =============================================================
     //                    ERREURS PERSONNALISÉES
     // =============================================================
@@ -241,6 +246,21 @@ contract BlockLucky is Ownable2Step, ReentrancyGuard {
         state = LotteryState.OPEN;
 
         emit RoundStarted(roundId, newPrice, newMaxParticipants, endTime);
+    }
+
+    /**
+     * @notice Arrête la vente des tickets maintenant. Réservé à la mairie.
+     * @dev Avance seulement `endTime` à maintenant : le tirage reste ouvert à tous via
+     *      `requestDraw()` et le gagnant vient toujours de Chainlink VRF. La mairie ne touche
+     *      ni aux tickets, ni à la cagnotte, ni au résultat.
+     */
+    function endLottery() external onlyOwner {
+        if (state != LotteryState.OPEN) revert LotteryNotOpen();
+        if (_drawConditionsMet()) revert LotteryEnded();
+
+        endTime = block.timestamp;
+
+        emit RoundEndedEarly(roundId, endTime);
     }
 
     // =============================================================

@@ -86,10 +86,15 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
           </p>
         )
       ) : derived.isOpen ? (
-        <p className="hint">
-          Le tirage sera possible à la fin de la vente : {String(data.maxParticipants)} participants ou{" "}
-          {formatDate(data.endTime)}.
-        </p>
+        <>
+          <p className="hint">
+            Le tirage sera possible à la fin de la vente : {String(data.maxParticipants)} participants ou{" "}
+            {formatDate(data.endTime)}.
+          </p>
+          <button type="button" className="btn btn-ghost btn-block" onClick={actions.end} disabled={txInProgress}>
+            Mettre fin à la vente maintenant
+          </button>
+        </>
       ) : (
         <p className="hint">Aucune loterie en cours.</p>
       )}

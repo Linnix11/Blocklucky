@@ -78,6 +78,7 @@ const MESSAGES = {
   LotteryNotOpen: "Aucune loterie ouverte.",
   LotteryNotClosed: "Une loterie est déjà en cours.",
   DrawConditionsNotMet: "La vente n'est pas terminée (participants ou date de fin pas encore atteints).",
+  LotteryEnded: "La vente est déjà terminée.",
   NoPendingDraw: "Aucun tirage en attente.",
   RetryTooEarly: "Trop tôt : la relance est possible 1 h après la demande.",
   InvalidParameters: "Paramètres invalides.",

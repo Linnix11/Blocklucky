@@ -20,7 +20,7 @@ const networkConfig = {
     keyHash: "0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae", // voie 500 gwei
     linkToken: "0x779877A7B0D9E8603169DdbD7836e478b4624789",
     minConfirmations: 3, // BlockLucky.REQUEST_CONFIRMATIONS = 3
-    maxGasLimit: 2_500_000, // BlockLucky.CALLBACK_GAS_LIMIT = 300 000
+    maxGasLimit: 2_500_000, // BlockLucky.CALLBACK_GAS_LIMIT = 800 000
     explorer: "https://sepolia.etherscan.io",
     vrfApp: "https://vrf.chain.link/sepolia",
   },

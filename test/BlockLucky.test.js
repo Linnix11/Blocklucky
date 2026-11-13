@@ -153,6 +153,32 @@ describe("BlockLucky", function () {
   });
 
   // ===========================================================
+  describe("Fin anticipée (endLottery)", function () {
+    it("la mairie arrête la vente : achats refusés, tirage ouvert à tous", async function () {
+      const { lottery, alice, bob } = await loadFixture(threePlayersFixture);
+      await expect(lottery.endLottery()).to.emit(lottery, "RoundEndedEarly");
+      await expect(lottery.connect(alice).enterLottery(1, { value: PRICE }))
+        .to.be.revertedWithCustomError(lottery, "LotteryEnded");
+      expect(await lottery.canDraw()).to.equal(true);
+      await lottery.connect(bob).requestDraw();
+      expect(await lottery.state()).to.equal(2n);
+    });
+
+    it("refusée pour quelqu'un d'autre que la mairie", async function () {
+      const { lottery, alice } = await loadFixture(openRoundFixture);
+      await expect(lottery.connect(alice).endLottery())
+        .to.be.revertedWithCustomError(lottery, "OwnableUnauthorizedAccount");
+    });
+
+    it("refusée si la loterie n'est pas ouverte ou déjà terminée", async function () {
+      const { lottery } = await loadFixture(deployFixture);
+      await expect(lottery.endLottery()).to.be.revertedWithCustomError(lottery, "LotteryNotOpen");
+      await lottery.startNewRound(PRICE, MAX_PARTICIPANTS, MAX_TICKETS, DURATION);
+      await lottery.endLottery();
+      await expect(lottery.endLottery()).to.be.revertedWithCustomError(lottery, "LotteryEnded");
+    });
+  });
+
   describe("Achat de tickets", function () {
     it("achat d'1 ticket : ticket ajouté, 1 participant, cagnotte à jour, événement émis", async function () {
       const { lottery, alice } = await loadFixture(openRoundFixture);
@@ -558,6 +584,7 @@ describe("BlockLucky", function () {
       expect(writeFunctions).to.deep.equal(
         [
           // Loterie
+          "endLottery", // mairie : arrête la vente, sans toucher au tirage
           "enterLottery",
           "rawFulfillRandomWords", // coordinateur VRF uniquement
           "requestDraw",

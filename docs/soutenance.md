@@ -6,7 +6,7 @@
 
 - [ ] Site en ligne (https://block.axionstudio.fr) testé sur un téléphone en 4G, pas seulement le wifi de l'école
 - [ ] Mairie de démo créée depuis l'admin, avec son design et la liste des 5 comptes de démo comme habitants
-- [ ] Souscription Chainlink VRF : **au moins 0,3 ETH**, contrats des villes bien listés dans « Consumers »
+- [ ] Souscription Chainlink VRF : **au moins 0,65 ETH**, contrats des villes bien listés dans « Consumers »
 - [ ] Compte du serveur (`PRIVATE_KEY`) avec des ETH de test (chaque action de la mairie est une transaction)
 - [ ] **5 comptes MetaMask de démo** avec chacun ≥ 0,01 ETH de test (faucets : les remplir à l'avance,
       ils limitent souvent le nombre de retraits)
