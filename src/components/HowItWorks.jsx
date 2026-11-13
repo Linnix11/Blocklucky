@@ -14,7 +14,10 @@ export function HowItWorks({ network }) {
         </li>
         <li>
           <strong>Chainlink tire le gagnant</strong>
-          <span>À la fin de la vente, la mairie lance le tirage. Toute la cagnotte va au gagnant.</span>
+          <span>
+            À la fin de la vente, n'importe qui peut lancer le tirage. Toute la cagnotte va au gagnant.{" "}
+            <a href="/regles">Toutes les règles</a>
+          </span>
         </li>
       </ol>
 
