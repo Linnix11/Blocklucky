@@ -1150,6 +1150,7 @@ a:hover {
 .admin-form {
   display: grid;
   gap: var(--space-sm);
+  align-items: start; /* une aide sous un champ ne décale pas le champ voisin */
 }
 
 @media (min-width: 560px) {

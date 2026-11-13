@@ -18,7 +18,15 @@ struct LotteryView: View {
                     if let error {
                         Card { Label(error, systemImage: "wifi.exclamationmark").foregroundStyle(t.festive) }
                     }
-                    if let l = lottery {
+                    if let l = lottery, l.roundId == 0 {
+                        // Aucune loterie encore ouverte : pas de cagnotte, de jauge ni de date à afficher.
+                        Card {
+                            SectionTitle(title: "Pas encore de loterie", icon: "calendar.badge.clock")
+                            Text("La mairie n'a pas encore ouvert de loterie. Revenez bientôt : la vente des tickets apparaîtra ici dès son ouverture.")
+                                .font(.subheadline).foregroundStyle(t.ink2)
+                        }
+                        HowItWorks()
+                    } else if let l = lottery {
                         TicketCard(lottery: l)
                         TimelineView(.periodic(from: .now, by: 1)) { context in
                             stats(l, now: context.date)
