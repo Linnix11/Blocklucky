@@ -209,8 +209,10 @@ struct LotteryView: View {
     }
 
     /// Ouvre la page de la ville dans le navigateur intégré de MetaMask, qui signe la transaction.
+    /// `?acheter=1` : la page connecte aussitôt le portefeuille et descend jusqu'au panneau d'achat.
+    /// (Un lien MetaMask ne peut pas appeler directement une fonction payante d'un contrat : il faut passer par le site.)
     var metamaskLink: URL {
-        URL(string: "https://metamask.app.link/dapp/\(SITE.host()!)/ville/\(city.slug)")!
+        URL(string: "https://metamask.app.link/dapp/\(SITE.host()!)/ville/\(city.slug)?acheter=1")!
     }
 
     func load() async {

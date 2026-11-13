@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import addresses from "../contracts/addresses.json";
 import { TARGET_CHAIN_ID } from "../config";
 import { api } from "../lib/api";
@@ -57,6 +57,28 @@ export function CityPage({ city, me }) {
   const selling = Boolean(data && data.state === STATE.OPEN && !data.canDraw && data.endTime > now);
   // Vente finie ou tirage en cours : sur mobile, le panneau du tirage passe juste sous le billet.
   const drawing = Boolean(data && data.roundId > 0n && (data.canDraw || data.state === STATE.CALCULATING));
+
+  // Arrivée depuis l'app iPhone (`?acheter=1`, ouvert dans le navigateur de MetaMask) : on connecte le portefeuille,
+  // on passe sur le bon réseau et on amène l'habitant directement au panneau d'achat. Une seule fois par visite.
+  // Chaque étape n'est tentée qu'une fois : si l'habitant refuse, on ne lui redemande pas en boucle.
+  const buyIntent = useRef(typeof window !== "undefined" && new URLSearchParams(window.location.search).has("acheter"));
+  const buyStep = useRef(null);
+  useEffect(() => {
+    if (!buyIntent.current || !wallet.available || !data) return;
+    // Étape à faire maintenant : connexion, puis changement de réseau, puis rien (on descend à l'achat).
+    const step = !wallet.account ? "connect" : wallet.wrongNetwork ? "network" : null;
+    if (step) {
+      if (buyStep.current !== step) {
+        buyStep.current = step;
+        if (step === "connect") lottery.connect();
+        else lottery.switchNetwork();
+      }
+      return;
+    }
+    buyIntent.current = false;
+    window.history.replaceState(null, "", window.location.pathname); // un rechargement ne relance pas la connexion
+    document.getElementById("buy-title")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [wallet.available, wallet.account, wallet.wrongNetwork, data, lottery]);
 
   useEffect(() => {
     // Seule la réponse à la dernière demande compte : sinon une réponse plus ancienne (sans portefeuille)
