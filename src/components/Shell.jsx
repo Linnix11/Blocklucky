@@ -85,17 +85,39 @@ export function Shell({ children }) {
       {mounted ? children : <main className="page" />}
 
       <footer className="site-footer">
-        <nav className="footer-links" aria-label="Informations légales">
-          <a href="/blockchain">La blockchain, simplement</a>
-          <a href="/regles">Règles du tirage</a>
-          <a href="/mentions-legales">Mentions légales</a>
-          <a href="/cadre-legal">Cadre légal</a>
-          <a href="/confidentialite">Confidentialité</a>
-          <a href="/accessibilite">Accessibilité : non conforme</a>
-        </nav>
-        <p className="footer-note">
-          BlockLucky, un projet Epitech Digital School avec les mairies partenaires. Loteries de démonstration
-          sur réseau de test : les ethers utilisés n'ont aucune valeur. Tirage au sort vérifiable par Chainlink.
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <a className="brand" href="/">
+              <BrandMark />
+              <span className="brand-text">
+                <span className="brand-name">BlockLucky</span>
+                <span className="brand-tagline">La loterie des villes</span>
+              </span>
+            </a>
+            <p className="footer-note">
+              Un projet Epitech Digital School avec les mairies partenaires. Tirage au sort vérifiable par Chainlink.
+            </p>
+          </div>
+          <nav className="footer-col" aria-labelledby="footer-discover">
+            <h2 id="footer-discover">Découvrir</h2>
+            <ul>
+              <li><a href="/blockchain">La blockchain, simplement</a></li>
+              <li><a href="/regles">Règles du tirage</a></li>
+            </ul>
+          </nav>
+          <nav className="footer-col" aria-labelledby="footer-legal">
+            <h2 id="footer-legal">Informations légales</h2>
+            <ul>
+              <li><a href="/mentions-legales">Mentions légales</a></li>
+              <li><a href="/cadre-legal">Cadre légal</a></li>
+              <li><a href="/confidentialite">Confidentialité</a></li>
+              <li><a href="/accessibilite">Accessibilité : non conforme</a></li>
+            </ul>
+          </nav>
+        </div>
+        <p className="footer-bottom">
+          <span className="footer-badge">Réseau de test</span>
+          Loteries de démonstration : les ethers utilisés n'ont aucune valeur.
         </p>
       </footer>
     </AppContext.Provider>
