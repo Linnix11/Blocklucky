@@ -60,6 +60,9 @@ export function humanizeError(error) {
   if (code === "NETWORK_ERROR" || code === "SERVER_ERROR" || code === "TIMEOUT") {
     return "Le réseau ne répond pas. Vérifiez votre connexion puis réessayez.";
   }
+  // « could not coalesce error » : ethers n'a pas reconnu l'erreur du portefeuille ; son vrai message est rangé plus loin.
+  const walletMessage = error?.info?.error?.message || error?.error?.message;
+  if (error?.shortMessage === "could not coalesce error" && walletMessage) return `Portefeuille : ${walletMessage}`;
   return error?.shortMessage || error?.message || "Une erreur inattendue est survenue.";
 }
 

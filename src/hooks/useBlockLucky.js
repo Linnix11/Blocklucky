@@ -348,6 +348,17 @@ export function useBlockLucky(deployment) {
 
   const lotteryWith = (signer) => new Contract(deployment.BlockLucky, LOTTERY_ABI, signer);
 
+  /**
+   * Appelle `method` du contrat avec une limite de gas calculée par notre propre nœud (+20 %).
+   * MetaMask mobile échoue parfois à l'estimer lui-même (« could not coalesce error ») ; si notre estimation
+   * échoue (la transaction serait refusée), l'erreur du contrat remonte telle quelle, décodable.
+   */
+  const callWithGas = async (signer, method, args, overrides = {}) => {
+    const from = await signer.getAddress();
+    const estimate = await readContract[method].estimateGas(...args, { ...overrides, from });
+    return lotteryWith(signer)[method](...args, { ...overrides, gasLimit: (estimate * 12n) / 10n });
+  };
+
   // ---------- Actions ----------
   const buyTickets = useCallback(
     async (quantity) => {
@@ -364,34 +375,34 @@ export function useBlockLucky(deployment) {
       }
       return send(
         { label: "Achat de tickets", successText: q > 1n ? `${q} tickets achetés. Bonne chance !` : "Ticket acheté. Bonne chance !" },
-        (signer) => lotteryWith(signer).enterLottery(q, { value: cost })
+        (signer) => callWithGas(signer, "enterLottery", [q], { value: cost })
       );
     },
-    [data, send]
+    [data, send, readContract]
   );
 
   const requestDraw = useCallback(
     () =>
       send({ label: "Lancement du tirage", successText: "Tirage lancé : Chainlink calcule le résultat." }, (signer) =>
-        lotteryWith(signer).requestDraw()
+        callWithGas(signer, "requestDraw", [])
       ),
-    [send]
+    [send, readContract]
   );
 
   const retryDraw = useCallback(
     () =>
       send({ label: "Relance du tirage", successText: "Nouvelle demande envoyée à Chainlink." }, (signer) =>
-        lotteryWith(signer).retryDraw()
+        callWithGas(signer, "retryDraw", [])
       ),
-    [send]
+    [send, readContract]
   );
 
   const withdrawPrize = useCallback(
     () =>
       send({ label: "Récupération des gains", successText: "Gains récupérés dans votre portefeuille." }, (signer) =>
-        lotteryWith(signer).withdrawPrize()
+        callWithGas(signer, "withdrawPrize", [])
       ),
-    [send]
+    [send, readContract]
   );
 
   const startNewRound = useCallback(
