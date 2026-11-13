@@ -8,7 +8,7 @@
  *   bascule vers le bon réseau, envoi des transactions avec suivi de leur état.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BrowserProvider, Contract, JsonRpcProvider, Network, parseEther } from "ethers";
+import { BrowserProvider, Contract, JsonRpcProvider, Network, parseEther, toQuantity } from "ethers";
 import { LOTTERY_ABI, MOCK_VRF_ABI, STATE, TARGET, TARGET_CHAIN_ID } from "../config";
 import { humanizeError, isUserRejection } from "../lib/errors";
 import { formatEth, sameAddress } from "../lib/format";
@@ -330,8 +330,8 @@ export function useBlockLucky(deployment) {
       }
       setTx({ ...IDLE_TX, status: "wallet", label, successText });
       try {
-        const signer = await new BrowserProvider(ethereum).getSigner();
-        const response = await buildTx(signer);
+        // Le « signer » ethers n'est créé que pour les actions qui en ont besoin (voir callWithGas).
+        const response = await buildTx(() => new BrowserProvider(ethereum).getSigner());
         setTx({ ...IDLE_TX, status: "pending", label, successText, hash: response.hash });
         await response.wait();
         setTx({ ...IDLE_TX, status: "success", label, successText, hash: response.hash });
@@ -349,14 +349,32 @@ export function useBlockLucky(deployment) {
   const lotteryWith = (signer) => new Contract(deployment.BlockLucky, LOTTERY_ABI, signer);
 
   /**
-   * Appelle `method` du contrat avec une limite de gas calculée par notre propre nœud (+20 %).
-   * MetaMask mobile échoue parfois à l'estimer lui-même (« could not coalesce error ») ; si notre estimation
-   * échoue (la transaction serait refusée), l'erreur du contrat remonte telle quelle, décodable.
+   * Appelle `method` du contrat en envoyant la transaction directement au portefeuille (`eth_sendTransaction`),
+   * avec une limite de gas calculée par notre propre nœud (+20 %), puis suit sa confirmation sur ce même nœud.
+   * Sans passer par ethers côté portefeuille : MetaMask mobile renvoie des erreurs qu'ethers ne sait pas lire
+   * (« could not coalesce error »). Si notre estimation échoue, l'erreur du contrat remonte telle quelle, décodable.
    */
-  const callWithGas = async (signer, method, args, overrides = {}) => {
-    const from = await signer.getAddress();
+  const callWithGas = async (method, args, overrides = {}) => {
+    const from = account;
     const estimate = await readContract[method].estimateGas(...args, { ...overrides, from });
-    return lotteryWith(signer)[method](...args, { ...overrides, gasLimit: (estimate * 12n) / 10n });
+    const hash = await ethereum.request({
+      method: "eth_sendTransaction",
+      params: [
+        {
+          from,
+          to: deployment.BlockLucky,
+          data: readContract.interface.encodeFunctionData(method, args),
+          value: toQuantity(overrides.value ?? 0n),
+          gas: toQuantity((estimate * 12n) / 10n),
+        },
+      ],
+    });
+    const wait = async () => {
+      const receipt = await readProvider.waitForTransaction(hash);
+      if (receipt?.status === 0) throw new Error("La transaction a été refusée par le contrat.");
+      return receipt;
+    };
+    return { hash, wait };
   };
 
   // ---------- Actions ----------
@@ -375,7 +393,7 @@ export function useBlockLucky(deployment) {
       }
       return send(
         { label: "Achat de tickets", successText: q > 1n ? `${q} tickets achetés. Bonne chance !` : "Ticket acheté. Bonne chance !" },
-        (signer) => callWithGas(signer, "enterLottery", [q], { value: cost })
+        () => callWithGas("enterLottery", [q], { value: cost })
       );
     },
     [data, send, readContract]
@@ -383,32 +401,32 @@ export function useBlockLucky(deployment) {
 
   const requestDraw = useCallback(
     () =>
-      send({ label: "Lancement du tirage", successText: "Tirage lancé : Chainlink calcule le résultat." }, (signer) =>
-        callWithGas(signer, "requestDraw", [])
+      send({ label: "Lancement du tirage", successText: "Tirage lancé : Chainlink calcule le résultat." }, () =>
+        callWithGas("requestDraw", [])
       ),
     [send, readContract]
   );
 
   const retryDraw = useCallback(
     () =>
-      send({ label: "Relance du tirage", successText: "Nouvelle demande envoyée à Chainlink." }, (signer) =>
-        callWithGas(signer, "retryDraw", [])
+      send({ label: "Relance du tirage", successText: "Nouvelle demande envoyée à Chainlink." }, () =>
+        callWithGas("retryDraw", [])
       ),
     [send, readContract]
   );
 
   const withdrawPrize = useCallback(
     () =>
-      send({ label: "Récupération des gains", successText: "Gains récupérés dans votre portefeuille." }, (signer) =>
-        callWithGas(signer, "withdrawPrize", [])
+      send({ label: "Récupération des gains", successText: "Gains récupérés dans votre portefeuille." }, () =>
+        callWithGas("withdrawPrize", [])
       ),
     [send, readContract]
   );
 
   const startNewRound = useCallback(
     ({ priceEth, maxParticipants, maxTicketsPerWallet, durationMinutes }) =>
-      send({ label: "Ouverture de la loterie", successText: "Nouvelle loterie ouverte." }, (signer) =>
-        lotteryWith(signer).startNewRound(
+      send({ label: "Ouverture de la loterie", successText: "Nouvelle loterie ouverte." }, async (getSigner) =>
+        lotteryWith(await getSigner()).startNewRound(
           parseEther(String(priceEth)),
           BigInt(maxParticipants),
           BigInt(maxTicketsPerWallet),
@@ -421,8 +439,8 @@ export function useBlockLucky(deployment) {
   /** Réseau local uniquement : fait répondre le faux coordinateur Chainlink. */
   const simulateChainlink = useCallback(
     () =>
-      send({ label: "Réponse de Chainlink (simulée)", successText: "Chainlink (simulé) a répondu." }, (signer) =>
-        new Contract(deployment.VRFCoordinator, MOCK_VRF_ABI, signer).fulfillRandomWords(
+      send({ label: "Réponse de Chainlink (simulée)", successText: "Chainlink (simulé) a répondu." }, async (getSigner) =>
+        new Contract(deployment.VRFCoordinator, MOCK_VRF_ABI, await getSigner()).fulfillRandomWords(
           data.lastRequestId,
           deployment.BlockLucky
         )
