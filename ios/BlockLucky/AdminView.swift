@@ -48,6 +48,7 @@ struct AdminView: View {
                 }
 
                 Section { LogoutButton(me: $me) } footer: { Text("Administrateur : \(me?.email ?? "")") }
+                AppVersionSection()
             }
             .searchable(text: $search, prompt: "Rechercher une ville ou un mail")
             .navigationTitle("Administration")

@@ -201,7 +201,9 @@ struct LotteryView: View {
     func buyBar(_ t: Theme) -> some View {
         if let l = lottery, l.isSelling {
             PrimaryButton(title: "Acheter des tickets", subtitle: "\(Chain.eth(l.ticketPrice)) le ticket · dans l'app MetaMask",
-                          icon: "ticket.fill") { openURL(metamaskLink) }
+                          icon: "ticket.fill") {
+                Task { openURL(metamaskLink(code: await API.handoffCode())) }
+            }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(.ultraThinMaterial)
@@ -210,9 +212,11 @@ struct LotteryView: View {
 
     /// Ouvre la page de la ville dans le navigateur intégré de MetaMask, qui signe la transaction.
     /// `?acheter=1` : la page connecte aussitôt le portefeuille et descend jusqu'au panneau d'achat.
+    /// `code` : code à usage unique qui connecte ce navigateur avec le compte de l'app (sinon le site ne sait pas qui on est).
     /// (Un lien MetaMask ne peut pas appeler directement une fonction payante d'un contrat : il faut passer par le site.)
-    var metamaskLink: URL {
-        URL(string: "https://metamask.app.link/dapp/\(SITE.host()!)/ville/\(city.slug)?acheter=1")!
+    func metamaskLink(code: String?) -> URL {
+        let query = "acheter=1" + (code.map { "&code=\($0)" } ?? "")
+        return URL(string: "https://metamask.app.link/dapp/\(SITE.host()!)/ville/\(city.slug)?\(query)")!
     }
 
     func load() async {

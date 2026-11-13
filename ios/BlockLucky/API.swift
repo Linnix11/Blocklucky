@@ -66,6 +66,9 @@ enum API {
         guard let role = r.role, let email = r.email else { throw APIError(message: r.message ?? "Connexion impossible", pending: r.message != nil) }
         return try await me() ?? Me(role: role, email: email) // /me donne aussi la ville d'une mairie
     }
+    /// Code à usage unique (2 minutes) qui connecte le navigateur de MetaMask avec le compte de l'app. nil si non connecté.
+    struct Handoff: Decodable { var code: String }
+    static func handoffCode() async -> String? { (try? await call("/handoff", method: "POST") as Handoff)?.code }
     static func logout() async { _ = try? await call("/logout", method: "POST") as [String: Bool] }
 
     /// L'habitant connecté est-il inscrit dans cette ville ? (même règle que la page de la ville sur le site)

@@ -34,7 +34,15 @@ export function Shell({ children }) {
     // ponytail: cours figé jusqu'au rechargement de la page, suffisant pour une loterie de quelques minutes.
     const rate = api("/eth-eur").then(({ eur }) => setEurRate(eur)).catch(() => {});
     Promise.race([rate, new Promise((resolve) => setTimeout(resolve, 1500))]).then(() => setMounted(true));
-    loadMe();
+    // Arrivée depuis l'app iPhone avec un code (`?code=`) : on l'échange contre une session, puis on le retire
+    // de l'adresse (il ne sert qu'une fois). Les autres paramètres (`?acheter=1`) sont gardés.
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (code) {
+      params.delete("code");
+      window.history.replaceState(null, "", window.location.pathname + (params.size ? `?${params}` : ""));
+    }
+    (code ? api("/handoff/redeem", { method: "POST", body: { code } }).catch(() => {}) : Promise.resolve()).then(loadMe);
     loadCities();
     // Liens internes (<a href="/…">) : navigation sans rechargement
     const onClick = (event) => {

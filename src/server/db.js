@@ -51,6 +51,13 @@ const SCHEMA = [
     email VARCHAR(190) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
+  // Codes de passage app iPhone → navigateur de MetaMask (usage unique, 2 minutes, seule l'empreinte est gardée)
+  `CREATE TABLE IF NOT EXISTS handoffs (
+    token_hash CHAR(64) PRIMARY KEY,
+    role VARCHAR(20) NOT NULL,
+    email VARCHAR(190) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )`,
   // Liens « mot de passe oublié » (seule l'empreinte du jeton est gardée, valable 1 heure)
   `CREATE TABLE IF NOT EXISTS password_resets (
     token_hash CHAR(64) PRIMARY KEY,

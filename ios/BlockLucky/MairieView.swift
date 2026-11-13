@@ -26,6 +26,7 @@ struct AccountView: View {
                     }
                 }
                 LogoutButton(me: $me)
+                AppVersionSection()
             }
             .navigationTitle("Mon compte")
             .toolbar { Button("Fermer") { dismiss() } }
@@ -41,6 +42,31 @@ struct LogoutButton: View {
             Task { await API.logout(); me = nil; dismiss() }
         } label: {
             Label("Se déconnecter", systemImage: "rectangle.portrait.and.arrow.right")
+        }
+    }
+}
+
+/// Version de l'app installée, pour vérifier qu'on a bien la dernière (à comparer avec les notes de version).
+/// Le numéro vient de MARKETING_VERSION / CURRENT_PROJECT_VERSION (project.yml), à augmenter à chaque changement de l'app ;
+/// la date de compilation, elle, se met à jour toute seule.
+struct AppVersionSection: View {
+    private var version: String {
+        let info = Bundle.main.infoDictionary
+        let short = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        return "\(short) (build \(build))"
+    }
+
+    private var buildDate: String {
+        let url = Bundle.main.executableURL
+        let date = url.flatMap { try? FileManager.default.attributesOfItem(atPath: $0.path)[.modificationDate] as? Date }
+        return date?.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: Locale(identifier: "fr_FR"))) ?? "inconnue"
+    }
+
+    var body: some View {
+        Section("Application") {
+            LabeledContent("Version", value: version)
+            LabeledContent("Compilée le", value: buildDate)
         }
     }
 }
@@ -98,6 +124,7 @@ struct MairieView: View {
                         }
                     }
                     Section { LogoutButton(me: $me) } footer: { Text("Connecté en tant que \(me?.email ?? "")") }
+                    AppVersionSection()
                 } else if error == nil {
                     Section { HStack { Spacer(); ProgressView(); Spacer() } }
                 }
