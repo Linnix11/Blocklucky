@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { STATE } from "../config";
-import { formatEth } from "../lib/format";
+import { formatEth, getEurRate } from "../lib/format";
 import { MyTickets } from "./MyTickets";
 import { cheer } from "./WinnerBanner";
 
@@ -162,6 +162,14 @@ export function BuyTickets({
         >
           <p className="hint">
             {formatEth(data.ticketPrice)} le ticket, {maxPerWallet} maximum par personne. Chaque ticket est une chance de plus.
+            {getEurRate() && (
+              <>
+                {" "}
+                <small>
+                  Prix fixé en ETH : sa valeur en euros est indicative et varie avec le cours de l'ETH.
+                </small>
+              </>
+            )}
           </p>
           {maxPerWallet >= STEPPER_FROM ? (
             <Stepper value={quantity} max={remaining} onChange={(n) => setQuantity(Math.min(Math.max(1, n), remaining))} />

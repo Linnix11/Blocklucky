@@ -29,6 +29,12 @@ export default function Page() {
           personne, le nombre de participants attendus et la durée. Ces réglages sont affichés sur la page de la ville
           et ne peuvent plus changer jusqu'à la fin de la loterie.
         </p>
+        <p>
+          <strong>Prix et cours de l'ETH :</strong> la mairie choisit un prix en euros, converti en ETH au cours du
+          jour. Le contrat enregistre ce prix en ETH : il reste fixe en ETH, mais sa valeur en euros (comme celle de la
+          cagnotte) monte ou baisse avec le cours de l'ETH pendant la loterie. Les montants en euros affichés sur le
+          site sont donc indicatifs.
+        </p>
 
         <h2>2. Achat des tickets</h2>
         <ul>

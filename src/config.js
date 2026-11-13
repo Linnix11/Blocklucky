@@ -42,4 +42,4 @@ export const MOCK_VRF_ABI = ["function fulfillRandomWords(uint256 requestId, add
 export const STATE = { CLOSED: 0, OPEN: 1, CALCULATING: 2 };
 
 /** Valeurs proposées par défaut à la mairie (section 3 du cadrage). */
-export const DEMO_ROUND = { priceEth: "0.001", maxParticipants: 5, maxTicketsPerWallet: 5, durationMinutes: 10 };
+export const DEMO_ROUND = { priceEur: "2", priceEth: "0.001", maxParticipants: 5, maxTicketsPerWallet: 5, durationMinutes: 10 };

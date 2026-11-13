@@ -3,6 +3,7 @@ import { formatEther } from "ethers";
 /** Cours de l'ETH en euros, chargé une fois par Shell (null tant qu'il est inconnu). */
 let eurRate = null;
 export const setEurRate = (rate) => (eurRate = rate);
+export const getEurRate = () => eurRate;
 
 /** 12000000000000000n → « ≈ 36,12 € » (chaîne vide si le cours est inconnu) */
 export function formatEur(wei) {

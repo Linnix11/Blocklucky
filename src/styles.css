@@ -1156,7 +1156,8 @@ a:hover {
   .admin-form:not(.admin-form-single) {
     grid-template-columns: 1fr 1fr;
   }
-  .admin-form:not(.admin-form-single) > button {
+  .admin-form:not(.admin-form-single) > button,
+  .admin-form:not(.admin-form-single) > .admin-form-note {
     grid-column: 1 / -1;
   }
 }
@@ -1166,6 +1167,18 @@ a:hover {
   gap: var(--space-3xs);
   font-size: var(--text-sm);
   font-weight: 600;
+}
+
+.admin-form label .hint {
+  font-weight: 400;
+}
+
+.admin-form-note {
+  margin: 0;
+  padding: var(--space-2xs) var(--space-xs);
+  border-left: 3px solid var(--color-warn-line);
+  background: var(--color-warn-wash);
+  color: var(--color-warn);
 }
 
 input:not([type="checkbox"]):not([type="file"]) {

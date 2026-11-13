@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DEMO_ROUND, STATE } from "../config";
-import { explorerLink, formatDate, formatDuration, formatEth } from "../lib/format";
+import { explorerLink, formatDate, formatDuration, formatEth, getEurRate } from "../lib/format";
 
 const STATE_LABEL = { [STATE.CLOSED]: "Fermée", [STATE.OPEN]: "Vente en cours", [STATE.CALCULATING]: "Tirage en cours" };
 
@@ -16,6 +16,10 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
   const update = (field) => (event) => setForm((f) => ({ ...f, [field]: event.target.value }));
   const retryIn = derived.retryAvailableAt - now;
   const contractLink = explorerLink(network.explorer, "address", deployment.BlockLucky);
+  // Prix saisi en euros, converti en ETH au cours du moment (le contrat ne connaît que l'ETH).
+  // Sans cours disponible, la saisie se fait directement en ETH.
+  const rate = getEurRate();
+  const priceEth = rate ? (Number(form.priceEur) / rate).toFixed(6) : form.priceEth;
   const vrfLink = network.chainId === 11155111 ? `https://vrf.chain.link/sepolia/${data.subscriptionId}` : null;
 
   return (
@@ -96,13 +100,25 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
           className="admin-form"
           onSubmit={(event) => {
             event.preventDefault();
-            actions.start(form);
+            actions.start({ ...form, priceEth });
           }}
         >
-          <label>
-            Prix du ticket (ETH)
-            <input type="number" min="0.000001" step="0.000001" required value={form.priceEth} onChange={update("priceEth")} />
-          </label>
+          {rate ? (
+            <label>
+              Prix du ticket (€)
+              <input type="number" min="0.01" step="0.01" required value={form.priceEur} onChange={update("priceEur")} />
+              <span className="hint">
+                Soit {Number(priceEth).toLocaleString("fr-FR", { maximumFractionDigits: 6 })} ETH (1 ETH ={" "}
+                {rate.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })})
+              </span>
+            </label>
+          ) : (
+            <label>
+              Prix du ticket (ETH)
+              <input type="number" min="0.000001" step="0.000001" required value={form.priceEth} onChange={update("priceEth")} />
+              <span className="hint">Cours de l'euro indisponible : prix à saisir en ETH.</span>
+            </label>
+          )}
           <label>
             Participants pour clore
             <input type="number" min="1" step="1" required value={form.maxParticipants} onChange={update("maxParticipants")} />
@@ -115,7 +131,11 @@ export function AdminPanel({ data, derived, network, deployment, now, busy: txIn
             Durée (minutes)
             <input type="number" min="1" step="1" required value={form.durationMinutes} onChange={update("durationMinutes")} />
           </label>
-          <button type="submit" className="btn btn-primary btn-block" disabled={txInProgress}>
+          <p className="hint admin-form-note" role="note">
+            Le prix est enregistré en ETH dans le contrat à l'ouverture et ne change plus. Sa valeur en euros suit
+            ensuite le cours de l'ETH : elle peut monter ou baisser pendant la loterie.
+          </p>
+          <button type="submit" className="btn btn-primary btn-block" disabled={txInProgress || !(Number(priceEth) > 0)}>
             Ouvrir la loterie
           </button>
         </form>
