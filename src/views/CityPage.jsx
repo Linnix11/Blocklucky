@@ -55,6 +55,8 @@ export function CityPage({ city, me }) {
   useCityTheme(city.theme, city.customTheme);
   // Vente ouverte : sur mobile, le panneau d'achat passe avant le billet (voir .play-grid.is-selling).
   const selling = Boolean(data && data.state === STATE.OPEN && !data.canDraw && data.endTime > now);
+  // Vente finie ou tirage en cours : sur mobile, le panneau du tirage passe juste sous le billet.
+  const drawing = Boolean(data && data.roundId > 0n && (data.canDraw || data.state === STATE.CALCULATING));
 
   useEffect(() => {
     // Seule la réponse à la dernière demande compte : sinon une réponse plus ancienne (sans portefeuille)
@@ -84,7 +86,7 @@ export function CityPage({ city, me }) {
 
       <Ticker data={data} now={now} />
 
-      <WalletNotice wallet={wallet} network={network} onSwitch={lottery.switchNetwork} />
+      <WalletNotice wallet={wallet} network={network} onSwitch={lottery.switchNetwork} selling={selling} />
 
       {lottery.loadError && (
         <div className="notice notice-warn" role="alert">
@@ -93,14 +95,25 @@ export function CityPage({ city, me }) {
       )}
 
       {/* Sur mobile, .play-side s'efface (display: contents) : pendant la vente, l'achat passe avant le récapitulatif. */}
-      <div className={`play-grid${selling ? " is-selling" : ""}`}>
+      <div className={`play-grid${selling ? " is-selling" : ""}${drawing ? " is-drawing" : ""}`}>
         <div className="play-main">
           <LotteryStats data={data} now={now} cityName={city.name} />
           <LastWinners data={data} account={wallet.account} />
         </div>
         <div className="play-side">
           <WinnerBanner data={data} account={wallet.account} network={network} txInProgress={txInProgress} onWithdraw={lottery.withdrawPrize} />
-          <DrawButton data={data} derived={derived} now={now} />
+          <DrawButton
+            data={data}
+            derived={derived}
+            now={now}
+            wallet={wallet}
+            network={network}
+            txInProgress={txInProgress}
+            onDraw={lottery.requestDraw}
+            onRetry={lottery.retryDraw}
+            onConnect={lottery.connect}
+            onSimulate={lottery.simulateChainlink}
+          />
           <BuyTickets
             data={data}
             wallet={wallet}
@@ -111,6 +124,7 @@ export function CityPage({ city, me }) {
             now={now}
             allowed={allowed}
             proof={lottery.proof}
+            me={me}
           />
           <HowItWorks network={network} />
         </div>

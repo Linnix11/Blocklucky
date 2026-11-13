@@ -26,18 +26,19 @@ export function ConnectWallet({ wallet, balance, onConnect }) {
 }
 
 /** Bandeaux d'aide : pas de portefeuille installé, ou mauvais réseau. */
-export function WalletNotice({ wallet, network, onSwitch }) {
+export function WalletNotice({ wallet, network, onSwitch, selling = false }) {
+  // Sans portefeuille : une ligne discrète, la loterie reste au premier plan (on peut la suivre sans MetaMask).
   if (!wallet.available) {
+    // Pendant la vente, le bloc d'achat propose déjà d'installer MetaMask : pas de doublon.
+    if (selling) return null;
     return (
-      <div className="notice" role="status">
-        <p>
-          <strong>Pour participer, il faut un portefeuille Ethereum.</strong> Vous pouvez suivre la loterie sans,
-          mais pour acheter des tickets installez l'extension gratuite MetaMask.
-        </p>
-        <a className="btn btn-primary" href="https://metamask.io/download/" target="_blank" rel="noreferrer">
-          Installer MetaMask
+      <p className="wallet-hint" role="status">
+        <span className="wallet-hint-icon" aria-hidden="true" />
+        <span>Vous regardez sans portefeuille. Pour jouer, il faut l'extension gratuite MetaMask.</span>
+        <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
+          Installer
         </a>
-      </div>
+      </p>
     );
   }
   if (wallet.wrongNetwork) {

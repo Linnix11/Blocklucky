@@ -39,12 +39,12 @@ function describe(data, now, cityName) {
   }
   return {
     status: "Vente terminée",
-    time: "0:00",
-    timeLabel: "Fin dans",
+    time: "Close",
+    timeLabel: "Vente",
     sub:
       data.tickets.length === 0
         ? "Aucun ticket vendu : la loterie sera clôturée sans gagnant."
-        : "La vente est terminée : la mairie va lancer le tirage.",
+        : "La vente est terminée : n'importe qui peut lancer le tirage.",
   };
 }
 

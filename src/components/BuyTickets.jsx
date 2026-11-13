@@ -7,7 +7,50 @@ import { cheer } from "./WinnerBanner";
 const percent = (value) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: value < 10 ? 1 : 0 })} %`;
 
 /** Choix du nombre de tickets et achat. */
-export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConnect, now, allowed = true, proof = null }) {
+const STEPPER_FROM = 7; // au-delà de 6 tickets possibles, un compteur − / + remplace la rangée de jetons
+
+/** Compteur − / + : le chiffre « saute » à chaque changement (clé React = valeur). */
+function Stepper({ value, max, onChange }) {
+  return (
+    <div className="stepper" role="group" aria-label="Nombre de tickets">
+      <button
+        type="button"
+        className="stepper-btn"
+        onClick={() => onChange(value - 1)}
+        disabled={value <= 1}
+        aria-label="Un ticket de moins"
+      >
+        −
+      </button>
+      <output className="stepper-value" aria-live="polite">
+        <span key={value}>{value}</span>
+        <small>sur {max}</small>
+      </output>
+      <button
+        type="button"
+        className="stepper-btn"
+        onClick={() => onChange(value + 1)}
+        disabled={value >= max}
+        aria-label="Un ticket de plus"
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
+export function BuyTickets({
+  data,
+  wallet,
+  network,
+  txInProgress,
+  onBuy,
+  onConnect,
+  now,
+  allowed = true,
+  proof = null,
+  me = null,
+}) {
   const [quantity, setQuantity] = useState(1);
 
   const myTickets = Number(data?.me?.myTickets ?? 0n);
@@ -29,6 +72,8 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
   if (!data || data.roundId === 0n) return null;
 
   const saleOpen = data.state === STATE.OPEN && !data.canDraw && data.endTime > now;
+  // Vente fermée et rien à montrer (pas de portefeuille ou pas de ticket) : la carte disparaît.
+  if (!saleOpen && (!wallet.account || myTickets === 0)) return null;
   const cost = data.ticketPrice * BigInt(quantity);
   const balance = data.me?.balance;
   const notEnough = balance !== undefined && balance !== null && balance < cost;
@@ -38,14 +83,18 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
 
   let blocker = null;
   // L'inscription se vérifie avec l'adresse du portefeuille : on propose donc de le connecter avant de refuser.
-  if (!saleOpen) blocker = "La vente est fermée pour cette loterie.";
+  if (!saleOpen)
+    blocker =
+      data.state === STATE.CLOSED
+        ? "Loterie terminée : merci d'avoir joué !"
+        : "La vente est fermée. Bonne chance pour le tirage !";
   else if (!wallet.account) blocker = "connect";
   else if (!allowed) blocker = "not-allowed";
   else if (wallet.wrongNetwork) blocker = `Passez votre portefeuille sur ${network.shortName} pour jouer.`;
   else if (remaining === 0) blocker = `Vous avez déjà ${maxPerWallet} tickets, le maximum par personne.`;
 
   return (
-    <section className="card buy" aria-labelledby="buy-title">
+    <section className="card buy reveal" aria-labelledby="buy-title">
       <h2 id="buy-title">{saleOpen ? "Acheter des tickets" : "Mes tickets"}</h2>
 
       {wallet.account && myTickets > 0 && (
@@ -58,37 +107,54 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
       {/* Monté dès la connexion (il ne s'affiche qu'avec des tickets) : il sait ainsi quels billets sont nouveaux */}
       {wallet.account && <MyTickets tickets={data.tickets} account={wallet.account} roundId={data.roundId} proof={proof} />}
 
+      {/* La clé change avec l'étape : le contenu se fond à chaque changement (connexion, inscription, achat). */}
       {blocker === "connect" ? (
-        <div className="stack">
+        <div className="stack swap-in" key="connect">
           <p>
-            {allowed
+            {!wallet.available
+              ? "Pour acheter vos tickets, installez l'extension gratuite MetaMask : un portefeuille qui garde vos ethers de test."
+              : allowed
               ? "Connectez votre portefeuille MetaMask pour acheter vos tickets."
+              : me
+              ? `Vous êtes connecté avec ${me.email}, mais ce mail n'est pas sur la liste des habitants de la ville. Connectez le portefeuille déclaré à votre mairie.`
               : "Réservé aux habitants inscrits par la mairie. Connectez le portefeuille déclaré à la mairie, ou connectez-vous avec votre mail."}
           </p>
-          <button type="button" className="btn btn-primary btn-block" onClick={onConnect} disabled={!wallet.available}>
-            Connecter mon portefeuille
-          </button>
-          {!allowed && (
+          {wallet.available ? (
+            <button type="button" className="btn btn-primary btn-block" onClick={onConnect}>
+              Connecter mon portefeuille
+            </button>
+          ) : (
+            <a className="btn btn-primary btn-block" href="https://metamask.io/download/" target="_blank" rel="noreferrer">
+              Installer MetaMask
+            </a>
+          )}
+          {!allowed && !me && (
             <a className="btn btn-ghost btn-block" href="/connexion">
               Me connecter avec mon mail
             </a>
           )}
         </div>
       ) : blocker === "not-allowed" ? (
-        <div className="stack">
+        <div className="stack swap-in" key="not-allowed">
           <p className="muted">
-            Ce portefeuille n'est pas dans la liste des habitants de la ville. Demandez à votre mairie de l'ajouter, ou
-            connectez-vous avec le mail qu'elle a inscrit.
+            {me
+              ? `Ni ce portefeuille ni votre mail (${me.email}) ne sont sur la liste des habitants de la ville. Demandez à votre mairie d'ajouter l'un des deux.`
+              : "Ce portefeuille n'est pas dans la liste des habitants de la ville. Demandez à votre mairie de l'ajouter, ou connectez-vous avec le mail qu'elle a inscrit."}
           </p>
-          <a className="btn btn-ghost btn-block" href="/connexion">
-            Me connecter avec mon mail
-          </a>
+          {!me && (
+            <a className="btn btn-ghost btn-block" href="/connexion">
+              Me connecter avec mon mail
+            </a>
+          )}
         </div>
       ) : blocker ? (
-        <p className="muted">{blocker}</p>
+        <p className="muted swap-in" key="blocker">
+          {blocker}
+        </p>
       ) : (
         <form
-          className="stack"
+          key="form"
+          className="stack swap-in"
           onSubmit={(event) => {
             event.preventDefault();
             onBuy(quantity);
@@ -97,25 +163,31 @@ export function BuyTickets({ data, wallet, network, txInProgress, onBuy, onConne
           <p className="hint">
             {formatEth(data.ticketPrice)} le ticket, {maxPerWallet} maximum par personne. Chaque ticket est une chance de plus.
           </p>
-          <div className="quantity" role="group" aria-label="Nombre de tickets">
-            {Array.from({ length: maxPerWallet }, (_, i) => i + 1).map((n) => (
-              <button
-                key={n}
-                type="button"
-                className="quantity-option"
-                aria-pressed={quantity === n}
-                aria-label={`${n} ticket${n > 1 ? "s" : ""}`}
-                disabled={n > remaining}
-                onClick={() => setQuantity(n)}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
+          {maxPerWallet >= STEPPER_FROM ? (
+            <Stepper value={quantity} max={remaining} onChange={(n) => setQuantity(Math.min(Math.max(1, n), remaining))} />
+          ) : (
+            <div className="quantity" role="group" aria-label="Nombre de tickets">
+              {Array.from({ length: maxPerWallet }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  className="quantity-option"
+                  aria-pressed={quantity === n}
+                  aria-label={`${n} ticket${n > 1 ? "s" : ""}`}
+                  disabled={n > remaining}
+                  onClick={() => setQuantity(n)}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          )}
 
           <p className="odds">
             <span>Vos chances après l'achat</span>
-            <b>{percent(chanceAfter)}</b>
+            <b key={quantity} className="odds-value">
+              {percent(chanceAfter)}
+            </b>
           </p>
 
           <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={txInProgress || notEnough}>
